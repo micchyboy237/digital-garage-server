@@ -1,0 +1,35 @@
+{
+  "name": "@boilerplate/database",
+  "version": "1.0.0",
+  "main": "./index.ts",
+  "files": [
+    "./index.ts",
+    "./types.ts"
+  ],
+  "sideEffects": false,
+  "dependencies": {
+    "@prisma/client": "^5.16.2"
+  },
+  "scripts": {
+    "dev": "pnpm with-env prisma studio",
+    "db:push": "pnpm with-env prisma db push",
+    "db:generate": "pnpm with-env prisma generate",
+    "with-env": "dotenv -e ../../.env --",
+    "postinstall": "prisma generate",
+    "db:reset": "npx prisma migrate reset",
+    "db:info": "python _view_all_table_schemas.py",
+    "db:studio": "npx prisma studio --port 5555",
+    "db:seed": "npx prisma db seed"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.3",
+    "dotenv-cli": "^7.1.0",
+    "prisma": "^5.16.2",
+    "ts-node": "^10.9.2",
+    "typescript": "5.3.3"
+  },
+  "prisma": {
+    "schema": "./schema.prisma",
+    "seed": "ts-node ./seed/index.ts"
+  }
+}
