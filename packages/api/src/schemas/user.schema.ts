@@ -1,9 +1,14 @@
 import { z } from "zod"
+import { ErrorMessages } from "../exceptions"
 
-export const emailSchema = z.string().email({ message: "Invalid email address" })
-export const passwordSchema = z.string().min(6, { message: "Password must be at least 6 characters long" })
+export const emailSchema = z.string().email({ message: ErrorMessages.INVALID_EMAIL_ADDRESS })
+export const passwordSchema = z.string().min(6, { message: ErrorMessages.PASSWORD_TOO_SHORT })
 
-export const userRegistrationSchema = z.object({
+export const registerSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
+})
+
+export const verifyEmailSchema = z.object({
+  code: z.string(),
 })

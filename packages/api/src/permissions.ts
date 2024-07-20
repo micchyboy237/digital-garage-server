@@ -8,6 +8,7 @@ export const permissions = shield<Context>(
     query: {},
     mutation: {
       register: allow,
+      verifyEmail: allow,
     },
   },
   {

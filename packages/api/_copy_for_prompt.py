@@ -21,6 +21,7 @@ include_files = [
     '*trpc.ts',
     '*permissions.ts',
     '*routes/index.ts',
+    '*exceptions*',
     'user*'
 ]
 
