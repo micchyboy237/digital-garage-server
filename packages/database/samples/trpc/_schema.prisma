@@ -1,0 +1,104 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator dbml {
+  provider   = "prisma-dbml-generator"
+  output     = env("DATABASE_DIAGRAMS_DIR")
+  projectName = "Digital Garage"
+  projectDatabaseType = "PostgreSQL"
+  projectNote = "DB ERD Schema for Digital Garage"
+}
+
+generator docs {
+  provider = "node node_modules/prisma-docs-generator"
+  output = env("DATABASE_DOCS_DIR")
+  includeRelationFields = true
+}
+
+generator trpc {
+  provider          = "prisma-trpc-generator"
+  withZod           = true
+  withMiddleware    = true
+  withShield        = true
+  output            = env("API_TRPC_ROUTERS_ZOD_SCHEMAS_DIR")
+}
+
+model User {
+  id             String        @id @default(uuid())
+  name           String
+  email          String        @unique
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+  subscriptionId String?       @unique // Add @unique here
+  profilePicture String?
+  location       String?
+  vehicles       Vehicle[]
+}
+
+model Vehicle {
+  id                    String   @id @default(uuid())
+  make                  String
+  model                 String
+  year                  Int
+  bodyType              String
+  driveSide             String
+  transmission          String
+  mileage               Int
+  engineSize            Float
+  registrationNumber    String
+  lastChangeOfOwnership DateTime
+  motStatus             String
+  motExpiry             DateTime
+  roadTaxStatus         String
+  roadTaxDueDate        DateTime
+  exteriorColour        String
+  fuelPower             String
+  chassisNumber         String
+  current               Boolean
+  archived              Boolean
+  forSale               Boolean
+  userId                String
+  user                  User     @relation(fields: [userId], references: [id])
+}
+
+model Subscription {
+  id          String   @id @default(uuid())
+  type        String
+  renewalDate DateTime
+  user        User?    @relation // No need to specify fields and references here
+  userId      String?  @unique // Add @unique here
+}
+
+model Event {
+  id          String          @id @default(uuid())
+  name        String
+  organiser   String
+  location    String
+  description String
+  date        DateTime
+  time        DateTime
+  documentGroups DocumentGroup[]
+}
+
+model Document {
+  id             String   @id @default(uuid())
+  type           String
+  displayDate    DateTime
+  header         String
+  description    String
+  invoiceValue   Float
+  documentGroupId String
+  documentGroup  DocumentGroup @relation(fields: [documentGroupId], references: [id])
+}
+
+model DocumentGroup {
+  id          String   @id @default(uuid())
+  eventId     String
+  event       Event    @relation(fields: [eventId], references: [id])
+  documents   Document[]
+}

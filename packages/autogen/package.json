@@ -1,0 +1,10 @@
+{
+  "name": "@boilerplate/autogen",
+  "version": "1.0.0",
+  "types": "./index.ts",
+  "sideEffects": false,
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "typescript": "5.3.3"
+  }
+}

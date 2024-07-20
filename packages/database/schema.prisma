@@ -1,28 +1,272 @@
-generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["jsonProtocol"]
-}
-
 datasource db {
-  provider     = "mysql"
-  url          = env("DATABASE_URL")
-  relationMode = "prisma"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-enum Role {
-  ADMIN
-  USER
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator kysely {
+  provider = "prisma-kysely"
+  output   = env("API_TRPC_DATA_MODEL_TYPES_DIR")
+  fileName = "types.ts"
+}
+
+generator docs {
+  provider                  = "node node_modules/prisma-docs-generator"
+  output                    = env("DATABASE_DOCS_DIR")
+  includeRelationFields     = true
+}
+
+generator dbml {
+  provider               = "prisma-dbml-generator"
+  output                 = env("DATABASE_DIAGRAMS_DIR")
+  projectName            = "Digital Garage"
+  projectDatabaseType    = "PostgreSQL"
+  projectNote            = "DB ERD Schema for Digital Garage"
+}
+
+generator erd {
+  provider  = "prisma-erd-generator"
+  theme     = "default"
+  output    = env("DATABASE_ERD_PATH")
+  mmdcPath  = "node_modules/.bin"
+}
+
+generator prismaClassGenerator {
+  provider = "prisma-class-generator"
+  // output = env("API_TRPC_DATA_MODEL_CLASSES_DIR")
+}
+
+generator prismabox {
+  provider                     = "prismabox"
+  output                       = env("API_TRPC_PRISMABOX_DIR")
+  typeboxImportVariableName    = "t"
+  typeboxImportDependencyName  = "elysia"
+  additionalProperties         = true
+  inputModel                   = true
+}
+
+generator trpc {
+  provider             = "prisma-trpc-generator"
+  withZod              = true
+  withMiddleware       = true
+  withShield           = true
+  output               = env("API_TRPC_ROUTERS_ZOD_SCHEMAS_DIR")
+  contextPath          = "../api/src/trpc"
+  isGenerateSelect     = true
+  isGenerateInclude    = true
+}
+
+generator custom_generator {
+  provider = "prisma-generator-fake-data"
+  output   = env("DATABASE_FAKE_DATA_PATH")
+}
+
+generator express {
+  provider = "prisma-generator-express"
+  output   = env("DATABASE_EXPRESS_DIR")
+}
+
+enum PaymentInterval {
+  monthly
+}
+
+enum SubscriptionStatus {
+  active
+  cancelled
+  paused
+}
+
+enum DocumentType {
+  post
+  invoice
+  reminder
+  document
+}
+
+enum MediaFileType {
+  photo
+  video
+  document
+}
+
+model Payment {
+  id                   String       @id @default(uuid())
+  amount               Float
+  currency             String
+  paymentDate          DateTime     @default(now())
+  userSubscriptionId   String
+  userSubscription     UserSubscription @relation(fields: [userSubscriptionId], references: [id])
+  stripePaymentId      String?      // Stripe payment ID for tracking
+  iapPaymentId         String?      // IAP payment ID for tracking
+}
+
+model Subscription {
+  id                  String   @id @default(uuid())
+  name                String
+  freeTrialDuration   Int?
+  price               Float?
+  currency            String  @default("GBP")
+  paymentInterval     PaymentInterval @default(monthly)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @default(now())
+  userSubscriptions   UserSubscription[]
+}
+
+model UserSubscription {
+  id                    String           @id @default(uuid())
+  subscription          Subscription     @relation(fields: [subscriptionId], references: [id])
+  subscriptionId        String           @unique
+  user                  User             @relation(fields: [userId], references: [id])
+  userId                String           @unique
+  status                SubscriptionStatus @default(active)
+  trialStartDate        DateTime?
+  trialEndDate          DateTime?
+  startDate             DateTime?
+  endDate               DateTime?
+  stripeSubscriptionId  String?          // Stripe subscription ID
+  iapSubscriptionId     String?          // IAP subscription ID
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @default(now())
+  payments              Payment[]
+}
+
+model Auth {
+  id                     String    @id @default(uuid())
+  password               String?
+  googleId               String?   @unique
+  emailVerificationCode  String?
+  emailVerificationExpiry DateTime?
+  isEmailVerified        Boolean   @default(false)
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+  userId                 String    @unique
+  user                   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Session {
+  id         String   @id @default(uuid())
+  token      String   @unique
+  createdAt  DateTime @default(now())
+  expiresAt  DateTime
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum UserRole {
+  admin
+  user
 }
 
 model User {
-  id        String  @id @default(uuid())
-  email     String  @unique
-  password  String
-  firstName String
-  lastName  String
-  role      Role    @default(USER)
-  avatar    String?
+  id                 String              @id @default(uuid())
+  role               UserRole            @default(user)
+  firstName          String?
+  lastName           String?
+  email              String              @unique
+  profilePicture     String?
+  location           String?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @default(now())
+  auth               Auth?
+  session            Session?
+  subscription       UserSubscription?   
+  vehicles           VehicleOwnership[]  @relation("UserVehicles")
+  documents          Document[]          @relation("UserDocuments")
+  notificationSubs   NotificationSubscription[]
+  notifications      Notification[]
+}
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+model Vehicle {
+  id                 String              @id @default(uuid())
+  make               String
+  model              String
+  registrationNumber String              @unique
+  details            VehicleDetails      @relation(fields: [registrationNumber], references: [registrationNumber])
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @default(now())
+  ownershipHistory   VehicleOwnership[]  @relation("VehicleOwnerships")
+  documents          Document[]          @relation("VehicleDocuments")
+}
+
+model VehicleOwnership {
+  id                String   @id @default(uuid())
+  userId            String
+  vehicleId         String
+  startDate         DateTime?
+  endDate           DateTime?
+  isCurrentOwner    Boolean  @default(true)
+  isTemporaryOwner  Boolean  @default(false)
+  canEditDocuments  Boolean  @default(true)
+  user              User     @relation("UserVehicles", fields: [userId], references: [id])
+  vehicle           Vehicle  @relation("VehicleOwnerships", fields: [vehicleId], references: [id])
+}
+
+model VehicleDetails {
+  id                      String    @id @default(uuid())
+  registrationNumber      String    @unique
+  taxStatus               String
+  taxDueDate              DateTime
+  motStatus               String
+  yearOfManufacture       Int
+  engineCapacity          Int
+  co2Emissions            Int
+  fuelType                String
+  markedForExport         Boolean
+  colour                  String
+  typeApproval            String
+  euroStatus              String
+  dateOfLastV5CIssued     DateTime
+  motExpiryDate           DateTime
+  wheelplan               String
+  monthOfFirstRegistration DateTime
+  vehicle                 Vehicle?
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @default(now())
+}
+
+model Document {
+  id             String       @id @default(uuid())
+  type           DocumentType
+  displayDate    DateTime
+  header         String
+  description    String
+  invoiceValue   Float
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @default(now())
+  vehicle        Vehicle      @relation("VehicleDocuments", fields: [vehicleId], references: [id])
+  vehicleId      String
+  createdBy      User         @relation("UserDocuments", fields: [createdById], references: [id])
+  createdById    String
+  files          MediaFile[]
+}
+
+model MediaFile {
+  id                String        @id @default(uuid())
+  type              MediaFileType
+  url               String
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @default(now())
+  document          Document?     @relation(fields: [documentId], references: [id])
+  documentId        String?
+}
+
+model NotificationSubscription {
+  id           String       @id @default(uuid())
+  category     String
+  user         User?        @relation(fields: [userId], references: [id])
+  userId       String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @default(now())
+}
+
+model Notification {
+  id             String              @id @default(uuid())
+  message        String
+  user           User                @relation(fields: [userId], references: [id])
+  userId         String
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @default(now())
 }

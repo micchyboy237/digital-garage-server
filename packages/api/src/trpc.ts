@@ -1,56 +1,43 @@
-import { initTRPC, TRPCError } from "@trpc/server"
-import { type inferAsyncReturnType } from "@trpc/server"
-import type * as trpcFetch from "@trpc/server/adapters/fetch"
-import superjson from "superjson"
-import { ZodError } from "zod"
+import { initTRPC } from "@trpc/server"
+import { Context } from "./context"
 
-import { prisma, type User } from "@boilerplate/database"
-
-import { decodeAuthToken } from "./lib/jwt"
-
-export async function createContext({ req }: trpcFetch.FetchCreateContextFnOptions) {
-  const headers = new Headers(req.headers)
-  const authHeader = headers.get("authorization")
-  const token = authHeader?.split("Bearer ")[1]
-  let user: User | null = null
-  if (token) {
-    const payload = decodeAuthToken(token)
-    user = await prisma.user.findUnique({ where: { id: payload.id } })
-  }
-  return { req, prisma, user }
-}
-export type Context = inferAsyncReturnType<typeof createContext>
-
-export const t = initTRPC.context<Context>().create({
-  transformer: superjson,
-  errorFormatter({ shape, error }) {
-    // TODO: sentry for internal server errors
-    // if (error.cause instanceof ZodError) {
-    //   console.log(error.cause.format().data.name)
-    // }
-
-    return {
-      ...shape,
-      data: {
-        ...shape.data,
-        formError: !(error.cause instanceof ZodError)
-          ? error.code === "INTERNAL_SERVER_ERROR"
-            ? "There was an error processing your request."
-            : error.message
-          : undefined,
-        zodError: error.cause instanceof ZodError ? error.cause.flatten() : null,
-      },
-    }
-  },
-})
-
-export const createTRPCRouter = t.router
+export const t = initTRPC.context<Context>().create()
 
 export const publicProcedure = t.procedure
 
-const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.user) throw new TRPCError({ code: "UNAUTHORIZED" })
-  return next({ ctx: { user: ctx.user } })
+// export const adminProcedure: typeof t.procedure = publicProcedure.use(async (opts) => {
+//   const { ctx } = opts
+//   if (!ctx.user?.isAdmin) {
+//     throw new TRPCError({ code: "UNAUTHORIZED" })
+//   }
+//   return opts.next({
+//     ctx: {
+//       user: ctx.user,
+//     },
+//   })
+// })
+
+export const loggedProcedure: typeof t.procedure = publicProcedure.use(async (opts) => {
+  const start = Date.now()
+
+  const result = await opts.next()
+
+  const durationMs = Date.now() - start
+  const meta = { path: opts.path, type: opts.type, durationMs }
+
+  result.ok ? console.log("OK request timing:", meta) : console.error("Non-OK request timing", meta)
+
+  return result
 })
 
-export const protectedProcedure = t.procedure.use(enforceUserIsAuthed)
+// export const protectedProcedure: typeof t.procedure = publicProcedure.use(async (opts) => {
+//   const { ctx } = opts
+//   if (!ctx.user) {
+//     throw new TRPCError({ code: "UNAUTHORIZED" })
+//   }
+//   return opts.next({
+//     ctx: {
+//       user: ctx.user,
+//     },
+//   })
+// })

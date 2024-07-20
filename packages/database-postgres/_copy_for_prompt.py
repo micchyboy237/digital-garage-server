@@ -104,4 +104,4 @@ if __name__ == "__main__":
     main()
 
 # Sample usage:
-# python _copy_for_prompt.py -m "Analyze the files then provide what the package.json scripts do"
+# python _copy_for_prompt.py -m "Generate commit description"
