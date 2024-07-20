@@ -3,7 +3,7 @@ import { prisma } from "@boilerplate/database"
 import { TRPCError } from "@trpc/server"
 import jwt from "jsonwebtoken"
 
-export const authenticate = async ({ req }) => {
+export const authenticateMiddleware = async ({ req }) => {
   const token = req.headers.authorization?.split(" ")[1]
   if (!token) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: "Please authenticate" })
