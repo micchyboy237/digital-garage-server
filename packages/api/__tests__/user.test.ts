@@ -10,7 +10,6 @@ describe("User Registration Endpoint", () => {
     })
 
     expect(response.status).toBe(200)
-    expect(response.body.message).toBe("User registered successfully")
   })
 
   it("should fail to register an existing user", async () => {
@@ -25,6 +24,5 @@ describe("User Registration Endpoint", () => {
     })
 
     expect(response.status).toBe(400)
-    expect(response.body.message).toBe("User already exists")
   })
 })

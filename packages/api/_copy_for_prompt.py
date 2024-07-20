@@ -17,6 +17,10 @@ exclude_files = [
 
 include_files = [
     'server.ts',
+    '*context.ts',
+    '*trpc.ts',
+    '*permissions.ts',
+    '*routes/index.ts',
     'user*'
 ]
 
