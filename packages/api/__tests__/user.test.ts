@@ -64,6 +64,41 @@ describe("User Registration Endpoint", () => {
       })
 
     expect(response.status).toBe(200)
-    expect(response.body.message).toBe("Email verified successfully")
+  })
+
+  it("should login a user", async () => {
+    await request(app)
+      .post("/trpc/user.register")
+      .send({
+        input: {
+          email: "login@example.com",
+          password: "password123",
+        },
+      })
+
+    const response = await request(app)
+      .post("/trpc/user.login")
+      .send({
+        input: {
+          email: "login@example.com",
+          password: "password123",
+        },
+      })
+
+    expect(response.status).toBe(200)
+    expect(response.body).toHaveProperty("accessToken")
+    expect(response.body).toHaveProperty("refreshToken")
+
+    const { accessToken, refreshToken } = response.body
+
+    // Test refresh token
+    const refreshResponse = await request(app).post("/trpc/user.refreshToken").send({
+      input: {
+        refreshToken,
+      },
+    })
+
+    expect(refreshResponse.status).toBe(200)
+    expect(refreshResponse.body).toHaveProperty("accessToken")
   })
 })

@@ -9,6 +9,15 @@ export const registerSchema = z.object({
   password: passwordSchema,
 })
 
+export const loginSchema = z.object({
+  email: emailSchema,
+  password: passwordSchema,
+})
+
 export const verifyEmailSchema = z.object({
   code: z.string(),
+})
+
+export const refreshTokenSchema = z.object({
+  refreshToken: z.string(),
 })

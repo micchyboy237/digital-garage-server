@@ -1,13 +1,13 @@
 import { prisma } from "@boilerplate/database"
 import bcrypt from "bcryptjs"
+import jwt from "jsonwebtoken"
 import nodemailer from "nodemailer"
 import { ErrorMessages, ValidationException } from "../exceptions"
+import { generateAccessToken, generateRefreshToken } from "../utils/tokens"
 
 export const userService = {
   register: async (email: string, password: string) => {
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    })
+    const existingUser = await prisma.user.findUnique({ where: { email } })
 
     if (existingUser) {
       throw new ValidationException(ErrorMessages.USER_ALREADY_EXISTS)
@@ -35,6 +35,26 @@ export const userService = {
     return user
   },
 
+  login: async (email: string, password: string) => {
+    const user = await prisma.user.findUnique({
+      where: { email },
+      include: { auth: true },
+    })
+
+    if (!user || !user.auth || !user.auth.password || !(await bcrypt.compare(password, user.auth.password))) {
+      throw new ValidationException(ErrorMessages.INVALID_CREDENTIALS)
+    }
+
+    if (!user.auth.isEmailVerified) {
+      throw new ValidationException("Email not verified")
+    }
+
+    const accessToken = generateAccessToken(user.id)
+    const refreshToken = await generateRefreshToken(user.id)
+
+    return { accessToken, refreshToken, user }
+  },
+
   sendEmailVerification: async (email: string, verificationCode: string) => {
     const transporter = nodemailer.createTransport({
       service: "Gmail",
@@ -52,7 +72,7 @@ export const userService = {
       to: email,
       subject: "Email Verification",
       text: `Please verify your email by clicking the following link: ${verificationUrl}`,
-      html: `Please verify your email by clicking the following link: <a href="${verificationUrl}">${verificationUrl}</a>`, // Include HTML version for better email formatting
+      html: `Please verify your email by clicking the following link: <a href="${verificationUrl}">${verificationUrl}</a>`,
     }
 
     try {
@@ -83,5 +103,19 @@ export const userService = {
     })
 
     return { verified: true }
+  },
+
+  refreshToken: async (refreshToken: string) => {
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET || "") as { id: string }
+    const session = await prisma.session.findFirst({
+      where: { token: refreshToken, userId: decoded.id },
+    })
+
+    if (!session || session.expiresAt < new Date()) {
+      throw new Error("Invalid refresh token")
+    }
+
+    const accessToken = generateAccessToken(decoded.id)
+    return { accessToken }
   },
 }
