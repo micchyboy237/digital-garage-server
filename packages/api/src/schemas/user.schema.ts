@@ -14,6 +14,8 @@ export const loginSchema = z.object({
   password: passwordSchema,
 })
 
+export const loginGoogleSchema = z.object({ idToken: z.string() })
+
 export const verifyEmailSchema = z.object({
   code: z.string(),
 })

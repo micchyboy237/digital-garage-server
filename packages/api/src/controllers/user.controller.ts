@@ -13,6 +13,12 @@ export const userController = {
     return { message: "Login successful", ...result }
   },
 
+  loginWithGoogle: async (input: { idToken: string }) => {
+    const { idToken } = input
+    const result = await userService.loginWithGoogle(idToken)
+    return { message: "Login successful", ...result }
+  },
+
   verifyEmail: async (input: { code: string }) => {
     const { code } = input
     const result = await userService.verifyEmail(code)

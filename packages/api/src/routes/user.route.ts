@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server"
 import { userController } from "../controllers/user.controller"
 import { ErrorMessages, ValidationException } from "../exceptions"
-import { loginSchema, refreshTokenSchema, registerSchema, verifyEmailSchema } from "../schemas/user.schema"
+import { loginGoogleSchema, loginSchema, refreshTokenSchema, registerSchema, verifyEmailSchema } from "../schemas/user.schema"
 import { loggedProcedure, t } from "../trpc" // Ensure these imports are correct
 
 export const userRouter = t.router({
@@ -20,6 +20,18 @@ export const userRouter = t.router({
   login: t.procedure.input(loginSchema).mutation(async ({ input }) => {
     try {
       return await userController.login(input)
+    } catch (error) {
+      if (error instanceof ValidationException) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: error.message })
+      } else {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: ErrorMessages.INTERNAL_SERVER_ERROR })
+      }
+    }
+  }),
+
+  loginWithGoogle: t.procedure.input(loginGoogleSchema).mutation(async ({ input }) => {
+    try {
+      return await userController.loginWithGoogle(input)
     } catch (error) {
       if (error instanceof ValidationException) {
         throw new TRPCError({ code: "BAD_REQUEST", message: error.message })

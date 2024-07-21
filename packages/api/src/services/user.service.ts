@@ -1,9 +1,12 @@
 import { prisma } from "@boilerplate/database"
 import bcrypt from "bcryptjs"
+import { OAuth2Client } from "google-auth-library"
 import jwt from "jsonwebtoken"
 import nodemailer from "nodemailer"
 import { ErrorMessages, ValidationException } from "../exceptions"
 import { generateAccessToken, generateRefreshToken } from "../utils/tokens"
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
 export const userService = {
   register: async (email: string, password: string) => {
@@ -47,6 +50,62 @@ export const userService = {
 
     if (!user.auth.isEmailVerified) {
       throw new ValidationException("Email not verified")
+    }
+
+    const accessToken = generateAccessToken(user.id)
+    const refreshToken = await generateRefreshToken(user.id)
+
+    return { accessToken, refreshToken, user }
+  },
+
+  loginWithGoogle: async (idToken: string) => {
+    const ticket = await googleClient.verifyIdToken({
+      idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    })
+
+    const payload = ticket.getPayload()
+    if (!payload || !payload.email) {
+      throw new ValidationException("Invalid Google ID token")
+    }
+
+    const { email, sub: googleId, name, picture } = payload
+
+    let user = await prisma.user.findUnique({
+      where: { email },
+      include: { auth: true },
+    })
+
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          email,
+          firstName: name?.split(" ")[0],
+          lastName: name?.split(" ").slice(1).join(" "),
+          profilePicture: picture,
+          auth: {
+            create: {
+              googleId,
+            },
+          },
+        },
+        include: { auth: true },
+      })
+    } else if (!user.auth?.googleId) {
+      await prisma.auth.update({
+        where: { userId: user.id },
+        data: {
+          googleId,
+        },
+      })
+      user = await prisma.user.findUnique({
+        where: { email },
+        include: { auth: true },
+      })
+    }
+
+    if (!user) {
+      throw new ValidationException("User creation failed")
     }
 
     const accessToken = generateAccessToken(user.id)
