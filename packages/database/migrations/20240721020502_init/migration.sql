@@ -69,6 +69,8 @@ CREATE TABLE "Auth" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "userId" TEXT NOT NULL,
+    "passwordResetToken" TEXT,
+    "passwordResetExpiry" TIMESTAMP(3),
 
     CONSTRAINT "Auth_pkey" PRIMARY KEY ("id")
 );

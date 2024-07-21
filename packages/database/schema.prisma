@@ -144,6 +144,8 @@ model Auth {
   updatedAt              DateTime  @updatedAt
   userId                 String    @unique
   user                   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  passwordResetToken     String?
+  passwordResetExpiry    DateTime?
 }
 
 model Session {

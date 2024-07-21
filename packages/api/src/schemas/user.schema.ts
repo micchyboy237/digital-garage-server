@@ -20,6 +20,19 @@ export const verifyEmailSchema = z.object({
   code: z.string(),
 })
 
+export const resendEmailVerificationSchema = z.object({
+  email: emailSchema,
+})
+
 export const refreshTokenSchema = z.object({
   refreshToken: z.string(),
+})
+
+export const requestPasswordResetSchema = z.object({
+  email: emailSchema,
+})
+
+export const resetPasswordSchema = z.object({
+  token: z.string(),
+  newPassword: passwordSchema,
 })

@@ -15,6 +15,8 @@ const Schema: z.ZodType<Prisma.AuthSelect> = z
     updatedAt: z.boolean().optional(),
     userId: z.boolean().optional(),
     user: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional(),
+    passwordResetToken: z.boolean().optional(),
+    passwordResetExpiry: z.boolean().optional(),
   })
   .strict()
 

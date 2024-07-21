@@ -30,4 +30,22 @@ export const userController = {
     const result = await userService.refreshToken(refreshToken)
     return { message: "Token refreshed successfully", ...result }
   },
+
+  resendEmailVerification: async (input: { email: string }) => {
+    const { email } = input
+    await userService.resendEmailVerification(email)
+    return { message: "Verification email resent successfully" }
+  },
+
+  requestPasswordReset: async (input: { email: string }) => {
+    const { email } = input
+    await userService.requestPasswordReset(email)
+    return { message: "Password reset email sent successfully" }
+  },
+
+  resetPassword: async (input: { token: string; newPassword: string }) => {
+    const { token, newPassword } = input
+    const result = await userService.resetPassword(token, newPassword)
+    return { message: "Password reset successfully", result }
+  },
 }

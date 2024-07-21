@@ -18,6 +18,8 @@ const Schema: z.ZodType<Prisma.AuthOrderByWithAggregationInput> = z
     createdAt: z.lazy(() => SortOrderSchema).optional(),
     updatedAt: z.lazy(() => SortOrderSchema).optional(),
     userId: z.lazy(() => SortOrderSchema).optional(),
+    passwordResetToken: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+    passwordResetExpiry: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
     _count: z.lazy(() => AuthCountOrderByAggregateInputObjectSchema).optional(),
     _max: z.lazy(() => AuthMaxOrderByAggregateInputObjectSchema).optional(),
     _min: z.lazy(() => AuthMinOrderByAggregateInputObjectSchema).optional(),

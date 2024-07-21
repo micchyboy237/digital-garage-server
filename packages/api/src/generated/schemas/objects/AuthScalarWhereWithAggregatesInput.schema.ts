@@ -46,6 +46,14 @@ const Schema: z.ZodType<Prisma.AuthScalarWhereWithAggregatesInput> = z
     createdAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
     updatedAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
     userId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
+    passwordResetToken: z
+      .union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()])
+      .optional()
+      .nullable(),
+    passwordResetExpiry: z
+      .union([z.lazy(() => DateTimeNullableWithAggregatesFilterObjectSchema), z.coerce.date()])
+      .optional()
+      .nullable(),
   })
   .strict()
 

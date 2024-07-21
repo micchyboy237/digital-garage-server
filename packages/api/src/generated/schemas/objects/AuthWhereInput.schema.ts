@@ -38,6 +38,14 @@ const Schema: z.ZodType<Prisma.AuthWhereInput> = z
     createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
     updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
     userId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+    passwordResetToken: z
+      .union([z.lazy(() => StringNullableFilterObjectSchema), z.string()])
+      .optional()
+      .nullable(),
+    passwordResetExpiry: z
+      .union([z.lazy(() => DateTimeNullableFilterObjectSchema), z.coerce.date()])
+      .optional()
+      .nullable(),
     user: z.union([z.lazy(() => UserRelationFilterObjectSchema), z.lazy(() => UserWhereInputObjectSchema)]).optional(),
   })
   .strict()

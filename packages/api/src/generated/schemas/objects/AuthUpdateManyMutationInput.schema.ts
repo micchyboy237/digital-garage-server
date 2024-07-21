@@ -29,6 +29,14 @@ const Schema: z.ZodType<Prisma.AuthUpdateManyMutationInput> = z
     isEmailVerified: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputObjectSchema)]).optional(),
     createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
     updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+    passwordResetToken: z
+      .union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)])
+      .optional()
+      .nullable(),
+    passwordResetExpiry: z
+      .union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputObjectSchema)])
+      .optional()
+      .nullable(),
   })
   .strict()
 

@@ -16,6 +16,8 @@ const Schema: z.ZodType<Prisma.AuthOrderByWithRelationInput> = z
     createdAt: z.lazy(() => SortOrderSchema).optional(),
     updatedAt: z.lazy(() => SortOrderSchema).optional(),
     userId: z.lazy(() => SortOrderSchema).optional(),
+    passwordResetToken: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+    passwordResetExpiry: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
     user: z.lazy(() => UserOrderByWithRelationInputObjectSchema).optional(),
   })
   .strict()

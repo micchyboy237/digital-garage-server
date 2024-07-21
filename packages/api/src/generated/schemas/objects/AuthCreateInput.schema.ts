@@ -13,6 +13,8 @@ const Schema: z.ZodType<Prisma.AuthCreateInput> = z
     isEmailVerified: z.boolean().optional(),
     createdAt: z.coerce.date().optional(),
     updatedAt: z.coerce.date().optional(),
+    passwordResetToken: z.string().optional().nullable(),
+    passwordResetExpiry: z.coerce.date().optional().nullable(),
     user: z.lazy(() => UserCreateNestedOneWithoutAuthInputObjectSchema),
   })
   .strict()

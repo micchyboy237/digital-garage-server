@@ -37,6 +37,12 @@ export const UserRelations = t.Object(
           createdAt: t.Date({ additionalProperties: true }),
           updatedAt: t.Date({ additionalProperties: true }),
           userId: t.String({ additionalProperties: true }),
+          passwordResetToken: __nullable__(
+            t.String({ additionalProperties: true }),
+          ),
+          passwordResetExpiry: __nullable__(
+            t.Date({ additionalProperties: true }),
+          ),
         },
         { additionalProperties: true },
       ),

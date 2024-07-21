@@ -75,6 +75,8 @@ export function fakeAuth() {
     emailVerificationCode: undefined,
     emailVerificationExpiry: undefined,
     updatedAt: faker.date.anytime(),
+    passwordResetToken: undefined,
+    passwordResetExpiry: undefined,
   };
 }
 export function fakeAuthComplete() {
@@ -88,6 +90,8 @@ export function fakeAuthComplete() {
     createdAt: new Date(),
     updatedAt: faker.date.anytime(),
     userId: faker.string.uuid(),
+    passwordResetToken: undefined,
+    passwordResetExpiry: undefined,
   };
 }
 export function fakeSession() {

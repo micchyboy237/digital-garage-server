@@ -13,6 +13,8 @@ const Schema: z.ZodType<Prisma.AuthCreateManyInput> = z
     createdAt: z.coerce.date().optional(),
     updatedAt: z.coerce.date().optional(),
     userId: z.string(),
+    passwordResetToken: z.string().optional().nullable(),
+    passwordResetExpiry: z.coerce.date().optional().nullable(),
   })
   .strict()
 

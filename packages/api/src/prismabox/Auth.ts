@@ -17,6 +17,8 @@ export const AuthPlain = t.Object(
     createdAt: t.Date({ additionalProperties: true }),
     updatedAt: t.Date({ additionalProperties: true }),
     userId: t.String({ additionalProperties: true }),
+    passwordResetToken: __nullable__(t.String({ additionalProperties: true })),
+    passwordResetExpiry: __nullable__(t.Date({ additionalProperties: true })),
   },
   { additionalProperties: true },
 );
@@ -55,6 +57,12 @@ export const AuthPlainInput = t.Object(
       __nullable__(t.Date({ additionalProperties: true })),
     ),
     isEmailVerified: t.Boolean({ additionalProperties: true }),
+    passwordResetToken: t.Optional(
+      __nullable__(t.String({ additionalProperties: true })),
+    ),
+    passwordResetExpiry: t.Optional(
+      __nullable__(t.Date({ additionalProperties: true })),
+    ),
   },
   { additionalProperties: true },
 );
@@ -113,6 +121,8 @@ export const AuthWhere = t.Partial(
           createdAt: t.Date({ additionalProperties: true }),
           updatedAt: t.Date({ additionalProperties: true }),
           userId: t.String({ additionalProperties: true }),
+          passwordResetToken: t.String({ additionalProperties: true }),
+          passwordResetExpiry: t.Date({ additionalProperties: true }),
         },
         { additionalProperties: true },
       ),
@@ -160,6 +170,8 @@ export const AuthWhereUnique = t.Recursive(
             isEmailVerified: t.Boolean({ additionalProperties: true }),
             createdAt: t.Date({ additionalProperties: true }),
             updatedAt: t.Date({ additionalProperties: true }),
+            passwordResetToken: t.String({ additionalProperties: true }),
+            passwordResetExpiry: t.Date({ additionalProperties: true }),
           }),
           { additionalProperties: true },
         ),

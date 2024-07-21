@@ -42,6 +42,8 @@ export type Auth = {
   createdAt: Generated<Timestamp>
   updatedAt: Timestamp
   userId: string
+  passwordResetToken: string | null
+  passwordResetExpiry: Timestamp | null
 }
 export type Document = {
   id: string

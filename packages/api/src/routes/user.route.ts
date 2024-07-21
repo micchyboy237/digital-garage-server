@@ -1,8 +1,17 @@
 import { TRPCError } from "@trpc/server"
 import { userController } from "../controllers/user.controller"
-import { ErrorMessages, ValidationException } from "../exceptions"
-import { loginGoogleSchema, loginSchema, refreshTokenSchema, registerSchema, verifyEmailSchema } from "../schemas/user.schema"
-import { loggedProcedure, t } from "../trpc" // Ensure these imports are correct
+import { ValidationException } from "../exceptions"
+import {
+  loginGoogleSchema,
+  loginSchema,
+  refreshTokenSchema,
+  registerSchema,
+  requestPasswordResetSchema,
+  resendEmailVerificationSchema,
+  resetPasswordSchema,
+  verifyEmailSchema,
+} from "../schemas/user.schema"
+import { loggedProcedure, t } from "../trpc"
 
 export const userRouter = t.router({
   register: loggedProcedure.input(registerSchema).mutation(async ({ input }) => {
@@ -11,9 +20,8 @@ export const userRouter = t.router({
     } catch (error) {
       if (error instanceof ValidationException) {
         throw new TRPCError({ code: "BAD_REQUEST", message: error.message })
-      } else {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: ErrorMessages.INTERNAL_SERVER_ERROR })
       }
+      throw error
     }
   }),
 
@@ -23,9 +31,8 @@ export const userRouter = t.router({
     } catch (error) {
       if (error instanceof ValidationException) {
         throw new TRPCError({ code: "BAD_REQUEST", message: error.message })
-      } else {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: ErrorMessages.INTERNAL_SERVER_ERROR })
       }
+      throw error
     }
   }),
 
@@ -35,9 +42,8 @@ export const userRouter = t.router({
     } catch (error) {
       if (error instanceof ValidationException) {
         throw new TRPCError({ code: "BAD_REQUEST", message: error.message })
-      } else {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: ErrorMessages.INTERNAL_SERVER_ERROR })
       }
+      throw error
     }
   }),
 
@@ -48,7 +54,7 @@ export const userRouter = t.router({
       if (error instanceof ValidationException) {
         throw new TRPCError({ code: "BAD_REQUEST", message: error.message })
       } else {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: ErrorMessages.INTERNAL_SERVER_ERROR })
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Internal Server Error" })
       }
     }
   }),
@@ -59,9 +65,41 @@ export const userRouter = t.router({
     } catch (error) {
       if (error instanceof ValidationException) {
         throw new TRPCError({ code: "BAD_REQUEST", message: error.message })
-      } else {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: ErrorMessages.INTERNAL_SERVER_ERROR })
       }
+      throw error
+    }
+  }),
+
+  resendEmailVerification: t.procedure.input(resendEmailVerificationSchema).mutation(async ({ input }) => {
+    try {
+      return await userController.resendEmailVerification(input)
+    } catch (error) {
+      if (error instanceof ValidationException) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: error.message })
+      }
+      throw error
+    }
+  }),
+
+  requestPasswordReset: t.procedure.input(requestPasswordResetSchema).mutation(async ({ input }) => {
+    try {
+      return await userController.requestPasswordReset(input)
+    } catch (error) {
+      if (error instanceof ValidationException) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: error.message })
+      }
+      throw error
+    }
+  }),
+
+  resetPassword: t.procedure.input(resetPasswordSchema).mutation(async ({ input }) => {
+    try {
+      return await userController.resetPassword(input)
+    } catch (error) {
+      if (error instanceof ValidationException) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: error.message })
+      }
+      throw error
     }
   }),
 })

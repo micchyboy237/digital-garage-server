@@ -13,6 +13,8 @@ const Schema: z.ZodType<Prisma.AuthCountAggregateInputType> = z
     createdAt: z.literal(true).optional(),
     updatedAt: z.literal(true).optional(),
     userId: z.literal(true).optional(),
+    passwordResetToken: z.literal(true).optional(),
+    passwordResetExpiry: z.literal(true).optional(),
     _all: z.literal(true).optional(),
   })
   .strict()

@@ -10,4 +10,6 @@ export const AuthScalarFieldEnumSchema = z.enum([
   "createdAt",
   "updatedAt",
   "userId",
+  "passwordResetToken",
+  "passwordResetExpiry",
 ])
