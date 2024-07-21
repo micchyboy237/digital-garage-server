@@ -47,7 +47,7 @@ export const UserRelations = t.Object(
         { additionalProperties: true },
       ),
     ),
-    session: __nullable__(
+    session: t.Array(
       t.Object(
         {
           id: t.String({ additionalProperties: true }),
@@ -58,6 +58,7 @@ export const UserRelations = t.Object(
         },
         { additionalProperties: true },
       ),
+      { additionalProperties: true },
     ),
     subscription: __nullable__(
       t.Object(
@@ -198,10 +199,13 @@ export const UserRelationsInputCreate = t.Object(
     session: t.Optional(
       t.Object(
         {
-          connect: t.Object(
-            {
-              id: t.String({ additionalProperties: true }),
-            },
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
             { additionalProperties: true },
           ),
         },
@@ -310,13 +314,24 @@ export const UserRelationsInputUpdate = t.Partial(
       session: t.Partial(
         t.Object(
           {
-            connect: t.Object(
-              {
-                id: t.String({ additionalProperties: true }),
-              },
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
               { additionalProperties: true },
             ),
-            disconnect: t.Boolean(),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
+              { additionalProperties: true },
+            ),
           },
           { additionalProperties: true },
         ),

@@ -1,9 +1,9 @@
 import { prisma } from "@boilerplate/database"
-import bcrypt from "bcryptjs"
 import { OAuth2Client } from "google-auth-library"
 import jwt from "jsonwebtoken"
 import { ErrorMessages, ValidationException } from "../exceptions"
-import { sendPasswordResetEmail, sendVerificationEmail } from "../utils/mail"
+import { generateCode, generateExpiry, sendPasswordResetEmail, sendVerificationEmail } from "../utils/mail"
+import { comparePasswords, hashPassword } from "../utils/password"
 import { generateAccessToken, generateRefreshToken } from "../utils/tokens"
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
@@ -17,9 +17,9 @@ export const userService = {
         throw new ValidationException(ErrorMessages.USER_ALREADY_EXISTS)
       }
 
-      const hashedPassword = await bcrypt.hash(password, 10)
-      const emailVerificationCode = Math.random().toString(36).substring(2, 15)
-      const emailVerificationExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours from now
+      const hashedPassword = await hashPassword(password)
+      const emailVerificationCode = generateCode()
+      const emailVerificationExpiry = generateExpiry(24) // 24 hours from now
 
       const user = await prisma.user.create({
         data: {
@@ -46,7 +46,7 @@ export const userService = {
       include: { auth: true },
     })
 
-    if (!user || !user.auth || !user.auth.password || !(await bcrypt.compare(password, user.auth.password))) {
+    if (!user || !user.auth || !user.auth.password || !(await comparePasswords(password, user.auth.password))) {
       throw new ValidationException(ErrorMessages.INVALID_CREDENTIALS)
     }
 
@@ -174,8 +174,8 @@ export const userService = {
         throw new ValidationException("Email already verified")
       }
 
-      const emailVerificationCode = Math.random().toString(36).substring(2, 15)
-      const emailVerificationExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours from now
+      const emailVerificationCode = generateCode()
+      const emailVerificationExpiry = generateExpiry(24) // 24 hours from now
 
       await prisma.auth.update({
         where: { userId: user.id },
@@ -200,8 +200,8 @@ export const userService = {
         throw new ValidationException("User not found")
       }
 
-      const passwordResetToken = Math.random().toString(36).substring(2, 15)
-      const passwordResetExpiry = new Date(Date.now() + 1 * 60 * 60 * 1000) // 1 hour from now
+      const passwordResetToken = generateCode()
+      const passwordResetExpiry = generateExpiry(1) // 1 hour from now
 
       await prisma.auth.update({
         where: { userId: user.id },
@@ -225,7 +225,7 @@ export const userService = {
         throw new ValidationException("Invalid or expired password reset token")
       }
 
-      const hashedPassword = await bcrypt.hash(newPassword, 10)
+      const hashedPassword = await hashPassword(newPassword)
 
       await prisma.auth.update({
         where: { id: authRecord.id },

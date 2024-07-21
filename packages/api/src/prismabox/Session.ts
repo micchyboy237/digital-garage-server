@@ -110,7 +110,6 @@ export const SessionWhereUnique = t.Recursive(
             {
               id: t.String({ additionalProperties: true }),
               token: t.String({ additionalProperties: true }),
-              userId: t.String({ additionalProperties: true }),
             },
             { additionalProperties: true },
           ),
@@ -120,7 +119,6 @@ export const SessionWhereUnique = t.Recursive(
           [
             t.Object({ id: t.String({ additionalProperties: true }) }),
             t.Object({ token: t.String({ additionalProperties: true }) }),
-            t.Object({ userId: t.String({ additionalProperties: true }) }),
           ],
           { additionalProperties: true },
         ),
@@ -136,6 +134,7 @@ export const SessionWhereUnique = t.Recursive(
           t.Object({
             createdAt: t.Date({ additionalProperties: true }),
             expiresAt: t.Date({ additionalProperties: true }),
+            userId: t.String({ additionalProperties: true }),
           }),
           { additionalProperties: true },
         ),

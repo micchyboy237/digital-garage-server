@@ -1,14 +1,11 @@
-import { prisma } from "@boilerplate/database"
 import nodemailer from "nodemailer"
 
-export const checkEmail = async (email: string): Promise<string> => {
-  const existingUser = await prisma.user.findUnique({ where: { email } })
+export const generateCode = (): string => {
+  return Math.random().toString(36).substring(2, 15)
+}
 
-  if (existingUser) {
-    throw new Error("Email already exists")
-  }
-
-  return "Email is available"
+export const generateExpiry = (hours: number): Date => {
+  return new Date(Date.now() + hours * 60 * 60 * 1000)
 }
 
 export const sendVerificationEmail = async (email: string, code: string) => {

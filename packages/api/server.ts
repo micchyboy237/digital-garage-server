@@ -1,6 +1,8 @@
 import { createExpressMiddleware } from "@trpc/server/adapters/express"
 import cors from "cors"
 import express from "express"
+// Uncomment the following line to enable scheduled cleanup
+// import "./scripts/scheduleCleanup"
 import { createContext } from "./src/context"
 import { appRouter } from "./src/routes"
 
