@@ -16,6 +16,7 @@ const Schema: z.ZodType<Prisma.MediaFileOrderByWithAggregationInput> = z
     createdAt: z.lazy(() => SortOrderSchema).optional(),
     updatedAt: z.lazy(() => SortOrderSchema).optional(),
     documentId: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+    userId: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
     vehicleOwnershipId: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
     _count: z.lazy(() => MediaFileCountOrderByAggregateInputObjectSchema).optional(),
     _max: z.lazy(() => MediaFileMaxOrderByAggregateInputObjectSchema).optional(),

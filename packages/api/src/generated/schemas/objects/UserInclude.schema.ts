@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { MediaFileArgsObjectSchema } from "./MediaFileArgs.schema"
 import { AuthArgsObjectSchema } from "./AuthArgs.schema"
 import { SessionFindManySchema } from "../findManySession.schema"
 import { UserSubscriptionArgsObjectSchema } from "./UserSubscriptionArgs.schema"
@@ -13,6 +14,7 @@ import type { Prisma } from "@prisma/client"
 
 const Schema: z.ZodType<Prisma.UserInclude> = z
   .object({
+    profilePicture: z.union([z.boolean(), z.lazy(() => MediaFileArgsObjectSchema)]).optional(),
     auth: z.union([z.boolean(), z.lazy(() => AuthArgsObjectSchema)]).optional(),
     session: z.union([z.boolean(), z.lazy(() => SessionFindManySchema)]).optional(),
     subscription: z.union([z.boolean(), z.lazy(() => UserSubscriptionArgsObjectSchema)]).optional(),

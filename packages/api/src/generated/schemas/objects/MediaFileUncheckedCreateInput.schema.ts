@@ -12,6 +12,7 @@ const Schema: z.ZodType<Prisma.MediaFileUncheckedCreateInput> = z
     createdAt: z.coerce.date().optional(),
     updatedAt: z.coerce.date().optional(),
     documentId: z.string().optional().nullable(),
+    userId: z.string().optional().nullable(),
     vehicleOwnershipId: z.string().optional().nullable(),
   })
   .strict()

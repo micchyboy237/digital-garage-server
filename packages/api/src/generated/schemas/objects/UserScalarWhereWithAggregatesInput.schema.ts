@@ -36,10 +36,6 @@ const Schema: z.ZodType<Prisma.UserScalarWhereWithAggregatesInput> = z
       .optional()
       .nullable(),
     email: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
-    profilePicture: z
-      .union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()])
-      .optional()
-      .nullable(),
     location: z
       .union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()])
       .optional()

@@ -14,6 +14,7 @@ export const MediaFilePlain = t.Object(
     createdAt: t.Date({ additionalProperties: true }),
     updatedAt: t.Date({ additionalProperties: true }),
     documentId: __nullable__(t.String({ additionalProperties: true })),
+    userId: __nullable__(t.String({ additionalProperties: true })),
     vehicleOwnershipId: __nullable__(t.String({ additionalProperties: true })),
   },
   { additionalProperties: true },
@@ -38,6 +39,23 @@ export const MediaFileRelations = t.Object(
           vehicleEventId: __nullable__(
             t.String({ additionalProperties: true }),
           ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+    user: __nullable__(
+      t.Object(
+        {
+          id: t.String({ additionalProperties: true }),
+          role: t.Union([t.Literal("admin"), t.Literal("user")], {
+            additionalProperties: true,
+          }),
+          firstName: __nullable__(t.String({ additionalProperties: true })),
+          lastName: __nullable__(t.String({ additionalProperties: true })),
+          email: t.String({ additionalProperties: true }),
+          location: __nullable__(t.String({ additionalProperties: true })),
+          createdAt: t.Date({ additionalProperties: true }),
+          updatedAt: t.Date({ additionalProperties: true }),
         },
         { additionalProperties: true },
       ),
@@ -92,6 +110,19 @@ export const MediaFileRelationsInputCreate = t.Object(
         { additionalProperties: true },
       ),
     ),
+    user: t.Optional(
+      t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
     vehicleOwnership: t.Optional(
       t.Object(
         {
@@ -113,6 +144,21 @@ export const MediaFileRelationsInputUpdate = t.Partial(
   t.Object(
     {
       document: t.Partial(
+        t.Object(
+          {
+            connect: t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+            disconnect: t.Boolean(),
+          },
+          { additionalProperties: true },
+        ),
+        { additionalProperties: true },
+      ),
+      user: t.Partial(
         t.Object(
           {
             connect: t.Object(
@@ -166,6 +212,7 @@ export const MediaFileWhere = t.Partial(
           createdAt: t.Date({ additionalProperties: true }),
           updatedAt: t.Date({ additionalProperties: true }),
           documentId: t.String({ additionalProperties: true }),
+          userId: t.String({ additionalProperties: true }),
           vehicleOwnershipId: t.String({ additionalProperties: true }),
         },
         { additionalProperties: true },
@@ -183,6 +230,7 @@ export const MediaFileWhereUnique = t.Recursive(
           t.Object(
             {
               id: t.String({ additionalProperties: true }),
+              userId: t.String({ additionalProperties: true }),
               vehicleOwnershipId: t.String({ additionalProperties: true }),
             },
             { additionalProperties: true },
@@ -192,6 +240,7 @@ export const MediaFileWhereUnique = t.Recursive(
         t.Union(
           [
             t.Object({ id: t.String({ additionalProperties: true }) }),
+            t.Object({ userId: t.String({ additionalProperties: true }) }),
             t.Object({
               vehicleOwnershipId: t.String({ additionalProperties: true }),
             }),

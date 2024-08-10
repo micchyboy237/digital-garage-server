@@ -8,5 +8,6 @@ export const MediaFileScalarFieldEnumSchema = z.enum([
   "createdAt",
   "updatedAt",
   "documentId",
+  "userId",
   "vehicleOwnershipId",
 ])

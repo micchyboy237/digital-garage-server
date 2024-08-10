@@ -11,6 +11,7 @@ const Schema: z.ZodType<Prisma.MediaFileMaxAggregateInputType> = z
     createdAt: z.literal(true).optional(),
     updatedAt: z.literal(true).optional(),
     documentId: z.literal(true).optional(),
+    userId: z.literal(true).optional(),
     vehicleOwnershipId: z.literal(true).optional(),
   })
   .strict()

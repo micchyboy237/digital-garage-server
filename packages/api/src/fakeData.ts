@@ -114,7 +114,6 @@ export function fakeUser() {
     firstName: undefined,
     lastName: undefined,
     email: faker.internet.email(),
-    profilePicture: undefined,
     location: undefined,
   };
 }
@@ -125,7 +124,6 @@ export function fakeUserComplete() {
     firstName: undefined,
     lastName: undefined,
     email: faker.internet.email(),
-    profilePicture: undefined,
     location: undefined,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -274,6 +272,7 @@ export function fakeMediaFileComplete() {
     createdAt: new Date(),
     updatedAt: new Date(),
     documentId: undefined,
+    userId: undefined,
     vehicleOwnershipId: undefined,
   };
 }

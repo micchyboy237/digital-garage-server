@@ -10,7 +10,6 @@ const Schema: z.ZodType<Prisma.UserCreateManyInput> = z
     firstName: z.string().optional().nullable(),
     lastName: z.string().optional().nullable(),
     email: z.string(),
-    profilePicture: z.string().optional().nullable(),
     location: z.string().optional().nullable(),
     createdAt: z.coerce.date().optional(),
     updatedAt: z.coerce.date().optional(),

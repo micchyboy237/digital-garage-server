@@ -4,6 +4,7 @@ import { UserRoleSchema } from "../enums/UserRole.schema"
 import { EnumUserRoleFieldUpdateOperationsInputObjectSchema } from "./EnumUserRoleFieldUpdateOperationsInput.schema"
 import { NullableStringFieldUpdateOperationsInputObjectSchema } from "./NullableStringFieldUpdateOperationsInput.schema"
 import { DateTimeFieldUpdateOperationsInputObjectSchema } from "./DateTimeFieldUpdateOperationsInput.schema"
+import { MediaFileUncheckedUpdateOneWithoutUserNestedInputObjectSchema } from "./MediaFileUncheckedUpdateOneWithoutUserNestedInput.schema"
 import { SessionUncheckedUpdateManyWithoutUserNestedInputObjectSchema } from "./SessionUncheckedUpdateManyWithoutUserNestedInput.schema"
 import { UserSubscriptionUncheckedUpdateOneWithoutUserNestedInputObjectSchema } from "./UserSubscriptionUncheckedUpdateOneWithoutUserNestedInput.schema"
 import { VehicleOwnershipUncheckedUpdateManyWithoutUserNestedInputObjectSchema } from "./VehicleOwnershipUncheckedUpdateManyWithoutUserNestedInput.schema"
@@ -27,16 +28,13 @@ const Schema: z.ZodType<Prisma.UserUncheckedUpdateWithoutAuthInput> = z
       .optional()
       .nullable(),
     email: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-    profilePicture: z
-      .union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)])
-      .optional()
-      .nullable(),
     location: z
       .union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)])
       .optional()
       .nullable(),
     createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
     updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+    profilePicture: z.lazy(() => MediaFileUncheckedUpdateOneWithoutUserNestedInputObjectSchema).optional(),
     session: z.lazy(() => SessionUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
     subscription: z.lazy(() => UserSubscriptionUncheckedUpdateOneWithoutUserNestedInputObjectSchema).optional(),
     vehicleOwnerships: z.lazy(() => VehicleOwnershipUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),

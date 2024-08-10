@@ -34,6 +34,7 @@ export const VehicleOwnershipRelations = t.Object(
           createdAt: t.Date({ additionalProperties: true }),
           updatedAt: t.Date({ additionalProperties: true }),
           documentId: __nullable__(t.String({ additionalProperties: true })),
+          userId: __nullable__(t.String({ additionalProperties: true })),
           vehicleOwnershipId: __nullable__(
             t.String({ additionalProperties: true }),
           ),
@@ -50,7 +51,6 @@ export const VehicleOwnershipRelations = t.Object(
         firstName: __nullable__(t.String({ additionalProperties: true })),
         lastName: __nullable__(t.String({ additionalProperties: true })),
         email: t.String({ additionalProperties: true }),
-        profilePicture: __nullable__(t.String({ additionalProperties: true })),
         location: __nullable__(t.String({ additionalProperties: true })),
         createdAt: t.Date({ additionalProperties: true }),
         updatedAt: t.Date({ additionalProperties: true }),

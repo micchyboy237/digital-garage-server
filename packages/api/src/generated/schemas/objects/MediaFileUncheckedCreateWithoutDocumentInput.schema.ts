@@ -11,6 +11,7 @@ const Schema: z.ZodType<Prisma.MediaFileUncheckedCreateWithoutDocumentInput> = z
     url: z.string(),
     createdAt: z.coerce.date().optional(),
     updatedAt: z.coerce.date().optional(),
+    userId: z.string().optional().nullable(),
     vehicleOwnershipId: z.string().optional().nullable(),
   })
   .strict()

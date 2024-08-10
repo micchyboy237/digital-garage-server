@@ -1,39 +1,6 @@
 import { DocumentType, EventType, MediaFileType, prisma, UserRole } from ".."
 import { mockAssets } from "./mock-assets"
 
-// Remove all attributes that have empty objects, arrays. Also remove all "id" attributes.
-const removeEmpty = (obj: any, visited = new Set()) => {
-  if (visited.has(obj)) {
-    return obj
-  }
-  visited.add(obj)
-
-  Object.keys(obj).forEach((key) => {
-    if (obj[key] && typeof obj[key] === "object") {
-      removeEmpty(obj[key], visited)
-    } else if (obj[key] === undefined || obj[key] === null || obj[key] === "") {
-      delete obj[key]
-    }
-  })
-  return obj
-}
-
-const removeId = (obj: any, visited = new Set()) => {
-  if (visited.has(obj)) {
-    return obj
-  }
-  visited.add(obj)
-
-  Object.keys(obj).forEach((key) => {
-    if (key === "id") {
-      delete obj[key]
-    } else if (obj[key] && typeof obj[key] === "object") {
-      obj[key], visited
-    }
-  })
-  return obj
-}
-
 async function main() {
   const vehicleDetails1 = await prisma.vehicleDetails.create({
     data: {
@@ -104,7 +71,14 @@ async function main() {
       firstName: "John",
       lastName: "Doe",
       email: "john.doe@example.com",
-      profilePicture: mockAssets.USER1_PROFILE_PIC,
+      profilePicture: {
+        create: {
+          id: "profile-picture-1",
+          type: MediaFileType.photo,
+          url: mockAssets.USER1_PROFILE_PIC,
+          mimeType: "image/jpeg",
+        },
+      },
       location: "New York, USA",
       auth: {
         create: {
@@ -300,6 +274,7 @@ async function main() {
   })
 
   // 2nd user for testing transfer of ownership
+
   const user2 = await prisma.user.create({
     data: {
       id: "user-2",
@@ -307,7 +282,14 @@ async function main() {
       firstName: "Jane",
       lastName: "Smith",
       email: "jane.smith@example.com",
-      profilePicture: mockAssets.USER2_PROFILE_PIC,
+      profilePicture: {
+        create: {
+          id: "profile-picture-2",
+          type: MediaFileType.photo,
+          url: mockAssets.USER2_PROFILE_PIC,
+          mimeType: "image/jpeg",
+        },
+      },
       location: "Los Angeles, USA",
       auth: {
         create: {

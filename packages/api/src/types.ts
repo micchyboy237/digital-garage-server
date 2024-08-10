@@ -70,6 +70,7 @@ export type MediaFile = {
   createdAt: Generated<Timestamp>
   updatedAt: Generated<Timestamp>
   documentId: string | null
+  userId: string | null
   vehicleOwnershipId: string | null
 }
 export type Notification = {
@@ -119,7 +120,6 @@ export type User = {
   firstName: string | null
   lastName: string | null
   email: string
-  profilePicture: string | null
   location: string | null
   createdAt: Generated<Timestamp>
   updatedAt: Generated<Timestamp>

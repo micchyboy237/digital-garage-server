@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { UserRoleSchema } from "../enums/UserRole.schema"
+import { MediaFileCreateNestedOneWithoutUserInputObjectSchema } from "./MediaFileCreateNestedOneWithoutUserInput.schema"
 import { AuthCreateNestedOneWithoutUserInputObjectSchema } from "./AuthCreateNestedOneWithoutUserInput.schema"
 import { SessionCreateNestedManyWithoutUserInputObjectSchema } from "./SessionCreateNestedManyWithoutUserInput.schema"
 import { UserSubscriptionCreateNestedOneWithoutUserInputObjectSchema } from "./UserSubscriptionCreateNestedOneWithoutUserInput.schema"
@@ -17,10 +18,10 @@ const Schema: z.ZodType<Prisma.UserCreateWithoutNotificationsInput> = z
     firstName: z.string().optional().nullable(),
     lastName: z.string().optional().nullable(),
     email: z.string(),
-    profilePicture: z.string().optional().nullable(),
     location: z.string().optional().nullable(),
     createdAt: z.coerce.date().optional(),
     updatedAt: z.coerce.date().optional(),
+    profilePicture: z.lazy(() => MediaFileCreateNestedOneWithoutUserInputObjectSchema).optional(),
     auth: z.lazy(() => AuthCreateNestedOneWithoutUserInputObjectSchema).optional(),
     session: z.lazy(() => SessionCreateNestedManyWithoutUserInputObjectSchema).optional(),
     subscription: z.lazy(() => UserSubscriptionCreateNestedOneWithoutUserInputObjectSchema).optional(),

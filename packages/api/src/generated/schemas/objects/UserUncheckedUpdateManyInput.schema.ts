@@ -20,10 +20,6 @@ const Schema: z.ZodType<Prisma.UserUncheckedUpdateManyInput> = z
       .optional()
       .nullable(),
     email: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-    profilePicture: z
-      .union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)])
-      .optional()
-      .nullable(),
     location: z
       .union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)])
       .optional()

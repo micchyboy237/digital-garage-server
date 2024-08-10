@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { MediaFileArgsObjectSchema } from "./MediaFileArgs.schema"
 import { AuthArgsObjectSchema } from "./AuthArgs.schema"
 import { SessionFindManySchema } from "../findManySession.schema"
 import { UserSubscriptionArgsObjectSchema } from "./UserSubscriptionArgs.schema"
@@ -18,7 +19,7 @@ const Schema: z.ZodType<Prisma.UserSelect> = z
     firstName: z.boolean().optional(),
     lastName: z.boolean().optional(),
     email: z.boolean().optional(),
-    profilePicture: z.boolean().optional(),
+    profilePicture: z.union([z.boolean(), z.lazy(() => MediaFileArgsObjectSchema)]).optional(),
     location: z.boolean().optional(),
     createdAt: z.boolean().optional(),
     updatedAt: z.boolean().optional(),

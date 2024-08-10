@@ -1,6 +1,7 @@
 import { z } from "zod"
 import { SortOrderSchema } from "../enums/SortOrder.schema"
 import { SortOrderInputObjectSchema } from "./SortOrderInput.schema"
+import { MediaFileOrderByWithRelationInputObjectSchema } from "./MediaFileOrderByWithRelationInput.schema"
 import { AuthOrderByWithRelationInputObjectSchema } from "./AuthOrderByWithRelationInput.schema"
 import { SessionOrderByRelationAggregateInputObjectSchema } from "./SessionOrderByRelationAggregateInput.schema"
 import { UserSubscriptionOrderByWithRelationInputObjectSchema } from "./UserSubscriptionOrderByWithRelationInput.schema"
@@ -19,10 +20,10 @@ const Schema: z.ZodType<Prisma.UserOrderByWithRelationInput> = z
     firstName: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
     lastName: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
     email: z.lazy(() => SortOrderSchema).optional(),
-    profilePicture: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
     location: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
     createdAt: z.lazy(() => SortOrderSchema).optional(),
     updatedAt: z.lazy(() => SortOrderSchema).optional(),
+    profilePicture: z.lazy(() => MediaFileOrderByWithRelationInputObjectSchema).optional(),
     auth: z.lazy(() => AuthOrderByWithRelationInputObjectSchema).optional(),
     session: z.lazy(() => SessionOrderByRelationAggregateInputObjectSchema).optional(),
     subscription: z.lazy(() => UserSubscriptionOrderByWithRelationInputObjectSchema).optional(),

@@ -17,6 +17,10 @@ const Schema: z.ZodType<Prisma.MediaFileUncheckedUpdateWithoutDocumentInput> = z
     url: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
     createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
     updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+    userId: z
+      .union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)])
+      .optional()
+      .nullable(),
     vehicleOwnershipId: z
       .union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)])
       .optional()

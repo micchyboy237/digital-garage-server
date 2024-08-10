@@ -53,7 +53,6 @@ export const UserSubscriptionRelations = t.Object(
         firstName: __nullable__(t.String({ additionalProperties: true })),
         lastName: __nullable__(t.String({ additionalProperties: true })),
         email: t.String({ additionalProperties: true }),
-        profilePicture: __nullable__(t.String({ additionalProperties: true })),
         location: __nullable__(t.String({ additionalProperties: true })),
         createdAt: t.Date({ additionalProperties: true }),
         updatedAt: t.Date({ additionalProperties: true }),

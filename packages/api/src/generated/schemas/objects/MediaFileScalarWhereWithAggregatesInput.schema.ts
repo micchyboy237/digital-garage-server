@@ -37,6 +37,10 @@ const Schema: z.ZodType<Prisma.MediaFileScalarWhereWithAggregatesInput> = z
       .union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()])
       .optional()
       .nullable(),
+    userId: z
+      .union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()])
+      .optional()
+      .nullable(),
     vehicleOwnershipId: z
       .union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()])
       .optional()

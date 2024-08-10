@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { UserRoleSchema } from "../enums/UserRole.schema"
+import { MediaFileUncheckedCreateNestedOneWithoutUserInputObjectSchema } from "./MediaFileUncheckedCreateNestedOneWithoutUserInput.schema"
 import { AuthUncheckedCreateNestedOneWithoutUserInputObjectSchema } from "./AuthUncheckedCreateNestedOneWithoutUserInput.schema"
 import { SessionUncheckedCreateNestedManyWithoutUserInputObjectSchema } from "./SessionUncheckedCreateNestedManyWithoutUserInput.schema"
 import { VehicleOwnershipUncheckedCreateNestedManyWithoutUserInputObjectSchema } from "./VehicleOwnershipUncheckedCreateNestedManyWithoutUserInput.schema"
@@ -17,10 +18,10 @@ const Schema: z.ZodType<Prisma.UserUncheckedCreateWithoutSubscriptionInput> = z
     firstName: z.string().optional().nullable(),
     lastName: z.string().optional().nullable(),
     email: z.string(),
-    profilePicture: z.string().optional().nullable(),
     location: z.string().optional().nullable(),
     createdAt: z.coerce.date().optional(),
     updatedAt: z.coerce.date().optional(),
+    profilePicture: z.lazy(() => MediaFileUncheckedCreateNestedOneWithoutUserInputObjectSchema).optional(),
     auth: z.lazy(() => AuthUncheckedCreateNestedOneWithoutUserInputObjectSchema).optional(),
     session: z.lazy(() => SessionUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
     vehicleOwnerships: z.lazy(() => VehicleOwnershipUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),

@@ -21,6 +21,10 @@ const Schema: z.ZodType<Prisma.MediaFileUncheckedUpdateWithoutVehicleOwnershipIn
       .union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)])
       .optional()
       .nullable(),
+    userId: z
+      .union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)])
+      .optional()
+      .nullable(),
   })
   .strict()
 

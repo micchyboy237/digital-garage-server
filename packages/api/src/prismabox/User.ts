@@ -11,7 +11,6 @@ export const UserPlain = t.Object(
     firstName: __nullable__(t.String({ additionalProperties: true })),
     lastName: __nullable__(t.String({ additionalProperties: true })),
     email: t.String({ additionalProperties: true }),
-    profilePicture: __nullable__(t.String({ additionalProperties: true })),
     location: __nullable__(t.String({ additionalProperties: true })),
     createdAt: t.Date({ additionalProperties: true }),
     updatedAt: t.Date({ additionalProperties: true }),
@@ -21,6 +20,27 @@ export const UserPlain = t.Object(
 
 export const UserRelations = t.Object(
   {
+    profilePicture: __nullable__(
+      t.Object(
+        {
+          id: t.String({ additionalProperties: true }),
+          type: t.Union(
+            [t.Literal("photo"), t.Literal("video"), t.Literal("document")],
+            { additionalProperties: true },
+          ),
+          mimeType: t.String({ additionalProperties: true }),
+          url: t.String({ additionalProperties: true }),
+          createdAt: t.Date({ additionalProperties: true }),
+          updatedAt: t.Date({ additionalProperties: true }),
+          documentId: __nullable__(t.String({ additionalProperties: true })),
+          userId: __nullable__(t.String({ additionalProperties: true })),
+          vehicleOwnershipId: __nullable__(
+            t.String({ additionalProperties: true }),
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
     auth: __nullable__(
       t.Object(
         {
@@ -199,9 +219,6 @@ export const UserPlainInput = t.Object(
       __nullable__(t.String({ additionalProperties: true })),
     ),
     email: t.String({ additionalProperties: true }),
-    profilePicture: t.Optional(
-      __nullable__(t.String({ additionalProperties: true })),
-    ),
     location: t.Optional(
       __nullable__(t.String({ additionalProperties: true })),
     ),
@@ -212,6 +229,19 @@ export const UserPlainInput = t.Object(
 
 export const UserRelationsInputCreate = t.Object(
   {
+    profilePicture: t.Optional(
+      t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
     auth: t.Optional(
       t.Object(
         {
@@ -341,6 +371,21 @@ export const UserRelationsInputCreate = t.Object(
 export const UserRelationsInputUpdate = t.Partial(
   t.Object(
     {
+      profilePicture: t.Partial(
+        t.Object(
+          {
+            connect: t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+            disconnect: t.Boolean(),
+          },
+          { additionalProperties: true },
+        ),
+        { additionalProperties: true },
+      ),
       auth: t.Partial(
         t.Object(
           {
@@ -548,7 +593,6 @@ export const UserWhere = t.Partial(
           firstName: t.String({ additionalProperties: true }),
           lastName: t.String({ additionalProperties: true }),
           email: t.String({ additionalProperties: true }),
-          profilePicture: t.String({ additionalProperties: true }),
           location: t.String({ additionalProperties: true }),
           createdAt: t.Date({ additionalProperties: true }),
           updatedAt: t.Date({ additionalProperties: true }),
@@ -596,7 +640,6 @@ export const UserWhereUnique = t.Recursive(
             }),
             firstName: t.String({ additionalProperties: true }),
             lastName: t.String({ additionalProperties: true }),
-            profilePicture: t.String({ additionalProperties: true }),
             location: t.String({ additionalProperties: true }),
             createdAt: t.Date({ additionalProperties: true }),
             updatedAt: t.Date({ additionalProperties: true }),

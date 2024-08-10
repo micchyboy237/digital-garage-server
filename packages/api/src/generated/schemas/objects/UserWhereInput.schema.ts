@@ -4,6 +4,8 @@ import { EnumUserRoleFilterObjectSchema } from "./EnumUserRoleFilter.schema"
 import { UserRoleSchema } from "../enums/UserRole.schema"
 import { StringNullableFilterObjectSchema } from "./StringNullableFilter.schema"
 import { DateTimeFilterObjectSchema } from "./DateTimeFilter.schema"
+import { MediaFileRelationFilterObjectSchema } from "./MediaFileRelationFilter.schema"
+import { MediaFileWhereInputObjectSchema } from "./MediaFileWhereInput.schema"
 import { AuthRelationFilterObjectSchema } from "./AuthRelationFilter.schema"
 import { AuthWhereInputObjectSchema } from "./AuthWhereInput.schema"
 import { SessionListRelationFilterObjectSchema } from "./SessionListRelationFilter.schema"
@@ -36,16 +38,16 @@ const Schema: z.ZodType<Prisma.UserWhereInput> = z
       .optional()
       .nullable(),
     email: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-    profilePicture: z
-      .union([z.lazy(() => StringNullableFilterObjectSchema), z.string()])
-      .optional()
-      .nullable(),
     location: z
       .union([z.lazy(() => StringNullableFilterObjectSchema), z.string()])
       .optional()
       .nullable(),
     createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
     updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
+    profilePicture: z
+      .union([z.lazy(() => MediaFileRelationFilterObjectSchema), z.lazy(() => MediaFileWhereInputObjectSchema)])
+      .optional()
+      .nullable(),
     auth: z
       .union([z.lazy(() => AuthRelationFilterObjectSchema), z.lazy(() => AuthWhereInputObjectSchema)])
       .optional()

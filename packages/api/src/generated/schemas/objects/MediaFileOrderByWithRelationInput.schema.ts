@@ -2,6 +2,7 @@ import { z } from "zod"
 import { SortOrderSchema } from "../enums/SortOrder.schema"
 import { SortOrderInputObjectSchema } from "./SortOrderInput.schema"
 import { DocumentOrderByWithRelationInputObjectSchema } from "./DocumentOrderByWithRelationInput.schema"
+import { UserOrderByWithRelationInputObjectSchema } from "./UserOrderByWithRelationInput.schema"
 import { VehicleOwnershipOrderByWithRelationInputObjectSchema } from "./VehicleOwnershipOrderByWithRelationInput.schema"
 
 import type { Prisma } from "@prisma/client"
@@ -15,8 +16,10 @@ const Schema: z.ZodType<Prisma.MediaFileOrderByWithRelationInput> = z
     createdAt: z.lazy(() => SortOrderSchema).optional(),
     updatedAt: z.lazy(() => SortOrderSchema).optional(),
     documentId: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+    userId: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
     vehicleOwnershipId: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
     document: z.lazy(() => DocumentOrderByWithRelationInputObjectSchema).optional(),
+    user: z.lazy(() => UserOrderByWithRelationInputObjectSchema).optional(),
     vehicleOwnership: z.lazy(() => VehicleOwnershipOrderByWithRelationInputObjectSchema).optional(),
   })
   .strict()

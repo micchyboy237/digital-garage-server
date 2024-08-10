@@ -96,7 +96,6 @@ CREATE TABLE "User" (
     "firstName" TEXT,
     "lastName" TEXT,
     "email" TEXT NOT NULL,
-    "profilePicture" TEXT,
     "location" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -200,6 +199,7 @@ CREATE TABLE "MediaFile" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "documentId" TEXT,
+    "userId" TEXT,
     "vehicleOwnershipId" TEXT,
 
     CONSTRAINT "MediaFile_pkey" PRIMARY KEY ("id")
@@ -256,6 +256,9 @@ CREATE UNIQUE INDEX "VehicleDetails_registrationNumber_key" ON "VehicleDetails"(
 CREATE UNIQUE INDEX "Document_vehicleEventId_key" ON "Document"("vehicleEventId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "MediaFile_userId_key" ON "MediaFile"("userId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "MediaFile_vehicleOwnershipId_key" ON "MediaFile"("vehicleOwnershipId");
 
 -- AddForeignKey
@@ -302,6 +305,9 @@ ALTER TABLE "Document" ADD CONSTRAINT "Document_vehicleEventId_fkey" FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE "MediaFile" ADD CONSTRAINT "MediaFile_documentId_fkey" FOREIGN KEY ("documentId") REFERENCES "Document"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "MediaFile" ADD CONSTRAINT "MediaFile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "MediaFile" ADD CONSTRAINT "MediaFile_vehicleOwnershipId_fkey" FOREIGN KEY ("vehicleOwnershipId") REFERENCES "VehicleOwnership"("id") ON DELETE SET NULL ON UPDATE CASCADE;

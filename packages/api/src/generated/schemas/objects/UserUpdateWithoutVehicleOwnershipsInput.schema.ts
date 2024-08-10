@@ -4,6 +4,7 @@ import { UserRoleSchema } from "../enums/UserRole.schema"
 import { EnumUserRoleFieldUpdateOperationsInputObjectSchema } from "./EnumUserRoleFieldUpdateOperationsInput.schema"
 import { NullableStringFieldUpdateOperationsInputObjectSchema } from "./NullableStringFieldUpdateOperationsInput.schema"
 import { DateTimeFieldUpdateOperationsInputObjectSchema } from "./DateTimeFieldUpdateOperationsInput.schema"
+import { MediaFileUpdateOneWithoutUserNestedInputObjectSchema } from "./MediaFileUpdateOneWithoutUserNestedInput.schema"
 import { AuthUpdateOneWithoutUserNestedInputObjectSchema } from "./AuthUpdateOneWithoutUserNestedInput.schema"
 import { SessionUpdateManyWithoutUserNestedInputObjectSchema } from "./SessionUpdateManyWithoutUserNestedInput.schema"
 import { UserSubscriptionUpdateOneWithoutUserNestedInputObjectSchema } from "./UserSubscriptionUpdateOneWithoutUserNestedInput.schema"
@@ -27,16 +28,13 @@ const Schema: z.ZodType<Prisma.UserUpdateWithoutVehicleOwnershipsInput> = z
       .optional()
       .nullable(),
     email: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
-    profilePicture: z
-      .union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)])
-      .optional()
-      .nullable(),
     location: z
       .union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)])
       .optional()
       .nullable(),
     createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
     updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+    profilePicture: z.lazy(() => MediaFileUpdateOneWithoutUserNestedInputObjectSchema).optional(),
     auth: z.lazy(() => AuthUpdateOneWithoutUserNestedInputObjectSchema).optional(),
     session: z.lazy(() => SessionUpdateManyWithoutUserNestedInputObjectSchema).optional(),
     subscription: z.lazy(() => UserSubscriptionUpdateOneWithoutUserNestedInputObjectSchema).optional(),
