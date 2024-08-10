@@ -23,6 +23,7 @@ module.exports = {
     "@boilerplate/shared",
     "@boilerplate/tailwind-config",
     "@boilerplate/ui",
+    "@boilerplate/autogen",
     "axios",
     "decode-uri-component",
     "filter-obj",

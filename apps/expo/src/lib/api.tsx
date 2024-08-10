@@ -1,10 +1,10 @@
-import * as React from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { httpBatchLink } from "@trpc/client"
 import { createTRPCReact } from "@trpc/react-query"
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server"
 import Constants from "expo-constants"
+import * as React from "react"
 import superjson from "superjson"
 
 import type { AppRouter } from "@boilerplate/api"
@@ -38,8 +38,8 @@ const getBaseUrl = () => {
    */
   // return "https://boilerplate.app"
   const localhost = Constants.manifest?.debuggerHost?.split(":")[0]
-  if (!localhost) return "https://my-production-app.com"
-  return `http://${localhost}:3000`
+  if (!localhost) return "https://my-production-app.com/trpc"
+  return `http://${localhost}:3000/trpc`
 }
 
 export const AUTH_TOKEN = "AUTH_TOKEN"
@@ -55,7 +55,7 @@ export function TRPCProvider({ children }: { children: React.ReactNode }) {
       transformer: superjson,
       links: [
         httpBatchLink({
-          url: `${getBaseUrl()}/api/trpc`,
+          url: `${getBaseUrl()}`,
           headers: async () => {
             const token = await AsyncStorage.getItem(AUTH_TOKEN).catch()
             return {

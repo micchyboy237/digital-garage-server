@@ -7,6 +7,8 @@ export const permissionsMiddleware = t.middleware(permissions)
 
 export const publicProcedure = t.procedure
 
+export const protectedProcedure = t.procedure
+
 export const loggedProcedure: typeof t.procedure = publicProcedure
   .use(async (opts) => {
     const start = Date.now()

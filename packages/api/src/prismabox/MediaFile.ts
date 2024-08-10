@@ -9,10 +9,12 @@ export const MediaFilePlain = t.Object(
       [t.Literal("photo"), t.Literal("video"), t.Literal("document")],
       { additionalProperties: true },
     ),
+    mimeType: t.String({ additionalProperties: true }),
     url: t.String({ additionalProperties: true }),
     createdAt: t.Date({ additionalProperties: true }),
     updatedAt: t.Date({ additionalProperties: true }),
     documentId: __nullable__(t.String({ additionalProperties: true })),
+    vehicleOwnershipId: __nullable__(t.String({ additionalProperties: true })),
   },
   { additionalProperties: true },
 );
@@ -23,23 +25,37 @@ export const MediaFileRelations = t.Object(
       t.Object(
         {
           id: t.String({ additionalProperties: true }),
-          type: t.Union(
-            [
-              t.Literal("post"),
-              t.Literal("invoice"),
-              t.Literal("reminder"),
-              t.Literal("document"),
-            ],
-            { additionalProperties: true },
-          ),
-          displayDate: t.Date({ additionalProperties: true }),
-          header: t.String({ additionalProperties: true }),
-          description: t.String({ additionalProperties: true }),
-          invoiceValue: t.Number({ additionalProperties: true }),
+          type: t.Union([t.Literal("general"), t.Literal("photo")], {
+            additionalProperties: true,
+          }),
+          date: t.Date({ additionalProperties: true }),
+          title: __nullable__(t.String({ additionalProperties: true })),
+          description: __nullable__(t.String({ additionalProperties: true })),
           createdAt: t.Date({ additionalProperties: true }),
           updatedAt: t.Date({ additionalProperties: true }),
-          vehicleId: t.String({ additionalProperties: true }),
+          vehicleId: __nullable__(t.String({ additionalProperties: true })),
           createdById: t.String({ additionalProperties: true }),
+          vehicleEventId: __nullable__(
+            t.String({ additionalProperties: true }),
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+    vehicleOwnership: __nullable__(
+      t.Object(
+        {
+          id: t.String({ additionalProperties: true }),
+          userId: t.String({ additionalProperties: true }),
+          vehicleId: t.String({ additionalProperties: true }),
+          description: __nullable__(t.String({ additionalProperties: true })),
+          startDate: __nullable__(t.Date({ additionalProperties: true })),
+          endDate: __nullable__(t.Date({ additionalProperties: true })),
+          isCurrentOwner: t.Boolean({ additionalProperties: true }),
+          isTemporaryOwner: t.Boolean({ additionalProperties: true }),
+          canEditDocuments: t.Boolean({ additionalProperties: true }),
+          createdAt: t.Date({ additionalProperties: true }),
+          updatedAt: t.Date({ additionalProperties: true }),
         },
         { additionalProperties: true },
       ),
@@ -54,6 +70,7 @@ export const MediaFilePlainInput = t.Object(
       [t.Literal("photo"), t.Literal("video"), t.Literal("document")],
       { additionalProperties: true },
     ),
+    mimeType: t.String({ additionalProperties: true }),
     url: t.String({ additionalProperties: true }),
     updatedAt: t.Date({ additionalProperties: true }),
   },
@@ -63,6 +80,19 @@ export const MediaFilePlainInput = t.Object(
 export const MediaFileRelationsInputCreate = t.Object(
   {
     document: t.Optional(
+      t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+    vehicleOwnership: t.Optional(
       t.Object(
         {
           connect: t.Object(
@@ -97,6 +127,21 @@ export const MediaFileRelationsInputUpdate = t.Partial(
         ),
         { additionalProperties: true },
       ),
+      vehicleOwnership: t.Partial(
+        t.Object(
+          {
+            connect: t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+            disconnect: t.Boolean(),
+          },
+          { additionalProperties: true },
+        ),
+        { additionalProperties: true },
+      ),
     },
     { additionalProperties: true },
   ),
@@ -116,10 +161,12 @@ export const MediaFileWhere = t.Partial(
             [t.Literal("photo"), t.Literal("video"), t.Literal("document")],
             { additionalProperties: true },
           ),
+          mimeType: t.String({ additionalProperties: true }),
           url: t.String({ additionalProperties: true }),
           createdAt: t.Date({ additionalProperties: true }),
           updatedAt: t.Date({ additionalProperties: true }),
           documentId: t.String({ additionalProperties: true }),
+          vehicleOwnershipId: t.String({ additionalProperties: true }),
         },
         { additionalProperties: true },
       ),
@@ -134,14 +181,23 @@ export const MediaFileWhereUnique = t.Recursive(
       [
         t.Partial(
           t.Object(
-            { id: t.String({ additionalProperties: true }) },
+            {
+              id: t.String({ additionalProperties: true }),
+              vehicleOwnershipId: t.String({ additionalProperties: true }),
+            },
             { additionalProperties: true },
           ),
           { additionalProperties: true },
         ),
-        t.Union([t.Object({ id: t.String({ additionalProperties: true }) })], {
-          additionalProperties: true,
-        }),
+        t.Union(
+          [
+            t.Object({ id: t.String({ additionalProperties: true }) }),
+            t.Object({
+              vehicleOwnershipId: t.String({ additionalProperties: true }),
+            }),
+          ],
+          { additionalProperties: true },
+        ),
         t.Partial(
           t.Object({
             AND: t.Union([Self, t.Array(Self, { additionalProperties: true })]),
@@ -156,6 +212,7 @@ export const MediaFileWhereUnique = t.Recursive(
               [t.Literal("photo"), t.Literal("video"), t.Literal("document")],
               { additionalProperties: true },
             ),
+            mimeType: t.String({ additionalProperties: true }),
             url: t.String({ additionalProperties: true }),
             createdAt: t.Date({ additionalProperties: true }),
             updatedAt: t.Date({ additionalProperties: true }),

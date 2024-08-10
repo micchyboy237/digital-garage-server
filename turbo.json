@@ -23,6 +23,12 @@
     "dev": {
       "cache": false
     },
+    "dev:web": {
+      "cache": false
+    },
+    "dev:ios": {
+      "cache": false
+    },
     "db:generate": {
       "cache": false
     },
@@ -32,6 +38,9 @@
     "typecheck": {
       "dependsOn": ["^build"],
       "outputs": []
+    },
+    "serve:docs": {
+      "cache": false
     }
   }
 }

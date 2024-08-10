@@ -1,105 +1,48 @@
 import { TRPCError } from "@trpc/server"
-import { userController } from "../controllers/user.controller"
-import { ValidationException } from "../exceptions"
-import {
-  loginGoogleSchema,
-  loginSchema,
-  refreshTokenSchema,
-  registerSchema,
-  requestPasswordResetSchema,
-  resendEmailVerificationSchema,
-  resetPasswordSchema,
-  verifyEmailSchema,
-} from "../schemas/user.schema"
-import { loggedProcedure, t } from "../trpc"
+import { z } from "zod"
+import { UserCreateInputObjectSchema, UserWhereUniqueInputObjectSchema } from "../generated/schemas"
+// import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc"
+import { protectedProcedure, publicProcedure, t } from "../trpc"
+
+const userIdSchema = z.object({
+  id: z.string().uuid(),
+})
 
 export const userRouter = t.router({
-  register: loggedProcedure.input(registerSchema).mutation(async ({ input }) => {
-    try {
-      return await userController.register(input)
-    } catch (error) {
-      if (error instanceof ValidationException) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: error.message })
-      }
-      throw error
-    }
+  createUser: publicProcedure.input(UserCreateInputObjectSchema).mutation(async ({ input, ctx }) => {
+    const newUser = await ctx.prisma.user.create({
+      data: input,
+    })
+    return newUser
   }),
 
-  login: t.procedure.input(loginSchema).mutation(async ({ input }) => {
-    try {
-      return await userController.login(input)
-    } catch (error) {
-      if (error instanceof ValidationException) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: error.message })
-      }
-      throw error
+  getUserById: protectedProcedure.input(UserWhereUniqueInputObjectSchema).query(async ({ input, ctx }) => {
+    const user = await ctx.prisma.user.findUnique({
+      where: { id: input.id },
+    })
+    if (!user) {
+      throw new TRPCError({ code: "NOT_FOUND", message: "User not found" })
     }
+    return user
   }),
 
-  loginWithGoogle: t.procedure.input(loginGoogleSchema).mutation(async ({ input }) => {
-    try {
-      return await userController.loginWithGoogle(input)
-    } catch (error) {
-      if (error instanceof ValidationException) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: error.message })
-      }
-      throw error
-    }
+  updateUser: protectedProcedure.input(UserCreateInputObjectSchema).mutation(async ({ input, ctx }) => {
+    const updatedUser = await ctx.prisma.user.update({
+      where: { id: input.id },
+      data: input,
+    })
+    return updatedUser
   }),
 
-  verifyEmail: t.procedure.input(verifyEmailSchema).query(async ({ input }) => {
-    try {
-      return await userController.verifyEmail(input)
-    } catch (error) {
-      if (error instanceof ValidationException) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: error.message })
-      } else {
-        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Internal Server Error" })
-      }
-    }
+  deleteUser: protectedProcedure.input(userIdSchema).mutation(async ({ input, ctx }) => {
+    await ctx.prisma.user.delete({
+      where: { id: input.id },
+    })
+    return { success: true }
   }),
 
-  refreshToken: t.procedure.input(refreshTokenSchema).mutation(async ({ input }) => {
-    try {
-      return await userController.refreshToken(input)
-    } catch (error) {
-      if (error instanceof ValidationException) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: error.message })
-      }
-      throw error
-    }
-  }),
-
-  resendEmailVerification: t.procedure.input(resendEmailVerificationSchema).mutation(async ({ input }) => {
-    try {
-      return await userController.resendEmailVerification(input)
-    } catch (error) {
-      if (error instanceof ValidationException) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: error.message })
-      }
-      throw error
-    }
-  }),
-
-  requestPasswordReset: t.procedure.input(requestPasswordResetSchema).mutation(async ({ input }) => {
-    try {
-      return await userController.requestPasswordReset(input)
-    } catch (error) {
-      if (error instanceof ValidationException) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: error.message })
-      }
-      throw error
-    }
-  }),
-
-  resetPassword: t.procedure.input(resetPasswordSchema).mutation(async ({ input }) => {
-    try {
-      return await userController.resetPassword(input)
-    } catch (error) {
-      if (error instanceof ValidationException) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: error.message })
-      }
-      throw error
-    }
+  getUsers: protectedProcedure.query(async ({ ctx }) => {
+    const users = await ctx.prisma.user.findMany()
+    return users
   }),
 })

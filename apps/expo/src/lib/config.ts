@@ -4,12 +4,12 @@ function getEnvironment() {
   if (__DEV__) {
     return {
       ENV: "development",
-      WEB_URL: "http://localhost:3000",
+      WEB_URL: "http://localhost:3000/trpc",
     }
   } else {
     return {
       ENV: "production",
-      WEB_URL: "https://my-production-app.com",
+      WEB_URL: "https://my-production-app.com/trpc",
     }
   }
 }

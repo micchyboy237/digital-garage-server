@@ -5,39 +5,35 @@ import { __nullable__ } from "./__nullable__";
 export const DocumentPlain = t.Object(
   {
     id: t.String({ additionalProperties: true }),
-    type: t.Union(
-      [
-        t.Literal("post"),
-        t.Literal("invoice"),
-        t.Literal("reminder"),
-        t.Literal("document"),
-      ],
-      { additionalProperties: true },
-    ),
-    displayDate: t.Date({ additionalProperties: true }),
-    header: t.String({ additionalProperties: true }),
-    description: t.String({ additionalProperties: true }),
-    invoiceValue: t.Number({ additionalProperties: true }),
+    type: t.Union([t.Literal("general"), t.Literal("photo")], {
+      additionalProperties: true,
+    }),
+    date: t.Date({ additionalProperties: true }),
+    title: __nullable__(t.String({ additionalProperties: true })),
+    description: __nullable__(t.String({ additionalProperties: true })),
     createdAt: t.Date({ additionalProperties: true }),
     updatedAt: t.Date({ additionalProperties: true }),
-    vehicleId: t.String({ additionalProperties: true }),
+    vehicleId: __nullable__(t.String({ additionalProperties: true })),
     createdById: t.String({ additionalProperties: true }),
+    vehicleEventId: __nullable__(t.String({ additionalProperties: true })),
   },
   { additionalProperties: true },
 );
 
 export const DocumentRelations = t.Object(
   {
-    vehicle: t.Object(
-      {
-        id: t.String({ additionalProperties: true }),
-        make: t.String({ additionalProperties: true }),
-        model: t.String({ additionalProperties: true }),
-        registrationNumber: t.String({ additionalProperties: true }),
-        createdAt: t.Date({ additionalProperties: true }),
-        updatedAt: t.Date({ additionalProperties: true }),
-      },
-      { additionalProperties: true },
+    vehicle: __nullable__(
+      t.Object(
+        {
+          id: t.String({ additionalProperties: true }),
+          make: t.String({ additionalProperties: true }),
+          model: t.String({ additionalProperties: true }),
+          registrationNumber: t.String({ additionalProperties: true }),
+          createdAt: t.Date({ additionalProperties: true }),
+          updatedAt: t.Date({ additionalProperties: true }),
+        },
+        { additionalProperties: true },
+      ),
     ),
     createdBy: t.Object(
       {
@@ -63,14 +59,46 @@ export const DocumentRelations = t.Object(
             [t.Literal("photo"), t.Literal("video"), t.Literal("document")],
             { additionalProperties: true },
           ),
+          mimeType: t.String({ additionalProperties: true }),
           url: t.String({ additionalProperties: true }),
           createdAt: t.Date({ additionalProperties: true }),
           updatedAt: t.Date({ additionalProperties: true }),
           documentId: __nullable__(t.String({ additionalProperties: true })),
+          vehicleOwnershipId: __nullable__(
+            t.String({ additionalProperties: true }),
+          ),
         },
         { additionalProperties: true },
       ),
       { additionalProperties: true },
+    ),
+    vehicleEvent: __nullable__(
+      t.Object(
+        {
+          id: t.String({ additionalProperties: true }),
+          type: t.Union(
+            [
+              t.Literal("post"),
+              t.Literal("reminder"),
+              t.Literal("invoice"),
+              t.Literal("document"),
+            ],
+            { additionalProperties: true },
+          ),
+          header: t.String({ additionalProperties: true }),
+          description: __nullable__(t.String({ additionalProperties: true })),
+          date: t.Date({ additionalProperties: true }),
+          price: __nullable__(t.Number({ additionalProperties: true })),
+          vehicleId: __nullable__(t.String({ additionalProperties: true })),
+          createdById: __nullable__(t.String({ additionalProperties: true })),
+          vehicleOwnershipId: __nullable__(
+            t.String({ additionalProperties: true }),
+          ),
+          createdAt: t.Date({ additionalProperties: true }),
+          updatedAt: t.Date({ additionalProperties: true }),
+        },
+        { additionalProperties: true },
+      ),
     ),
   },
   { additionalProperties: true },
@@ -78,19 +106,14 @@ export const DocumentRelations = t.Object(
 
 export const DocumentPlainInput = t.Object(
   {
-    type: t.Union(
-      [
-        t.Literal("post"),
-        t.Literal("invoice"),
-        t.Literal("reminder"),
-        t.Literal("document"),
-      ],
-      { additionalProperties: true },
+    type: t.Union([t.Literal("general"), t.Literal("photo")], {
+      additionalProperties: true,
+    }),
+    date: t.Date({ additionalProperties: true }),
+    title: t.Optional(__nullable__(t.String({ additionalProperties: true }))),
+    description: t.Optional(
+      __nullable__(t.String({ additionalProperties: true })),
     ),
-    displayDate: t.Date({ additionalProperties: true }),
-    header: t.String({ additionalProperties: true }),
-    description: t.String({ additionalProperties: true }),
-    invoiceValue: t.Number({ additionalProperties: true }),
     updatedAt: t.Date({ additionalProperties: true }),
   },
   { additionalProperties: true },
@@ -98,16 +121,18 @@ export const DocumentPlainInput = t.Object(
 
 export const DocumentRelationsInputCreate = t.Object(
   {
-    vehicle: t.Object(
-      {
-        connect: t.Object(
-          {
-            id: t.String({ additionalProperties: true }),
-          },
-          { additionalProperties: true },
-        ),
-      },
-      { additionalProperties: true },
+    vehicle: t.Optional(
+      t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
     ),
     createdBy: t.Object(
       {
@@ -136,14 +161,8 @@ export const DocumentRelationsInputCreate = t.Object(
         { additionalProperties: true },
       ),
     ),
-  },
-  { additionalProperties: true },
-);
-
-export const DocumentRelationsInputUpdate = t.Partial(
-  t.Object(
-    {
-      vehicle: t.Object(
+    vehicleEvent: t.Optional(
+      t.Object(
         {
           connect: t.Object(
             {
@@ -152,6 +171,29 @@ export const DocumentRelationsInputUpdate = t.Partial(
             { additionalProperties: true },
           ),
         },
+        { additionalProperties: true },
+      ),
+    ),
+  },
+  { additionalProperties: true },
+);
+
+export const DocumentRelationsInputUpdate = t.Partial(
+  t.Object(
+    {
+      vehicle: t.Partial(
+        t.Object(
+          {
+            connect: t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+            disconnect: t.Boolean(),
+          },
+          { additionalProperties: true },
+        ),
         { additionalProperties: true },
       ),
       createdBy: t.Object(
@@ -191,6 +233,21 @@ export const DocumentRelationsInputUpdate = t.Partial(
         ),
         { additionalProperties: true },
       ),
+      vehicleEvent: t.Partial(
+        t.Object(
+          {
+            connect: t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+            disconnect: t.Boolean(),
+          },
+          { additionalProperties: true },
+        ),
+        { additionalProperties: true },
+      ),
     },
     { additionalProperties: true },
   ),
@@ -206,23 +263,17 @@ export const DocumentWhere = t.Partial(
           NOT: t.Union([Self, t.Array(Self, { additionalProperties: true })]),
           OR: t.Array(Self, { additionalProperties: true }),
           id: t.String({ additionalProperties: true }),
-          type: t.Union(
-            [
-              t.Literal("post"),
-              t.Literal("invoice"),
-              t.Literal("reminder"),
-              t.Literal("document"),
-            ],
-            { additionalProperties: true },
-          ),
-          displayDate: t.Date({ additionalProperties: true }),
-          header: t.String({ additionalProperties: true }),
+          type: t.Union([t.Literal("general"), t.Literal("photo")], {
+            additionalProperties: true,
+          }),
+          date: t.Date({ additionalProperties: true }),
+          title: t.String({ additionalProperties: true }),
           description: t.String({ additionalProperties: true }),
-          invoiceValue: t.Number({ additionalProperties: true }),
           createdAt: t.Date({ additionalProperties: true }),
           updatedAt: t.Date({ additionalProperties: true }),
           vehicleId: t.String({ additionalProperties: true }),
           createdById: t.String({ additionalProperties: true }),
+          vehicleEventId: t.String({ additionalProperties: true }),
         },
         { additionalProperties: true },
       ),
@@ -237,14 +288,23 @@ export const DocumentWhereUnique = t.Recursive(
       [
         t.Partial(
           t.Object(
-            { id: t.String({ additionalProperties: true }) },
+            {
+              id: t.String({ additionalProperties: true }),
+              vehicleEventId: t.String({ additionalProperties: true }),
+            },
             { additionalProperties: true },
           ),
           { additionalProperties: true },
         ),
-        t.Union([t.Object({ id: t.String({ additionalProperties: true }) })], {
-          additionalProperties: true,
-        }),
+        t.Union(
+          [
+            t.Object({ id: t.String({ additionalProperties: true }) }),
+            t.Object({
+              vehicleEventId: t.String({ additionalProperties: true }),
+            }),
+          ],
+          { additionalProperties: true },
+        ),
         t.Partial(
           t.Object({
             AND: t.Union([Self, t.Array(Self, { additionalProperties: true })]),
@@ -255,19 +315,12 @@ export const DocumentWhereUnique = t.Recursive(
         ),
         t.Partial(
           t.Object({
-            type: t.Union(
-              [
-                t.Literal("post"),
-                t.Literal("invoice"),
-                t.Literal("reminder"),
-                t.Literal("document"),
-              ],
-              { additionalProperties: true },
-            ),
-            displayDate: t.Date({ additionalProperties: true }),
-            header: t.String({ additionalProperties: true }),
+            type: t.Union([t.Literal("general"), t.Literal("photo")], {
+              additionalProperties: true,
+            }),
+            date: t.Date({ additionalProperties: true }),
+            title: t.String({ additionalProperties: true }),
             description: t.String({ additionalProperties: true }),
-            invoiceValue: t.Number({ additionalProperties: true }),
             createdAt: t.Date({ additionalProperties: true }),
             updatedAt: t.Date({ additionalProperties: true }),
             vehicleId: t.String({ additionalProperties: true }),

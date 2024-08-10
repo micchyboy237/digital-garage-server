@@ -1,5 +1,6 @@
 export * from "./PaymentInterval";
 export * from "./SubscriptionStatus";
+export * from "./EventType";
 export * from "./DocumentType";
 export * from "./MediaFileType";
 export * from "./UserRole";
@@ -12,6 +13,7 @@ export * from "./User";
 export * from "./Vehicle";
 export * from "./VehicleOwnership";
 export * from "./VehicleDetails";
+export * from "./VehicleEvent";
 export * from "./Document";
 export * from "./MediaFile";
 export * from "./NotificationSubscription";

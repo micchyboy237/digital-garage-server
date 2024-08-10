@@ -84,10 +84,10 @@ os.makedirs("./coding", exist_ok=True)
 
 # config_list = autogen.config_list_from_json(
 #     "OAI_CONFIG_LIST",
-#     filter_dict={"tags": ["gpt-4"]},  # comment out to get all
+#     filter_dict={"tags": ["gpt-4o-mini"]},  # comment out to get all
 # )
 # When using a single openai endpoint, you can use the following:
-# config_list = [{"model": "gpt-4", "api_key": os.getenv("OPENAI_API_KEY")}]
+# config_list = [{"model": "gpt-4o-mini", "api_key": os.getenv("OPENAI_API_KEY")}]
 config_list = [
     {
         "model": "codellama",

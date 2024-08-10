@@ -5,6 +5,7 @@ import { __nullable__ } from "./__nullable__";
 export const NotificationPlain = t.Object(
   {
     id: t.String({ additionalProperties: true }),
+    title: t.String({ additionalProperties: true }),
     message: t.String({ additionalProperties: true }),
     userId: t.String({ additionalProperties: true }),
     createdAt: t.Date({ additionalProperties: true }),
@@ -37,6 +38,7 @@ export const NotificationRelations = t.Object(
 
 export const NotificationPlainInput = t.Object(
   {
+    title: t.String({ additionalProperties: true }),
     message: t.String({ additionalProperties: true }),
     updatedAt: t.Date({ additionalProperties: true }),
   },
@@ -89,6 +91,7 @@ export const NotificationWhere = t.Partial(
           NOT: t.Union([Self, t.Array(Self, { additionalProperties: true })]),
           OR: t.Array(Self, { additionalProperties: true }),
           id: t.String({ additionalProperties: true }),
+          title: t.String({ additionalProperties: true }),
           message: t.String({ additionalProperties: true }),
           userId: t.String({ additionalProperties: true }),
           createdAt: t.Date({ additionalProperties: true }),
@@ -125,6 +128,7 @@ export const NotificationWhereUnique = t.Recursive(
         ),
         t.Partial(
           t.Object({
+            title: t.String({ additionalProperties: true }),
             message: t.String({ additionalProperties: true }),
             userId: t.String({ additionalProperties: true }),
             createdAt: t.Date({ additionalProperties: true }),

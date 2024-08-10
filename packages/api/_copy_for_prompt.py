@@ -3,6 +3,8 @@ import fnmatch
 import argparse
 import subprocess
 
+DEFAULT_MESSAGE = "Analyze all files above then derive the business requirements categorized by features"
+
 # Default exclude files or directories with wildcard support
 exclude_files = [
     '_*.py',
@@ -57,7 +59,7 @@ def main():
                         help='Patterns of files to include (default: server.ts, user*)')
     parser.add_argument('-e', '--exclude', nargs='*', default=exclude_files,
                         help='Directories or files to exclude (default: node_modules)')
-    parser.add_argument('-m', '--message', default='Please update the files so that it follows the UI in the screenshot',
+    parser.add_argument('-m', '--message', default=DEFAULT_MESSAGE,
                         help='Message to include in the clipboard content')
     parser.add_argument('-fo', '--filenames-only', action='store_true',
                         help='Only copy the relative filenames, not their contents')
@@ -81,9 +83,9 @@ def main():
     print(f"Base directory: {base_dir}")
     print(f"Include patterns: {include}")
     print(f"Exclude patterns: {exclude}")
-    print(f"Message: {message}")
     print(f"Filenames only: {filenames_only}")
-    print(f"Found files ({len(files)}): {files}")
+    print(f"\nFound files ({len(files)}): {files}")
+    print(f"\nMessage: {message}")
 
     if not files:
         print("No files found matching the given patterns.")
@@ -91,7 +93,7 @@ def main():
     print("\n")
 
     # Initialize the clipboard content
-    clipboard_content = f"{message}\n\n\n"
+    clipboard_content = ""
 
     # Append relative filenames to the clipboard content
     for file in files:
@@ -107,6 +109,11 @@ def main():
                         f"{prefix}{f.read()}\n\n")
             else:
                 clipboard_content += f"{prefix}\n"
+
+    # Append the message to the clipboard content
+    clipboard_content += f"\n{message}"
+    # Add a newline at the end
+    clipboard_content += "\n"
 
     # Print the content to the console for manual copying (if needed)
     # print(clipboard_content)

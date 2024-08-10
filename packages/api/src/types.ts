@@ -14,11 +14,16 @@ export const SubscriptionStatus = {
   paused: "paused",
 } as const
 export type SubscriptionStatus = (typeof SubscriptionStatus)[keyof typeof SubscriptionStatus]
-export const DocumentType = {
+export const EventType = {
   post: "post",
-  invoice: "invoice",
   reminder: "reminder",
+  invoice: "invoice",
   document: "document",
+} as const
+export type EventType = (typeof EventType)[keyof typeof EventType]
+export const DocumentType = {
+  general: "general",
+  photo: "photo",
 } as const
 export type DocumentType = (typeof DocumentType)[keyof typeof DocumentType]
 export const MediaFileType = {
@@ -48,25 +53,28 @@ export type Auth = {
 export type Document = {
   id: string
   type: DocumentType
-  displayDate: Timestamp
-  header: string
-  description: string
-  invoiceValue: number
+  date: Timestamp
+  title: string | null
+  description: string | null
   createdAt: Generated<Timestamp>
   updatedAt: Generated<Timestamp>
-  vehicleId: string
+  vehicleId: string | null
   createdById: string
+  vehicleEventId: string | null
 }
 export type MediaFile = {
   id: string
   type: MediaFileType
+  mimeType: string
   url: string
   createdAt: Generated<Timestamp>
   updatedAt: Generated<Timestamp>
   documentId: string | null
+  vehicleOwnershipId: string | null
 }
 export type Notification = {
   id: string
+  title: string
   message: string
   userId: string
   createdAt: Generated<Timestamp>
@@ -159,15 +167,31 @@ export type VehicleDetails = {
   createdAt: Generated<Timestamp>
   updatedAt: Generated<Timestamp>
 }
+export type VehicleEvent = {
+  id: string
+  type: EventType
+  header: string
+  description: string | null
+  date: Timestamp
+  price: number | null
+  vehicleId: string | null
+  createdById: string | null
+  vehicleOwnershipId: string | null
+  createdAt: Generated<Timestamp>
+  updatedAt: Generated<Timestamp>
+}
 export type VehicleOwnership = {
   id: string
   userId: string
   vehicleId: string
+  description: string | null
   startDate: Timestamp | null
   endDate: Timestamp | null
   isCurrentOwner: Generated<boolean>
   isTemporaryOwner: Generated<boolean>
   canEditDocuments: Generated<boolean>
+  createdAt: Generated<Timestamp>
+  updatedAt: Generated<Timestamp>
 }
 export type DB = {
   Auth: Auth
@@ -182,5 +206,6 @@ export type DB = {
   UserSubscription: UserSubscription
   Vehicle: Vehicle
   VehicleDetails: VehicleDetails
+  VehicleEvent: VehicleEvent
   VehicleOwnership: VehicleOwnership
 }

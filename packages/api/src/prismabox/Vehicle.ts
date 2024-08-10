@@ -46,11 +46,14 @@ export const VehicleRelations = t.Object(
           id: t.String({ additionalProperties: true }),
           userId: t.String({ additionalProperties: true }),
           vehicleId: t.String({ additionalProperties: true }),
+          description: __nullable__(t.String({ additionalProperties: true })),
           startDate: __nullable__(t.Date({ additionalProperties: true })),
           endDate: __nullable__(t.Date({ additionalProperties: true })),
           isCurrentOwner: t.Boolean({ additionalProperties: true }),
           isTemporaryOwner: t.Boolean({ additionalProperties: true }),
           canEditDocuments: t.Boolean({ additionalProperties: true }),
+          createdAt: t.Date({ additionalProperties: true }),
+          updatedAt: t.Date({ additionalProperties: true }),
         },
         { additionalProperties: true },
       ),
@@ -60,23 +63,48 @@ export const VehicleRelations = t.Object(
       t.Object(
         {
           id: t.String({ additionalProperties: true }),
+          type: t.Union([t.Literal("general"), t.Literal("photo")], {
+            additionalProperties: true,
+          }),
+          date: t.Date({ additionalProperties: true }),
+          title: __nullable__(t.String({ additionalProperties: true })),
+          description: __nullable__(t.String({ additionalProperties: true })),
+          createdAt: t.Date({ additionalProperties: true }),
+          updatedAt: t.Date({ additionalProperties: true }),
+          vehicleId: __nullable__(t.String({ additionalProperties: true })),
+          createdById: t.String({ additionalProperties: true }),
+          vehicleEventId: __nullable__(
+            t.String({ additionalProperties: true }),
+          ),
+        },
+        { additionalProperties: true },
+      ),
+      { additionalProperties: true },
+    ),
+    events: t.Array(
+      t.Object(
+        {
+          id: t.String({ additionalProperties: true }),
           type: t.Union(
             [
               t.Literal("post"),
-              t.Literal("invoice"),
               t.Literal("reminder"),
+              t.Literal("invoice"),
               t.Literal("document"),
             ],
             { additionalProperties: true },
           ),
-          displayDate: t.Date({ additionalProperties: true }),
           header: t.String({ additionalProperties: true }),
-          description: t.String({ additionalProperties: true }),
-          invoiceValue: t.Number({ additionalProperties: true }),
+          description: __nullable__(t.String({ additionalProperties: true })),
+          date: t.Date({ additionalProperties: true }),
+          price: __nullable__(t.Number({ additionalProperties: true })),
+          vehicleId: __nullable__(t.String({ additionalProperties: true })),
+          createdById: __nullable__(t.String({ additionalProperties: true })),
+          vehicleOwnershipId: __nullable__(
+            t.String({ additionalProperties: true }),
+          ),
           createdAt: t.Date({ additionalProperties: true }),
           updatedAt: t.Date({ additionalProperties: true }),
-          vehicleId: t.String({ additionalProperties: true }),
-          createdById: t.String({ additionalProperties: true }),
         },
         { additionalProperties: true },
       ),
@@ -141,6 +169,22 @@ export const VehicleRelationsInputCreate = t.Object(
         { additionalProperties: true },
       ),
     ),
+    events: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
   },
   { additionalProperties: true },
 );
@@ -186,6 +230,32 @@ export const VehicleRelationsInputUpdate = t.Partial(
         { additionalProperties: true },
       ),
       documents: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
+              { additionalProperties: true },
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
+              { additionalProperties: true },
+            ),
+          },
+          { additionalProperties: true },
+        ),
+        { additionalProperties: true },
+      ),
+      events: t.Partial(
         t.Object(
           {
             connect: t.Array(

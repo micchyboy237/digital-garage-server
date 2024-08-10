@@ -1,247 +1,245 @@
-import { prisma } from ".."
-import { REGISTRATION_NUMBERS, VEHICLE_DATA, VEHICLE_MODELS } from "./mock"
-import { RandomUserApiResponse } from "./types"
+import { DocumentType, EventType, MediaFileType, prisma, UserRole } from ".."
+import { mockAssets } from "./mock-assets"
 
-async function generateSubscriptions() {
-  const free = await prisma.subscription.create({
-    data: {
-      name: "Free",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  })
-
-  const monthly = await prisma.subscription.create({
-    data: {
-      name: "Monthly",
-      freeTrialDuration: 14,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  })
-
-  return {
-    free,
-    monthly,
+// Remove all attributes that have empty objects, arrays. Also remove all "id" attributes.
+const removeEmpty = (obj: any, visited = new Set()) => {
+  if (visited.has(obj)) {
+    return obj
   }
+  visited.add(obj)
+
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] && typeof obj[key] === "object") {
+      removeEmpty(obj[key], visited)
+    } else if (obj[key] === undefined || obj[key] === null || obj[key] === "") {
+      delete obj[key]
+    }
+  })
+  return obj
 }
 
-async function generateUsers(n: number = 2) {
-  const response = await fetch(`https://randomuser.me/api/?nat=us&results=${n}`)
-  const randomUsers = (await response.json()) as RandomUserApiResponse
-  const user1 = await prisma.user.create({
-    data: {
-      email: randomUsers.results[0].email,
-      firstName: randomUsers.results[0].name.first,
-      lastName: randomUsers.results[0].name.last,
-      profilePicture: randomUsers.results[0].picture.large,
-      location: `${randomUsers.results[0].location.city}, ${randomUsers.results[0].location.state}`,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  })
-
-  const user2 = await prisma.user.create({
-    data: {
-      email: randomUsers.results[1].email,
-      firstName: randomUsers.results[1].name.first,
-      lastName: randomUsers.results[1].name.last,
-      profilePicture: randomUsers.results[1].picture.large,
-      location: `${randomUsers.results[1].location.city}, ${randomUsers.results[1].location.state}`,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  })
-
-  return {
-    user1,
-    user2,
+const removeId = (obj: any, visited = new Set()) => {
+  if (visited.has(obj)) {
+    return obj
   }
-}
+  visited.add(obj)
 
-async function generateUserSubscription(userId: string, subscriptionId: string) {
-  const result = await prisma.userSubscription.create({
-    data: {
-      userId,
-      subscriptionId,
-      startDate: new Date(),
-      endDate: new Date(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
+  Object.keys(obj).forEach((key) => {
+    if (key === "id") {
+      delete obj[key]
+    } else if (obj[key] && typeof obj[key] === "object") {
+      obj[key], visited
+    }
   })
-  return result
+  return obj
 }
 
-async function generateVehicle(userId: string, registrationNumber: string) {
+async function main() {
   const vehicleDetails1 = await prisma.vehicleDetails.create({
     data: {
-      ...VEHICLE_DATA[registrationNumber],
+      id: "details-1",
+      registrationNumber: "ABC123",
+      taxStatus: "Valid",
+      taxDueDate: new Date(),
+      motStatus: "Valid",
+      yearOfManufacture: 2020,
+      engineCapacity: 2000,
+      co2Emissions: 150,
+      fuelType: "Petrol",
+      markedForExport: false,
+      colour: "Blue",
+      typeApproval: "Approved",
+      euroStatus: "Euro 6",
+      dateOfLastV5CIssued: new Date(),
+      motExpiryDate: new Date(),
+      wheelplan: "2 Axle Rigid Body",
+      monthOfFirstRegistration: new Date(),
     },
   })
 
   const vehicle1 = await prisma.vehicle.create({
     data: {
-      registrationNumber: vehicleDetails1.registrationNumber,
-      model: VEHICLE_MODELS[registrationNumber],
+      id: "vehicle-1",
+      make: "Toyota",
+      model: "Camry",
+      registrationNumber: "ABC123",
     },
   })
 
-  const vehicleOwnership1 = await prisma.vehicleOwnership.create({
+  const user1 = await prisma.user.create({
     data: {
-      userId: userId,
-      vehicleId: vehicle1.id,
-      startDate: new Date(),
-      isCurrentOwner: true,
-    },
-  })
-
-  return vehicleOwnership1
-}
-
-async function generateDocuments(userId: string, vehicleId: string) {
-  const document1 = await prisma.document.create({
-    data: {
-      type: "invoice",
-      invoiceValue: 1000,
-      displayDate: new Date("2024-06-02"),
-      header: "Volvo Main Dealer",
-      description: "Replacement timing chain cover",
-      vehicleId,
-      createdById: userId,
-    },
-  })
-
-  const document2 = await prisma.document.create({
-    data: {
-      type: "reminder",
-      invoiceValue: 0,
-      displayDate: new Date("2024-06-19"),
-      header: "MOT Due",
-      description: "",
-      vehicleId,
-      createdById: userId,
-    },
-  })
-
-  const document3 = await prisma.document.create({
-    data: {
-      type: "document",
-      invoiceValue: 0,
-      displayDate: new Date("2024-08-02"),
-      header: "V5 Proof of Ownership",
-      description: `Replacement received from DVLA.`,
-      vehicleId,
-      createdById: userId,
-    },
-  })
-
-  return {
-    document1,
-    document2,
-    document3,
-  }
-}
-
-async function generateVehiclePhotoDocuments(userId: string, vehicleId: string, urlPhotos: string[]) {
-  const vehiclePhotoDocument = await prisma.document.create({
-    data: {
-      type: "post",
-      invoiceValue: 0,
-      displayDate: new Date("2024-06-27"),
-      header: "National Car Rally",
-      description: `Great event, took a bit of time to get there but took some great pictures.`,
-      vehicleId,
-      createdById: userId,
-    },
-  })
-
-  const vehiclePhotos: any[] = []
-
-  for (let index = 0; index < urlPhotos.length; index++) {
-    const url = urlPhotos[index]
-    const vehiclePhoto = await prisma.mediaFile.create({
-      data: {
-        type: "photo",
-        url,
-        documentId: vehiclePhotoDocument.id,
+      id: "user-1",
+      role: UserRole.user,
+      firstName: "John",
+      lastName: "Doe",
+      email: "john.doe@example.com",
+      profilePicture: mockAssets.USER1_PROFILE_PIC,
+      location: "New York, USA",
+      auth: {
+        create: {
+          id: "auth-1",
+          password: "hashedpassword",
+          googleId: "google-123",
+          emailVerificationCode: "123456",
+          emailVerificationExpiry: new Date(Date.now() + 3600 * 1000),
+          isEmailVerified: true,
+          passwordResetToken: "reset-token",
+          passwordResetExpiry: new Date(Date.now() + 3600 * 1000),
+        },
       },
-    })
-    vehiclePhotos[index] = vehiclePhoto
-  }
+      session: {
+        create: {
+          id: "session-1",
+          token: "authorization-token-1",
+          expiresAt: new Date(Date.now() + 3600 * 1000),
+        },
+      },
+      vehicleOwnerships: {
+        create: {
+          id: "vehicle-ownership-1",
+          vehicleId: vehicle1.id,
+          displayPicture: {
+            create: {
+              id: "display-photo-1",
+              type: MediaFileType.photo,
+              url: mockAssets.VEHICLE1_DISPLAY_PIC,
+              mimeType: "image/jpeg",
+              document: {} as Document, // Circular reference, will be assigned later
+            },
+          },
+          startDate: new Date("2020-02-03"),
+          isCurrentOwner: true,
+          isTemporaryOwner: false,
+          canEditDocuments: true,
+          events: {
+            createMany: {
+              data: [
+                {
+                  id: "event-1",
+                  type: EventType.post,
+                  header: "National Car Rally",
+                  description: "Great event, took a bit of time to get there but took some great pictures.",
+                  date: new Date("2024-06-27"),
+                  vehicleId: "vehicle-1",
+                  createdById: "user-1",
+                },
+                {
+                  id: "event-2",
+                  type: EventType.reminder,
+                  header: "MOT Due",
+                  date: new Date("2024-06-19"),
+                  vehicleId: "vehicle-1",
+                  createdById: "user-1",
+                },
+                {
+                  id: "event-3",
+                  type: EventType.invoice,
+                  header: "Volvo Main Dealer",
+                  description: "Oil change and service",
+                  date: new Date("2024-06-02"),
+                  price: 9.99,
+                  vehicleId: "vehicle-1",
+                  createdById: "user-1",
+                },
+                {
+                  id: "event-4",
+                  type: EventType.document,
+                  header: "V5 Proof of Ownership",
+                  description: "Vehicle ownership affidavit from DVLA",
+                  date: new Date("2024-08-02"),
+                  vehicleId: "vehicle-1",
+                  createdById: "user-1",
+                },
+              ],
+            },
+          },
+        },
+      },
 
-  return vehiclePhotos
-}
-
-async function generateAuth(userId: string) {
-  const auth = await prisma.auth.create({
-    data: {
-      password: "asdasd!123",
-      isEmailVerified: false,
-      emailVerificationCode: "123456",
-      emailVerificationExpiry: new Date("2024-06-27"),
-      userId,
+      //     // session: [],
+      //     // subscription: {} as UserSubscription, // Circular reference, will be assigned later
+      //     // vehicleOwnerships: [],
+      //     // documents: [],
+      //     // events: [], // Will be populated with mock events
+      //     // notificationSubs: [],
+      //     // notifications: [],
     },
   })
 
-  return auth
-}
-
-async function generateSession(userId: string) {
-  const session = await prisma.session.create({
+  const eventPhotoDocument1 = await prisma.document.create({
     data: {
-      token: `authorization-token-${userId}`,
-      expiresAt: new Date("2024-10-01"),
-      userId,
+      id: "event-photo-1",
+      type: DocumentType.photo,
+      date: new Date(),
+      vehicleId: vehicle1.id,
+      vehicleEventId: "event-1",
+      createdById: user1.id,
     },
   })
 
-  return session
-}
+  const photoFile1 = await prisma.mediaFile.create({
+    data: {
+      id: "photo-1",
+      type: MediaFileType.photo,
+      url: mockAssets.VEHICLE1_GALLERY_PIC,
+      mimeType: "image/jpeg",
+      documentId: "event-photo-1",
+    },
+  })
 
-async function main() {
-  // Create Subscriptions
-  const subscriptions = await generateSubscriptions()
-  const users = await generateUsers()
-  // Create Auth
-  await generateAuth(users.user1.id)
-  await generateAuth(users.user2.id)
-  // Create Session
-  await generateSession(users.user1.id)
-  await generateSession(users.user2.id)
-  // Create User Subscriptions
-  await generateUserSubscription(users.user1.id, subscriptions.free.id)
-  await generateUserSubscription(users.user2.id, subscriptions.monthly.id)
-  // Create Vehicles
-  // await generateVehicleData(users.user1.id, "ABC123")
-  // await generateVehicleData(users.user2.id, "DEF456")
-  // Call generateVehicleData user1 for 7 vehicles
-  // Call generateVehicleData user2 for 3 vehicles
-  // Use Promise.all to run all the calls in parallel
-  const user1Vehicles = REGISTRATION_NUMBERS.slice(0, 7)
-  const user2Vehicles = REGISTRATION_NUMBERS.slice(7, 10)
+  const photoFile2 = await prisma.mediaFile.create({
+    data: {
+      id: "photo-2",
+      type: MediaFileType.photo,
+      url: mockAssets.VEHICLE1_GALLERY_PIC,
+      mimeType: "image/jpeg",
+      documentId: "event-photo-1",
+    },
+  })
 
-  const n = 6
-  const response = await fetch(`https://randomuser.me/api/?nat=us&results=${n}`)
-  const randomUsers = (await response.json()) as RandomUserApiResponse
-  const urlPhotos: string[] = []
-  for (let i = 0; i < n; i++) {
-    urlPhotos.push(randomUsers.results[i].picture.large)
-  }
+  const mockInvoiceDocument: Document = await prisma.document.create({
+    data: {
+      id: "document-1",
+      type: DocumentType.general,
+      date: new Date(),
+      title: "Invoice from Volvo Main Dealer",
+      vehicleId: "vehicle-1",
+      vehicleEventId: "event-3",
+      createdById: "user-1",
+    },
+  })
 
-  await Promise.all([
-    ...user1Vehicles.map((registrationNumber) => generateVehicleData(users.user1.id, registrationNumber)),
-    ...user2Vehicles.map((registrationNumber) => generateVehicleData(users.user2.id, registrationNumber)),
-  ])
+  const mockProofOfOwnershipDocument: Document = await prisma.document.create({
+    data: {
+      id: "document-2",
+      type: DocumentType.general,
+      date: new Date(),
+      title: "Proof of Ownership from DVLA",
+      vehicleId: "vehicle-1",
+      vehicleEventId: "event-4",
+      createdById: "user-1",
+    },
+  })
 
-  async function generateVehicleData(userId: string, registrationNumber: string) {
-    const vehicles = await generateVehicle(userId, registrationNumber)
-    const vehicle1Id = vehicles.vehicleId
-    // Create Documents
-    await generateDocuments(userId, vehicle1Id)
-    // Create Vehicle Photo Documents
-    await generateVehiclePhotoDocuments(userId, vehicle1Id, urlPhotos)
-  }
+  const mockInvoiceFile = await prisma.mediaFile.create({
+    data: {
+      id: "file-1",
+      type: MediaFileType.document,
+      url: mockAssets.VEHICLE1_INVOICE,
+      mimeType: "application/pdf",
+      documentId: "document-1",
+    },
+  })
+
+  const mockProofOfOwnershipFile = await prisma.mediaFile.create({
+    data: {
+      id: "file-2",
+      type: MediaFileType.document,
+      url: mockAssets.VEHICLE1_PROOF_OF_OWNERSHIP,
+      mimeType: "application/pdf",
+      documentId: "document-2",
+    },
+  })
 }
 
 main()

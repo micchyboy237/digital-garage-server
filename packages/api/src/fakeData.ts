@@ -1,4 +1,4 @@
-import { PaymentInterval, SubscriptionStatus, DocumentType, MediaFileType, UserRole } from '@prisma/client';
+import { PaymentInterval, SubscriptionStatus, EventType, DocumentType, MediaFileType, UserRole } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 import Decimal from 'decimal.js';
 
@@ -149,6 +149,7 @@ export function fakeVehicleComplete() {
 }
 export function fakeVehicleOwnership() {
   return {
+    description: undefined,
     startDate: undefined,
     endDate: undefined,
   };
@@ -158,11 +159,14 @@ export function fakeVehicleOwnershipComplete() {
     id: faker.string.uuid(),
     userId: faker.string.uuid(),
     vehicleId: faker.string.uuid(),
+    description: undefined,
     startDate: undefined,
     endDate: undefined,
     isCurrentOwner: true,
     isTemporaryOwner: false,
     canEditDocuments: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 }
 export function fakeVehicleDetails() {
@@ -208,32 +212,56 @@ export function fakeVehicleDetailsComplete() {
     updatedAt: new Date(),
   };
 }
+export function fakeVehicleEvent() {
+  return {
+    type: faker.helpers.arrayElement([EventType.post, EventType.reminder, EventType.invoice, EventType.document] as const),
+    header: faker.lorem.words(5),
+    description: undefined,
+    date: faker.date.anytime(),
+    price: undefined,
+  };
+}
+export function fakeVehicleEventComplete() {
+  return {
+    id: faker.string.uuid(),
+    type: faker.helpers.arrayElement([EventType.post, EventType.reminder, EventType.invoice, EventType.document] as const),
+    header: faker.lorem.words(5),
+    description: undefined,
+    date: faker.date.anytime(),
+    price: undefined,
+    vehicleId: undefined,
+    createdById: undefined,
+    vehicleOwnershipId: undefined,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+}
 export function fakeDocument() {
   return {
-    type: faker.helpers.arrayElement([DocumentType.post, DocumentType.invoice, DocumentType.reminder, DocumentType.document] as const),
-    displayDate: faker.date.anytime(),
-    header: faker.lorem.words(5),
-    description: faker.lorem.words(5),
-    invoiceValue: faker.number.float(),
+    type: faker.helpers.arrayElement([DocumentType.general, DocumentType.photo] as const),
+    date: faker.date.anytime(),
+    title: undefined,
+    description: undefined,
   };
 }
 export function fakeDocumentComplete() {
   return {
     id: faker.string.uuid(),
-    type: faker.helpers.arrayElement([DocumentType.post, DocumentType.invoice, DocumentType.reminder, DocumentType.document] as const),
-    displayDate: faker.date.anytime(),
-    header: faker.lorem.words(5),
-    description: faker.lorem.words(5),
-    invoiceValue: faker.number.float(),
+    type: faker.helpers.arrayElement([DocumentType.general, DocumentType.photo] as const),
+    date: faker.date.anytime(),
+    title: undefined,
+    description: undefined,
     createdAt: new Date(),
     updatedAt: new Date(),
-    vehicleId: faker.string.uuid(),
+    vehicleId: undefined,
     createdById: faker.string.uuid(),
+    vehicleEventId: undefined,
   };
 }
 export function fakeMediaFile() {
   return {
     type: faker.helpers.arrayElement([MediaFileType.photo, MediaFileType.video, MediaFileType.document] as const),
+    mimeType: faker.lorem.words(5),
     url: faker.lorem.words(5),
   };
 }
@@ -241,10 +269,12 @@ export function fakeMediaFileComplete() {
   return {
     id: faker.string.uuid(),
     type: faker.helpers.arrayElement([MediaFileType.photo, MediaFileType.video, MediaFileType.document] as const),
+    mimeType: faker.lorem.words(5),
     url: faker.lorem.words(5),
     createdAt: new Date(),
     updatedAt: new Date(),
     documentId: undefined,
+    vehicleOwnershipId: undefined,
   };
 }
 export function fakeNotificationSubscription() {
@@ -263,12 +293,14 @@ export function fakeNotificationSubscriptionComplete() {
 }
 export function fakeNotification() {
   return {
+    title: faker.lorem.words(5),
     message: faker.lorem.words(5),
   };
 }
 export function fakeNotificationComplete() {
   return {
     id: faker.string.uuid(),
+    title: faker.lorem.words(5),
     message: faker.lorem.words(5),
     userId: faker.string.uuid(),
     createdAt: new Date(),

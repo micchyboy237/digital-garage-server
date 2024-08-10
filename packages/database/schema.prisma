@@ -79,11 +79,16 @@ enum SubscriptionStatus {
   paused
 }
 
-enum DocumentType {
+enum EventType {
   post
-  invoice
   reminder
+  invoice
   document
+}
+
+enum DocumentType {
+  general
+  photo
 }
 
 enum MediaFileType {
@@ -175,8 +180,9 @@ model User {
   auth               Auth?
   session            Session[]
   subscription       UserSubscription?   
-  vehicles           VehicleOwnership[]  @relation("UserVehicles")
+  vehicleOwnerships  VehicleOwnership[]  @relation("UserVehicleOwnerships")
   documents          Document[]          @relation("UserDocuments")
+  events             VehicleEvent[]
   notificationSubs   NotificationSubscription[]
   notifications      Notification[]
 }
@@ -191,19 +197,25 @@ model Vehicle {
   updatedAt          DateTime            @default(now())
   ownershipHistory   VehicleOwnership[]  @relation("VehicleOwnerships")
   documents          Document[]          @relation("VehicleDocuments")
+  events             VehicleEvent[]
 }
 
 model VehicleOwnership {
   id                String   @id @default(uuid())
   userId            String
   vehicleId         String
+  description       String?
+  displayPicture    MediaFile?
   startDate         DateTime?
   endDate           DateTime?
   isCurrentOwner    Boolean  @default(true)
   isTemporaryOwner  Boolean  @default(false)
   canEditDocuments  Boolean  @default(true)
-  user              User     @relation("UserVehicles", fields: [userId], references: [id])
+  user              User     @relation("UserVehicleOwnerships", fields: [userId], references: [id])
   vehicle           Vehicle  @relation("VehicleOwnerships", fields: [vehicleId], references: [id])
+  events            VehicleEvent[]
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @default(now())
 }
 
 model VehicleDetails {
@@ -229,30 +241,52 @@ model VehicleDetails {
   updatedAt               DateTime  @default(now())
 }
 
+model VehicleEvent {
+  id             String       @id @default(uuid())
+  type           EventType
+  header         String
+  description    String?
+  date           DateTime
+  price          Float?
+  documents      Document[]
+  vehicleId      String?      
+  vehicle        Vehicle?     @relation(fields: [vehicleId], references: [id])
+  createdById    String?      
+  createdBy      User?        @relation(fields: [createdById], references: [id])
+  vehicleOwnershipId String?  
+  vehicleOwnership  VehicleOwnership? @relation(fields: [vehicleOwnershipId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @default(now())
+}
+
 model Document {
   id             String       @id @default(uuid())
   type           DocumentType
-  displayDate    DateTime
-  header         String
-  description    String
-  invoiceValue   Float
+  date           DateTime
+  title          String?
+  description    String?
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @default(now())
-  vehicle        Vehicle      @relation("VehicleDocuments", fields: [vehicleId], references: [id])
-  vehicleId      String
+  vehicle        Vehicle?      @relation("VehicleDocuments", fields: [vehicleId], references: [id])
+  vehicleId      String?
   createdBy      User         @relation("UserDocuments", fields: [createdById], references: [id])
   createdById    String
   files          MediaFile[]
+  vehicleEventId String?       @unique
+  vehicleEvent   VehicleEvent? @relation(fields: [vehicleEventId], references: [id])
 }
 
 model MediaFile {
   id                String        @id @default(uuid())
   type              MediaFileType
+  mimeType          String
   url               String
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @default(now())
   document          Document?     @relation(fields: [documentId], references: [id])
   documentId        String?
+  vehicleOwnershipId String?      @unique
+  vehicleOwnership  VehicleOwnership? @relation(fields: [vehicleOwnershipId], references: [id])
 }
 
 model NotificationSubscription {
@@ -266,6 +300,7 @@ model NotificationSubscription {
 
 model Notification {
   id             String              @id @default(uuid())
+  title          String
   message        String
   user           User                @relation(fields: [userId], references: [id])
   userId         String
