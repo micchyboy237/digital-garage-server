@@ -37,7 +37,7 @@ const removeId = (obj: any, visited = new Set()) => {
 async function main() {
   const vehicleDetails1 = await prisma.vehicleDetails.create({
     data: {
-      id: "details-1",
+      id: "vehicle-details-1",
       registrationNumber: "ABC123",
       taxStatus: "Valid",
       taxDueDate: new Date(),
@@ -57,12 +57,43 @@ async function main() {
     },
   })
 
+  const vehicleDetails2 = await prisma.vehicleDetails.create({
+    data: {
+      id: "vehicle-details-2",
+      registrationNumber: "XYZ789",
+      taxStatus: "Expired",
+      taxDueDate: new Date(Date.now() - 365 * 24 * 3600 * 1000),
+      motStatus: "Expired",
+      yearOfManufacture: 2015,
+      engineCapacity: 1800,
+      co2Emissions: 140,
+      fuelType: "Diesel",
+      markedForExport: false,
+      colour: "Blue",
+      typeApproval: "Approved",
+      euroStatus: "Euro 5",
+      dateOfLastV5CIssued: new Date(),
+      motExpiryDate: new Date(Date.now() - 365 * 24 * 3600 * 1000),
+      wheelplan: "4x2",
+      monthOfFirstRegistration: new Date("2015-01-01"),
+    },
+  })
+
   const vehicle1 = await prisma.vehicle.create({
     data: {
       id: "vehicle-1",
       make: "Toyota",
       model: "Camry",
       registrationNumber: "ABC123",
+    },
+  })
+
+  const previousVehicle1 = await prisma.vehicle.create({
+    data: {
+      id: "vehicle-2",
+      make: "Honda",
+      model: "Civic",
+      registrationNumber: "XYZ789",
     },
   })
 
@@ -78,8 +109,8 @@ async function main() {
       auth: {
         create: {
           id: "auth-1",
-          password: "hashedpassword",
-          googleId: "google-123",
+          password: "asdasdasd",
+          googleId: undefined,
           emailVerificationCode: "123456",
           emailVerificationExpiry: new Date(Date.now() + 3600 * 1000),
           isEmailVerified: true,
@@ -95,64 +126,26 @@ async function main() {
         },
       },
       vehicleOwnerships: {
-        create: {
-          id: "vehicle-ownership-1",
-          vehicleId: vehicle1.id,
-          displayPicture: {
-            create: {
-              id: "display-photo-1",
-              type: MediaFileType.photo,
-              url: mockAssets.VEHICLE1_DISPLAY_PIC,
-              mimeType: "image/jpeg",
-              document: {} as Document, // Circular reference, will be assigned later
+        createMany: {
+          data: [
+            {
+              id: "vehicle-ownership-1",
+              vehicleId: vehicle1.id,
+              startDate: new Date("2020-02-03"),
+              isCurrentOwner: true,
+              isTemporaryOwner: false,
+              canEditDocuments: true,
             },
-          },
-          startDate: new Date("2020-02-03"),
-          isCurrentOwner: true,
-          isTemporaryOwner: false,
-          canEditDocuments: true,
-          events: {
-            createMany: {
-              data: [
-                {
-                  id: "event-1",
-                  type: EventType.post,
-                  header: "National Car Rally",
-                  description: "Great event, took a bit of time to get there but took some great pictures.",
-                  date: new Date("2024-06-27"),
-                  vehicleId: "vehicle-1",
-                  createdById: "user-1",
-                },
-                {
-                  id: "event-2",
-                  type: EventType.reminder,
-                  header: "MOT Due",
-                  date: new Date("2024-06-19"),
-                  vehicleId: "vehicle-1",
-                  createdById: "user-1",
-                },
-                {
-                  id: "event-3",
-                  type: EventType.invoice,
-                  header: "Volvo Main Dealer",
-                  description: "Oil change and service",
-                  date: new Date("2024-06-02"),
-                  price: 9.99,
-                  vehicleId: "vehicle-1",
-                  createdById: "user-1",
-                },
-                {
-                  id: "event-4",
-                  type: EventType.document,
-                  header: "V5 Proof of Ownership",
-                  description: "Vehicle ownership affidavit from DVLA",
-                  date: new Date("2024-08-02"),
-                  vehicleId: "vehicle-1",
-                  createdById: "user-1",
-                },
-              ],
+            {
+              id: "vehicle-ownership-2",
+              vehicleId: previousVehicle1.id,
+              startDate: new Date("2015-01-01"),
+              endDate: new Date("2019-12-31"),
+              isCurrentOwner: false,
+              isTemporaryOwner: false,
+              canEditDocuments: false,
             },
-          },
+          ],
         },
       },
 
@@ -164,6 +157,71 @@ async function main() {
       //     // notificationSubs: [],
       //     // notifications: [],
     },
+  })
+
+  const displayPicture1 = await prisma.mediaFile.create({
+    data: {
+      id: "display-photo-1",
+      type: MediaFileType.photo,
+      url: mockAssets.VEHICLE1_DISPLAY_PIC,
+      mimeType: "image/jpeg",
+      vehicleOwnershipId: "vehicle-ownership-1",
+    },
+  })
+
+  const displayPicture2 = await prisma.mediaFile.create({
+    data: {
+      id: "display-photo-2",
+      type: MediaFileType.photo,
+      url: mockAssets.VEHICLE2_DISPLAY_PIC,
+      mimeType: "image/jpeg",
+      vehicleOwnershipId: "vehicle-ownership-2",
+    },
+  })
+
+  const events1 = await prisma.vehicleEvent.createMany({
+    data: [
+      {
+        id: "event-1",
+        type: EventType.post,
+        header: "National Car Rally",
+        description: "Great event, took a bit of time to get there but took some great pictures.",
+        date: new Date("2024-06-27"),
+        vehicleId: "vehicle-1",
+        vehicleOwnershipId: "vehicle-ownership-1",
+        createdById: "user-1",
+      },
+      {
+        id: "event-2",
+        type: EventType.reminder,
+        header: "MOT Due",
+        date: new Date("2024-06-19"),
+        vehicleId: "vehicle-1",
+        vehicleOwnershipId: "vehicle-ownership-1",
+        createdById: "user-1",
+      },
+      {
+        id: "event-3",
+        type: EventType.invoice,
+        header: "Volvo Main Dealer",
+        description: "Oil change and service",
+        date: new Date("2024-06-02"),
+        price: 9.99,
+        vehicleId: "vehicle-1",
+        vehicleOwnershipId: "vehicle-ownership-1",
+        createdById: "user-1",
+      },
+      {
+        id: "event-4",
+        type: EventType.document,
+        header: "V5 Proof of Ownership",
+        description: "Vehicle ownership affidavit from DVLA",
+        date: new Date("2024-08-02"),
+        vehicleId: "vehicle-1",
+        vehicleOwnershipId: "vehicle-ownership-1",
+        createdById: "user-1",
+      },
+    ],
   })
 
   const eventPhotoDocument1 = await prisma.document.create({
@@ -238,6 +296,31 @@ async function main() {
       url: mockAssets.VEHICLE1_PROOF_OF_OWNERSHIP,
       mimeType: "application/pdf",
       documentId: "document-2",
+    },
+  })
+
+  // 2nd user for testing transfer of ownership
+  const user2 = await prisma.user.create({
+    data: {
+      id: "user-2",
+      role: UserRole.user,
+      firstName: "Jane",
+      lastName: "Smith",
+      email: "jane.smith@example.com",
+      profilePicture: mockAssets.USER2_PROFILE_PIC,
+      location: "Los Angeles, USA",
+      auth: {
+        create: {
+          id: "auth-2",
+          password: "asdasdasd",
+          googleId: undefined,
+          emailVerificationCode: "654321",
+          emailVerificationExpiry: new Date(Date.now() + 3600 * 1000),
+          isEmailVerified: true,
+          passwordResetToken: "reset-token-2",
+          passwordResetExpiry: new Date(Date.now() + 3600 * 1000),
+        },
+      },
     },
   })
 }
