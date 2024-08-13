@@ -281,6 +281,7 @@ model MediaFile {
   type              MediaFileType
   mimeType          String
   url               String
+  thumbnailUrl      String?
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @default(now())
   document          Document?     @relation(fields: [documentId], references: [id])
