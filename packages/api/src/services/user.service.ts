@@ -1,7 +1,7 @@
 import { prisma } from "@boilerplate/database"
 import { OAuth2Client } from "google-auth-library"
 import jwt from "jsonwebtoken"
-import { ErrorMessages, ValidationException } from "../exceptions"
+import { ErrorCodes, ValidationException } from "../exceptions"
 import { generateCode, generateExpiry, sendPasswordResetEmail, sendVerificationEmail } from "../utils/mail"
 import { comparePasswords, hashPassword } from "../utils/password"
 import { generateAccessToken, generateRefreshToken } from "../utils/tokens"
@@ -14,7 +14,7 @@ export const userService = {
       const existingUser = await prisma.user.findUnique({ where: { email } })
 
       if (existingUser) {
-        throw new ValidationException(ErrorMessages.USER_ALREADY_EXISTS)
+        throw new ValidationException(ErrorCodes.USER_ALREADY_EXISTS)
       }
 
       const hashedPassword = await hashPassword(password)
@@ -47,11 +47,11 @@ export const userService = {
     })
 
     if (!user || !user.auth || !user.auth.password || !(await comparePasswords(password, user.auth.password))) {
-      throw new ValidationException(ErrorMessages.INVALID_CREDENTIALS)
+      throw new ValidationException(ErrorCodes.INVALID_CREDENTIALS)
     }
 
     if (!user.auth.isEmailVerified) {
-      throw new ValidationException("Email not verified")
+      throw new ValidationException(ErrorCodes.EMAIL_NOT_VERIFIED)
     }
 
     const accessToken = generateAccessToken(user.id)
@@ -68,7 +68,7 @@ export const userService = {
 
     const payload = ticket.getPayload()
     if (!payload || !payload.email) {
-      throw new ValidationException("Invalid Google ID token")
+      throw new ValidationException(ErrorCodes.INVALID_GOOGLE_ID_TOKEN)
     }
 
     const { email, sub: googleId, name, picture } = payload
@@ -108,7 +108,7 @@ export const userService = {
       }
 
       if (!user) {
-        throw new ValidationException("User creation failed")
+        throw new ValidationException(ErrorCodes.USER_CREATION_FAILED)
       }
 
       const accessToken = generateAccessToken(user.id)
@@ -129,7 +129,7 @@ export const userService = {
       })
 
       if (!authRecord || (authRecord.emailVerificationExpiry && authRecord.emailVerificationExpiry < new Date())) {
-        throw new ValidationException("Invalid or expired verification code")
+        throw new ValidationException(ErrorCodes.INVALID_OR_EXPIRED_VERIFICATION_CODE)
       }
 
       await prisma.auth.update({
@@ -167,11 +167,11 @@ export const userService = {
       })
 
       if (!user || !user.auth) {
-        throw new ValidationException("User not found")
+        throw new ValidationException(ErrorCodes.USER_NOT_FOUND)
       }
 
       if (user.auth.isEmailVerified) {
-        throw new ValidationException("Email already verified")
+        throw new ValidationException(ErrorCodes.EMAIL_ALREADY_VERIFIED)
       }
 
       const emailVerificationCode = generateCode()
@@ -197,7 +197,7 @@ export const userService = {
       })
 
       if (!user || !user.auth) {
-        throw new ValidationException("User not found")
+        throw new ValidationException(ErrorCodes.USER_NOT_FOUND)
       }
 
       const passwordResetToken = generateCode()
@@ -222,7 +222,7 @@ export const userService = {
       })
 
       if (!authRecord) {
-        throw new ValidationException("Invalid or expired password reset token")
+        throw new ValidationException(ErrorCodes.INVALID_OR_EXPIRED_PASSWORD_RESET_TOKEN)
       }
 
       const hashedPassword = await hashPassword(newPassword)
