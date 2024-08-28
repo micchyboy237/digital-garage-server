@@ -1,13 +1,21 @@
-import { initTRPC } from "@trpc/server"
+import { initTRPC, TRPCError } from "@trpc/server"
 import { Context } from "./context"
-import { permissions } from "./permissions"
+import { permissions } from "./middlewares"
 
 export const t = initTRPC.context<Context>().create()
+
 export const permissionsMiddleware = t.middleware(permissions)
 
 export const publicProcedure = t.procedure
 
-export const protectedProcedure = t.procedure
+export const protectedProcedure: typeof t.procedure = t.procedure.use(({ ctx, next }) => {
+  if (!ctx.session) {
+    throw new TRPCError({ code: "UNAUTHORIZED" })
+  }
+  return next({
+    ctx,
+  })
+})
 
 export const loggedProcedure: typeof t.procedure = publicProcedure
   .use(async (opts) => {

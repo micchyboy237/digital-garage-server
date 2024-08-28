@@ -1,6 +1,8 @@
 import { z } from "zod"
 import { StringWithAggregatesFilterObjectSchema } from "./StringWithAggregatesFilter.schema"
 import { DateTimeWithAggregatesFilterObjectSchema } from "./DateTimeWithAggregatesFilter.schema"
+import { EnumAuthProviderWithAggregatesFilterObjectSchema } from "./EnumAuthProviderWithAggregatesFilter.schema"
+import { AuthProviderSchema } from "../enums/AuthProvider.schema"
 
 import type { Prisma } from "@prisma/client"
 
@@ -24,8 +26,11 @@ const Schema: z.ZodType<Prisma.SessionScalarWhereWithAggregatesInput> = z
       .optional(),
     id: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
     token: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
-    createdAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
     expiresAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
+    provider: z
+      .union([z.lazy(() => EnumAuthProviderWithAggregatesFilterObjectSchema), z.lazy(() => AuthProviderSchema)])
+      .optional(),
+    deviceFingerprint: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
     userId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   })
   .strict()

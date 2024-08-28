@@ -1,0 +1,22 @@
+import { z } from "zod"
+import { AuthProviderSchema } from "../enums/AuthProvider.schema"
+import { AccountStatusSchema } from "../enums/AccountStatus.schema"
+import { ProfileUncheckedCreateNestedOneWithoutUserInputObjectSchema } from "./ProfileUncheckedCreateNestedOneWithoutUserInput.schema"
+import { SessionUncheckedCreateNestedManyWithoutUserInputObjectSchema } from "./SessionUncheckedCreateNestedManyWithoutUserInput.schema"
+
+import type { Prisma } from "@prisma/client"
+
+const Schema: z.ZodType<Prisma.UserUncheckedCreateWithoutSubscriptionInput> = z
+  .object({
+    id: z.string().optional(),
+    email: z.string(),
+    password: z.string().optional().nullable(),
+    firebaseUid: z.string(),
+    provider: z.lazy(() => AuthProviderSchema),
+    accountStatus: z.lazy(() => AccountStatusSchema).optional(),
+    profile: z.lazy(() => ProfileUncheckedCreateNestedOneWithoutUserInputObjectSchema).optional(),
+    sessions: z.lazy(() => SessionUncheckedCreateNestedManyWithoutUserInputObjectSchema).optional(),
+  })
+  .strict()
+
+export const UserUncheckedCreateWithoutSubscriptionInputObjectSchema = Schema

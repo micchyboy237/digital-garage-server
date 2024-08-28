@@ -1,13 +1,7 @@
 import { z } from "zod"
-import { MediaFileArgsObjectSchema } from "./MediaFileArgs.schema"
-import { AuthArgsObjectSchema } from "./AuthArgs.schema"
+import { ProfileArgsObjectSchema } from "./ProfileArgs.schema"
+import { SubscriptionArgsObjectSchema } from "./SubscriptionArgs.schema"
 import { SessionFindManySchema } from "../findManySession.schema"
-import { UserSubscriptionArgsObjectSchema } from "./UserSubscriptionArgs.schema"
-import { VehicleOwnershipFindManySchema } from "../findManyVehicleOwnership.schema"
-import { DocumentFindManySchema } from "../findManyDocument.schema"
-import { VehicleEventFindManySchema } from "../findManyVehicleEvent.schema"
-import { NotificationSubscriptionFindManySchema } from "../findManyNotificationSubscription.schema"
-import { NotificationFindManySchema } from "../findManyNotification.schema"
 import { UserCountOutputTypeArgsObjectSchema } from "./UserCountOutputTypeArgs.schema"
 
 import type { Prisma } from "@prisma/client"
@@ -15,22 +9,13 @@ import type { Prisma } from "@prisma/client"
 const Schema: z.ZodType<Prisma.UserSelect> = z
   .object({
     id: z.boolean().optional(),
-    role: z.boolean().optional(),
-    firstName: z.boolean().optional(),
-    lastName: z.boolean().optional(),
     email: z.boolean().optional(),
-    profilePicture: z.union([z.boolean(), z.lazy(() => MediaFileArgsObjectSchema)]).optional(),
-    location: z.boolean().optional(),
-    createdAt: z.boolean().optional(),
-    updatedAt: z.boolean().optional(),
-    auth: z.union([z.boolean(), z.lazy(() => AuthArgsObjectSchema)]).optional(),
-    session: z.union([z.boolean(), z.lazy(() => SessionFindManySchema)]).optional(),
-    subscription: z.union([z.boolean(), z.lazy(() => UserSubscriptionArgsObjectSchema)]).optional(),
-    vehicleOwnerships: z.union([z.boolean(), z.lazy(() => VehicleOwnershipFindManySchema)]).optional(),
-    documents: z.union([z.boolean(), z.lazy(() => DocumentFindManySchema)]).optional(),
-    events: z.union([z.boolean(), z.lazy(() => VehicleEventFindManySchema)]).optional(),
-    notificationSubs: z.union([z.boolean(), z.lazy(() => NotificationSubscriptionFindManySchema)]).optional(),
-    notifications: z.union([z.boolean(), z.lazy(() => NotificationFindManySchema)]).optional(),
+    firebaseUid: z.boolean().optional(),
+    isEmailVerified: z.boolean().optional(),
+    profile: z.union([z.boolean(), z.lazy(() => ProfileArgsObjectSchema)]).optional(),
+    subscription: z.union([z.boolean(), z.lazy(() => SubscriptionArgsObjectSchema)]).optional(),
+    accountStatus: z.boolean().optional(),
+    sessions: z.union([z.boolean(), z.lazy(() => SessionFindManySchema)]).optional(),
     _count: z.union([z.boolean(), z.lazy(() => UserCountOutputTypeArgsObjectSchema)]).optional(),
   })
   .strict()

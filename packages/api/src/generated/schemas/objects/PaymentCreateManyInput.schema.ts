@@ -1,16 +1,17 @@
 import { z } from "zod"
+import { PaymentStatusSchema } from "../enums/PaymentStatus.schema"
 
 import type { Prisma } from "@prisma/client"
 
 const Schema: z.ZodType<Prisma.PaymentCreateManyInput> = z
   .object({
     id: z.string().optional(),
-    amount: z.number(),
-    currency: z.string(),
-    paymentDate: z.coerce.date().optional(),
-    userSubscriptionId: z.string(),
-    stripePaymentId: z.string().optional().nullable(),
-    iapPaymentId: z.string().optional().nullable(),
+    price: z.number(),
+    currencyCode: z.string(),
+    status: z.lazy(() => PaymentStatusSchema),
+    transactionId: z.string(),
+    transactionDate: z.coerce.date(),
+    subscriptionId: z.string(),
   })
   .strict()
 

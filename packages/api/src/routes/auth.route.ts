@@ -11,10 +11,10 @@ import {
   resetPasswordSchema,
   verifyEmailSchema,
 } from "../schemas/user.schema"
-import { publicProcedure, t } from "../trpc"
+import { protectedProcedure, t } from "../trpc"
 
 export const authRouter = t.router({
-  register: publicProcedure.input(registerSchema).mutation(async ({ input }) => {
+  register: protectedProcedure.input(registerSchema).mutation(async ({ input }) => {
     try {
       return await userController.register(input)
     } catch (error) {
@@ -25,7 +25,7 @@ export const authRouter = t.router({
     }
   }),
 
-  login: publicProcedure.input(loginSchema).mutation(async ({ input }) => {
+  login: protectedProcedure.input(loginSchema).mutation(async ({ input }) => {
     try {
       return await userController.login(input)
     } catch (error) {
@@ -36,7 +36,7 @@ export const authRouter = t.router({
     }
   }),
 
-  loginWithGoogle: publicProcedure.input(loginGoogleSchema).mutation(async ({ input }) => {
+  loginWithGoogle: protectedProcedure.input(loginGoogleSchema).mutation(async ({ input }) => {
     try {
       return await userController.loginWithGoogle(input)
     } catch (error) {
@@ -47,7 +47,7 @@ export const authRouter = t.router({
     }
   }),
 
-  verifyEmail: publicProcedure.input(verifyEmailSchema).query(async ({ input }) => {
+  verifyEmail: protectedProcedure.input(verifyEmailSchema).query(async ({ input }) => {
     try {
       return await userController.verifyEmail(input)
     } catch (error) {
@@ -59,7 +59,7 @@ export const authRouter = t.router({
     }
   }),
 
-  refreshToken: publicProcedure.input(refreshTokenSchema).mutation(async ({ input }) => {
+  refreshToken: protectedProcedure.input(refreshTokenSchema).mutation(async ({ input }) => {
     try {
       return await userController.refreshToken(input)
     } catch (error) {
@@ -70,7 +70,7 @@ export const authRouter = t.router({
     }
   }),
 
-  resendEmailVerification: publicProcedure.input(resendEmailVerificationSchema).mutation(async ({ input }) => {
+  resendEmailVerification: protectedProcedure.input(resendEmailVerificationSchema).mutation(async ({ input }) => {
     try {
       return await userController.resendEmailVerification(input)
     } catch (error) {
@@ -81,7 +81,7 @@ export const authRouter = t.router({
     }
   }),
 
-  requestPasswordReset: publicProcedure.input(requestPasswordResetSchema).mutation(async ({ input }) => {
+  requestPasswordReset: protectedProcedure.input(requestPasswordResetSchema).mutation(async ({ input }) => {
     try {
       return await userController.requestPasswordReset(input)
     } catch (error) {
@@ -92,7 +92,7 @@ export const authRouter = t.router({
     }
   }),
 
-  resetPassword: publicProcedure.input(resetPasswordSchema).mutation(async ({ input }) => {
+  resetPassword: protectedProcedure.input(resetPasswordSchema).mutation(async ({ input }) => {
     try {
       return await userController.resetPassword(input)
     } catch (error) {

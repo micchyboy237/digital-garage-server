@@ -1,10 +1,10 @@
 import { z } from "zod"
 import { StringWithAggregatesFilterObjectSchema } from "./StringWithAggregatesFilter.schema"
-import { IntNullableWithAggregatesFilterObjectSchema } from "./IntNullableWithAggregatesFilter.schema"
-import { FloatNullableWithAggregatesFilterObjectSchema } from "./FloatNullableWithAggregatesFilter.schema"
-import { EnumPaymentIntervalWithAggregatesFilterObjectSchema } from "./EnumPaymentIntervalWithAggregatesFilter.schema"
-import { PaymentIntervalSchema } from "../enums/PaymentInterval.schema"
-import { DateTimeWithAggregatesFilterObjectSchema } from "./DateTimeWithAggregatesFilter.schema"
+import { EnumSubscriptionPlanNullableWithAggregatesFilterObjectSchema } from "./EnumSubscriptionPlanNullableWithAggregatesFilter.schema"
+import { SubscriptionPlanSchema } from "../enums/SubscriptionPlan.schema"
+import { EnumSubscriptionStatusWithAggregatesFilterObjectSchema } from "./EnumSubscriptionStatusWithAggregatesFilter.schema"
+import { SubscriptionStatusSchema } from "../enums/SubscriptionStatus.schema"
+import { DateTimeNullableWithAggregatesFilterObjectSchema } from "./DateTimeNullableWithAggregatesFilter.schema"
 
 import type { Prisma } from "@prisma/client"
 
@@ -27,21 +27,27 @@ const Schema: z.ZodType<Prisma.SubscriptionScalarWhereWithAggregatesInput> = z
       ])
       .optional(),
     id: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
-    name: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
-    freeTrialDuration: z
-      .union([z.lazy(() => IntNullableWithAggregatesFilterObjectSchema), z.number()])
+    productId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
+    plan: z
+      .union([z.lazy(() => EnumSubscriptionPlanNullableWithAggregatesFilterObjectSchema), z.lazy(() => SubscriptionPlanSchema)])
       .optional()
       .nullable(),
-    price: z
-      .union([z.lazy(() => FloatNullableWithAggregatesFilterObjectSchema), z.number()])
-      .optional()
-      .nullable(),
-    currency: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
-    paymentInterval: z
-      .union([z.lazy(() => EnumPaymentIntervalWithAggregatesFilterObjectSchema), z.lazy(() => PaymentIntervalSchema)])
+    status: z
+      .union([z.lazy(() => EnumSubscriptionStatusWithAggregatesFilterObjectSchema), z.lazy(() => SubscriptionStatusSchema)])
       .optional(),
-    createdAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
-    updatedAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
+    startDate: z
+      .union([z.lazy(() => DateTimeNullableWithAggregatesFilterObjectSchema), z.coerce.date()])
+      .optional()
+      .nullable(),
+    endDate: z
+      .union([z.lazy(() => DateTimeNullableWithAggregatesFilterObjectSchema), z.coerce.date()])
+      .optional()
+      .nullable(),
+    expiresAt: z
+      .union([z.lazy(() => DateTimeNullableWithAggregatesFilterObjectSchema), z.coerce.date()])
+      .optional()
+      .nullable(),
+    userId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
   })
   .strict()
 

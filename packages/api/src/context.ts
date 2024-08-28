@@ -1,31 +1,39 @@
 import { prisma } from "@boilerplate/database"
 import { inferAsyncReturnType } from "@trpc/server"
 import { CreateExpressContextOptions } from "@trpc/server/adapters/express"
-import jwt from "jsonwebtoken"
 
 export interface ContextType {
   prisma: typeof prisma
+  session: Awaited<ReturnType<typeof prisma.session.findUnique>> | null
   user: Awaited<ReturnType<typeof prisma.user.findUnique>> | null
 }
 
 export const createContext = async ({ req, res }: CreateExpressContextOptions): Promise<ContextType> => {
-  const getUserFromHeader = async () => {
+  const getSessionFromHeader = async () => {
     if (req.headers.authorization) {
-      const token = req.headers.authorization.split(" ")[1]
+      const token = req.headers.authorization.slice("Bearer ".length)
       try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || "") as string
-        const user = await prisma.user.findUnique({ where: { id: decoded } })
-        return user
+        // const decoded = jwt.verify(token, process.env.JWT_SECRET || "") as string
+        const session = await prisma.session.findUnique({ where: { token } })
+        return session
       } catch (error) {
         return null
       }
     }
     return null
   }
+  const getUserFromSession = async (session: Awaited<ReturnType<typeof prisma.session.findUnique>>) => {
+    if (!session) {
+      return null
+    }
 
-  const user = await getUserFromHeader()
+    return await prisma.user.findUnique({ where: { id: session.userId } })
+  }
 
-  return { prisma, user }
+  const session = await getSessionFromHeader()
+  const user = await getUserFromSession(session)
+
+  return { prisma, session, user }
 }
 
 export type Context = inferAsyncReturnType<typeof createContext>

@@ -6,8 +6,12 @@ export const SessionPlain = t.Object(
   {
     id: t.String({ additionalProperties: true }),
     token: t.String({ additionalProperties: true }),
-    createdAt: t.Date({ additionalProperties: true }),
     expiresAt: t.Date({ additionalProperties: true }),
+    provider: t.Union(
+      [t.Literal("EMAIL_PASSWORD"), t.Literal("GOOGLE"), t.Literal("APPLE")],
+      { additionalProperties: true },
+    ),
+    deviceFingerprint: t.String({ additionalProperties: true }),
     userId: t.String({ additionalProperties: true }),
   },
   { additionalProperties: true },
@@ -15,20 +19,24 @@ export const SessionPlain = t.Object(
 
 export const SessionRelations = t.Object(
   {
-    user: t.Object(
-      {
-        id: t.String({ additionalProperties: true }),
-        role: t.Union([t.Literal("admin"), t.Literal("user")], {
-          additionalProperties: true,
-        }),
-        firstName: __nullable__(t.String({ additionalProperties: true })),
-        lastName: __nullable__(t.String({ additionalProperties: true })),
-        email: t.String({ additionalProperties: true }),
-        location: __nullable__(t.String({ additionalProperties: true })),
-        createdAt: t.Date({ additionalProperties: true }),
-        updatedAt: t.Date({ additionalProperties: true }),
-      },
-      { additionalProperties: true },
+    user: __nullable__(
+      t.Object(
+        {
+          id: t.String({ additionalProperties: true }),
+          email: t.String({ additionalProperties: true }),
+          firebaseUid: t.String({ additionalProperties: true }),
+          isEmailVerified: t.Boolean({ additionalProperties: true }),
+          accountStatus: t.Union(
+            [
+              t.Literal("ONBOARDING"),
+              t.Literal("SELECT_SUBSCRIPTION"),
+              t.Literal("ACTIVE"),
+            ],
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
     ),
   },
   { additionalProperties: true },
@@ -38,31 +46,19 @@ export const SessionPlainInput = t.Object(
   {
     token: t.String({ additionalProperties: true }),
     expiresAt: t.Date({ additionalProperties: true }),
+    provider: t.Union(
+      [t.Literal("EMAIL_PASSWORD"), t.Literal("GOOGLE"), t.Literal("APPLE")],
+      { additionalProperties: true },
+    ),
+    deviceFingerprint: t.String({ additionalProperties: true }),
   },
   { additionalProperties: true },
 );
 
 export const SessionRelationsInputCreate = t.Object(
   {
-    user: t.Object(
-      {
-        connect: t.Object(
-          {
-            id: t.String({ additionalProperties: true }),
-          },
-          { additionalProperties: true },
-        ),
-      },
-      { additionalProperties: true },
-    ),
-  },
-  { additionalProperties: true },
-);
-
-export const SessionRelationsInputUpdate = t.Partial(
-  t.Object(
-    {
-      user: t.Object(
+    user: t.Optional(
+      t.Object(
         {
           connect: t.Object(
             {
@@ -71,6 +67,29 @@ export const SessionRelationsInputUpdate = t.Partial(
             { additionalProperties: true },
           ),
         },
+        { additionalProperties: true },
+      ),
+    ),
+  },
+  { additionalProperties: true },
+);
+
+export const SessionRelationsInputUpdate = t.Partial(
+  t.Object(
+    {
+      user: t.Partial(
+        t.Object(
+          {
+            connect: t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+            disconnect: t.Boolean(),
+          },
+          { additionalProperties: true },
+        ),
         { additionalProperties: true },
       ),
     },
@@ -89,8 +108,16 @@ export const SessionWhere = t.Partial(
           OR: t.Array(Self, { additionalProperties: true }),
           id: t.String({ additionalProperties: true }),
           token: t.String({ additionalProperties: true }),
-          createdAt: t.Date({ additionalProperties: true }),
           expiresAt: t.Date({ additionalProperties: true }),
+          provider: t.Union(
+            [
+              t.Literal("EMAIL_PASSWORD"),
+              t.Literal("GOOGLE"),
+              t.Literal("APPLE"),
+            ],
+            { additionalProperties: true },
+          ),
+          deviceFingerprint: t.String({ additionalProperties: true }),
           userId: t.String({ additionalProperties: true }),
         },
         { additionalProperties: true },
@@ -109,6 +136,14 @@ export const SessionWhereUnique = t.Recursive(
             {
               id: t.String({ additionalProperties: true }),
               token: t.String({ additionalProperties: true }),
+              deviceFingerprint: t.String({ additionalProperties: true }),
+              deviceFingerprint_userId: t.Object(
+                {
+                  deviceFingerprint: t.String({ additionalProperties: true }),
+                  userId: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
             },
             { additionalProperties: true },
           ),
@@ -118,6 +153,18 @@ export const SessionWhereUnique = t.Recursive(
           [
             t.Object({ id: t.String({ additionalProperties: true }) }),
             t.Object({ token: t.String({ additionalProperties: true }) }),
+            t.Object({
+              deviceFingerprint: t.String({ additionalProperties: true }),
+            }),
+            t.Object({
+              deviceFingerprint_userId: t.Object(
+                {
+                  deviceFingerprint: t.String({ additionalProperties: true }),
+                  userId: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
+            }),
           ],
           { additionalProperties: true },
         ),
@@ -131,8 +178,15 @@ export const SessionWhereUnique = t.Recursive(
         ),
         t.Partial(
           t.Object({
-            createdAt: t.Date({ additionalProperties: true }),
             expiresAt: t.Date({ additionalProperties: true }),
+            provider: t.Union(
+              [
+                t.Literal("EMAIL_PASSWORD"),
+                t.Literal("GOOGLE"),
+                t.Literal("APPLE"),
+              ],
+              { additionalProperties: true },
+            ),
             userId: t.String({ additionalProperties: true }),
           }),
           { additionalProperties: true },

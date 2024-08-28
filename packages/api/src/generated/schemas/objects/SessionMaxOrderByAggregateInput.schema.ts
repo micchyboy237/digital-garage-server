@@ -7,8 +7,9 @@ const Schema: z.ZodType<Prisma.SessionMaxOrderByAggregateInput> = z
   .object({
     id: z.lazy(() => SortOrderSchema).optional(),
     token: z.lazy(() => SortOrderSchema).optional(),
-    createdAt: z.lazy(() => SortOrderSchema).optional(),
     expiresAt: z.lazy(() => SortOrderSchema).optional(),
+    provider: z.lazy(() => SortOrderSchema).optional(),
+    deviceFingerprint: z.lazy(() => SortOrderSchema).optional(),
     userId: z.lazy(() => SortOrderSchema).optional(),
   })
   .strict()

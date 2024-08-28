@@ -1,0 +1,154 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator kysely {
+  provider = "prisma-kysely"
+  output   = env("API_TRPC_DATA_MODEL_TYPES_DIR")
+  fileName = "types.ts"
+}
+
+generator docs {
+  provider                  = "node node_modules/prisma-docs-generator"
+  output                    = env("DATABASE_DOCS_DIR")
+  includeRelationFields     = true
+}
+
+generator dbml {
+  provider               = "prisma-dbml-generator"
+  output                 = env("DATABASE_DIAGRAMS_DIR")
+  projectName            = "Digital Garage"
+  projectDatabaseType    = "PostgreSQL"
+  projectNote            = "DB ERD Schema for Digital Garage"
+}
+
+generator erd {
+  provider  = "prisma-erd-generator"
+  theme     = "default"
+  output    = env("DATABASE_ERD_PATH")
+  mmdcPath  = "node_modules/.bin"
+}
+
+generator prismaClassGenerator {
+  provider = "prisma-class-generator"
+  // output = env("API_TRPC_DATA_MODEL_CLASSES_DIR")
+}
+
+generator prismabox {
+  provider                     = "prismabox"
+  output                       = env("API_TRPC_PRISMABOX_DIR")
+  typeboxImportVariableName    = "t"
+  typeboxImportDependencyName  = "elysia"
+  additionalProperties         = true
+  inputModel                   = true
+}
+
+generator trpc {
+  provider             = "prisma-trpc-generator"
+  withZod              = true
+  withMiddleware       = true
+  withShield           = true
+  output               = env("API_TRPC_ROUTERS_ZOD_SCHEMAS_DIR")
+  contextPath          = "../api/src/trpc"
+  isGenerateSelect     = true
+  isGenerateInclude    = true
+}
+
+generator custom_generator {
+  provider = "prisma-generator-fake-data"
+  output   = env("DATABASE_FAKE_DATA_PATH")
+}
+
+generator express {
+  provider = "prisma-generator-express"
+  output   = env("DATABASE_EXPRESS_DIR")
+}
+
+enum AuthProvider {
+  EMAIL_PASSWORD
+  GOOGLE
+  APPLE
+}
+
+enum AccountStatus {
+  ONBOARDING
+  SELECT_SUBSCRIPTION
+  ACTIVE
+}
+
+enum SubscriptionPlan {
+  MONTHLY
+  YEARLY
+  WEEKLY
+  CUSTOM // For any other types of plans or products
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  EXPIRED
+}
+
+enum PaymentStatus {
+  PAID
+  REFUNDED
+  PENDING
+  FAILED
+}
+
+model User {
+  id                String          @id @default(uuid())
+  email             String          @unique
+  password          String?
+  firebaseUid       String          @unique
+  provider          AuthProvider
+  profile           Profile?
+  subscription      Subscription?
+  accountStatus     AccountStatus   @default(ONBOARDING)
+  sessions          Session[]
+}
+
+model Session {
+  id         String   @id @default(uuid())
+  token      String   @unique
+  expiresAt  DateTime
+  userId     String
+  user       User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
+model Profile {
+  id                String          @id @default(uuid())
+  firstName         String?
+  lastName          String?
+  profilePicture    String?
+  location          String?
+  userId            String          @unique
+  user              User?           @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Subscription {
+  id                String              @id @default(uuid())
+  plan              SubscriptionPlan?
+  status            SubscriptionStatus  @default(ACTIVE)
+  startDate         DateTime?
+  endDate           DateTime?
+  userId            String              @unique
+  user              User?               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments          Payment[]           // Relation to Payment model
+}
+
+model Payment {
+  id                String          @id @default(uuid())
+  amount            Float
+  currency          String
+  status            PaymentStatus
+  transactionDate   DateTime
+  subscriptionId    String
+  subscription      Subscription?     @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+}

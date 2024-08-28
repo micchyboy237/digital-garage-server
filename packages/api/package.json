@@ -5,7 +5,7 @@
   "sideEffects": false,
   "scripts": {
     "start": "pnpm with-env ts-node server.ts",
-    "dev": "pnpm with-env nodemon --exec ts-node --transpile-only server.ts",
+    "dev": "pnpm with-env npx tsx watch server.ts",
     "data:gen": "pnpm with-env ts-node src/dataGenerator.ts",
     "lint:fix": "eslint --config .eslintrc.commit.js --fix --cache --ext .ts,.tsx src",
     "lint": "eslint --config .eslintrc.js --ext .ts,.tsx src",
@@ -52,6 +52,7 @@
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.2",
     "ts-node": "^10.9.2",
+    "tsx": "^4.17.0",
     "typescript": "5.3.3"
   }
 }

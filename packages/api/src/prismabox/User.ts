@@ -5,199 +5,82 @@ import { __nullable__ } from "./__nullable__";
 export const UserPlain = t.Object(
   {
     id: t.String({ additionalProperties: true }),
-    role: t.Union([t.Literal("admin"), t.Literal("user")], {
-      additionalProperties: true,
-    }),
-    firstName: __nullable__(t.String({ additionalProperties: true })),
-    lastName: __nullable__(t.String({ additionalProperties: true })),
     email: t.String({ additionalProperties: true }),
-    location: __nullable__(t.String({ additionalProperties: true })),
-    createdAt: t.Date({ additionalProperties: true }),
-    updatedAt: t.Date({ additionalProperties: true }),
+    firebaseUid: t.String({ additionalProperties: true }),
+    isEmailVerified: t.Boolean({ additionalProperties: true }),
+    accountStatus: t.Union(
+      [
+        t.Literal("ONBOARDING"),
+        t.Literal("SELECT_SUBSCRIPTION"),
+        t.Literal("ACTIVE"),
+      ],
+      { additionalProperties: true },
+    ),
   },
   { additionalProperties: true },
 );
 
 export const UserRelations = t.Object(
   {
-    profilePicture: __nullable__(
+    profile: __nullable__(
       t.Object(
         {
           id: t.String({ additionalProperties: true }),
-          type: t.Union(
-            [t.Literal("photo"), t.Literal("video"), t.Literal("document")],
-            { additionalProperties: true },
-          ),
-          mimeType: t.String({ additionalProperties: true }),
-          url: t.String({ additionalProperties: true }),
-          createdAt: t.Date({ additionalProperties: true }),
-          updatedAt: t.Date({ additionalProperties: true }),
-          documentId: __nullable__(t.String({ additionalProperties: true })),
-          userId: __nullable__(t.String({ additionalProperties: true })),
-          vehicleOwnershipId: __nullable__(
+          firstName: __nullable__(t.String({ additionalProperties: true })),
+          lastName: __nullable__(t.String({ additionalProperties: true })),
+          profilePicture: __nullable__(
             t.String({ additionalProperties: true }),
           ),
-        },
-        { additionalProperties: true },
-      ),
-    ),
-    auth: __nullable__(
-      t.Object(
-        {
-          id: t.String({ additionalProperties: true }),
-          password: __nullable__(t.String({ additionalProperties: true })),
-          googleId: __nullable__(t.String({ additionalProperties: true })),
-          emailVerificationCode: __nullable__(
-            t.String({ additionalProperties: true }),
-          ),
-          emailVerificationExpiry: __nullable__(
-            t.Date({ additionalProperties: true }),
-          ),
-          isEmailVerified: t.Boolean({ additionalProperties: true }),
-          createdAt: t.Date({ additionalProperties: true }),
-          updatedAt: t.Date({ additionalProperties: true }),
-          userId: t.String({ additionalProperties: true }),
-          passwordResetToken: __nullable__(
-            t.String({ additionalProperties: true }),
-          ),
-          passwordResetExpiry: __nullable__(
-            t.Date({ additionalProperties: true }),
-          ),
-        },
-        { additionalProperties: true },
-      ),
-    ),
-    session: t.Array(
-      t.Object(
-        {
-          id: t.String({ additionalProperties: true }),
-          token: t.String({ additionalProperties: true }),
-          createdAt: t.Date({ additionalProperties: true }),
-          expiresAt: t.Date({ additionalProperties: true }),
+          location: __nullable__(t.String({ additionalProperties: true })),
           userId: t.String({ additionalProperties: true }),
         },
         { additionalProperties: true },
       ),
-      { additionalProperties: true },
     ),
     subscription: __nullable__(
       t.Object(
         {
           id: t.String({ additionalProperties: true }),
-          subscriptionId: t.String({ additionalProperties: true }),
-          userId: t.String({ additionalProperties: true }),
+          productId: t.String({ additionalProperties: true }),
+          plan: __nullable__(
+            t.Union(
+              [
+                t.Literal("DAY"),
+                t.Literal("WEEK"),
+                t.Literal("MONTH"),
+                t.Literal("YEAR"),
+              ],
+              { additionalProperties: true },
+            ),
+          ),
           status: t.Union(
-            [t.Literal("active"), t.Literal("cancelled"), t.Literal("paused")],
+            [t.Literal("ACTIVE"), t.Literal("CANCELED"), t.Literal("EXPIRED")],
             { additionalProperties: true },
           ),
-          trialStartDate: __nullable__(t.Date({ additionalProperties: true })),
-          trialEndDate: __nullable__(t.Date({ additionalProperties: true })),
           startDate: __nullable__(t.Date({ additionalProperties: true })),
           endDate: __nullable__(t.Date({ additionalProperties: true })),
-          stripeSubscriptionId: __nullable__(
-            t.String({ additionalProperties: true }),
-          ),
-          iapSubscriptionId: __nullable__(
-            t.String({ additionalProperties: true }),
-          ),
-          createdAt: t.Date({ additionalProperties: true }),
-          updatedAt: t.Date({ additionalProperties: true }),
-        },
-        { additionalProperties: true },
-      ),
-    ),
-    vehicleOwnerships: t.Array(
-      t.Object(
-        {
-          id: t.String({ additionalProperties: true }),
+          expiresAt: __nullable__(t.Date({ additionalProperties: true })),
           userId: t.String({ additionalProperties: true }),
-          vehicleId: t.String({ additionalProperties: true }),
-          description: __nullable__(t.String({ additionalProperties: true })),
-          startDate: __nullable__(t.Date({ additionalProperties: true })),
-          endDate: __nullable__(t.Date({ additionalProperties: true })),
-          isCurrentOwner: t.Boolean({ additionalProperties: true }),
-          isTemporaryOwner: t.Boolean({ additionalProperties: true }),
-          canEditDocuments: t.Boolean({ additionalProperties: true }),
-          createdAt: t.Date({ additionalProperties: true }),
-          updatedAt: t.Date({ additionalProperties: true }),
         },
         { additionalProperties: true },
       ),
-      { additionalProperties: true },
     ),
-    documents: t.Array(
+    sessions: t.Array(
       t.Object(
         {
           id: t.String({ additionalProperties: true }),
-          type: t.Union([t.Literal("general"), t.Literal("photo")], {
-            additionalProperties: true,
-          }),
-          date: t.Date({ additionalProperties: true }),
-          title: __nullable__(t.String({ additionalProperties: true })),
-          description: __nullable__(t.String({ additionalProperties: true })),
-          createdAt: t.Date({ additionalProperties: true }),
-          updatedAt: t.Date({ additionalProperties: true }),
-          vehicleId: __nullable__(t.String({ additionalProperties: true })),
-          createdById: t.String({ additionalProperties: true }),
-          vehicleEventId: __nullable__(
-            t.String({ additionalProperties: true }),
-          ),
-        },
-        { additionalProperties: true },
-      ),
-      { additionalProperties: true },
-    ),
-    events: t.Array(
-      t.Object(
-        {
-          id: t.String({ additionalProperties: true }),
-          type: t.Union(
+          token: t.String({ additionalProperties: true }),
+          expiresAt: t.Date({ additionalProperties: true }),
+          provider: t.Union(
             [
-              t.Literal("post"),
-              t.Literal("reminder"),
-              t.Literal("invoice"),
-              t.Literal("document"),
+              t.Literal("EMAIL_PASSWORD"),
+              t.Literal("GOOGLE"),
+              t.Literal("APPLE"),
             ],
             { additionalProperties: true },
           ),
-          header: t.String({ additionalProperties: true }),
-          description: __nullable__(t.String({ additionalProperties: true })),
-          date: t.Date({ additionalProperties: true }),
-          price: __nullable__(t.Number({ additionalProperties: true })),
-          vehicleId: __nullable__(t.String({ additionalProperties: true })),
-          createdById: __nullable__(t.String({ additionalProperties: true })),
-          vehicleOwnershipId: __nullable__(
-            t.String({ additionalProperties: true }),
-          ),
-          createdAt: t.Date({ additionalProperties: true }),
-          updatedAt: t.Date({ additionalProperties: true }),
-        },
-        { additionalProperties: true },
-      ),
-      { additionalProperties: true },
-    ),
-    notificationSubs: t.Array(
-      t.Object(
-        {
-          id: t.String({ additionalProperties: true }),
-          category: t.String({ additionalProperties: true }),
-          userId: __nullable__(t.String({ additionalProperties: true })),
-          createdAt: t.Date({ additionalProperties: true }),
-          updatedAt: t.Date({ additionalProperties: true }),
-        },
-        { additionalProperties: true },
-      ),
-      { additionalProperties: true },
-    ),
-    notifications: t.Array(
-      t.Object(
-        {
-          id: t.String({ additionalProperties: true }),
-          title: t.String({ additionalProperties: true }),
-          message: t.String({ additionalProperties: true }),
+          deviceFingerprint: t.String({ additionalProperties: true }),
           userId: t.String({ additionalProperties: true }),
-          createdAt: t.Date({ additionalProperties: true }),
-          updatedAt: t.Date({ additionalProperties: true }),
         },
         { additionalProperties: true },
       ),
@@ -209,62 +92,29 @@ export const UserRelations = t.Object(
 
 export const UserPlainInput = t.Object(
   {
-    role: t.Union([t.Literal("admin"), t.Literal("user")], {
-      additionalProperties: true,
-    }),
-    firstName: t.Optional(
-      __nullable__(t.String({ additionalProperties: true })),
-    ),
-    lastName: t.Optional(
-      __nullable__(t.String({ additionalProperties: true })),
-    ),
     email: t.String({ additionalProperties: true }),
-    location: t.Optional(
-      __nullable__(t.String({ additionalProperties: true })),
+    isEmailVerified: t.Boolean({ additionalProperties: true }),
+    accountStatus: t.Union(
+      [
+        t.Literal("ONBOARDING"),
+        t.Literal("SELECT_SUBSCRIPTION"),
+        t.Literal("ACTIVE"),
+      ],
+      { additionalProperties: true },
     ),
-    updatedAt: t.Date({ additionalProperties: true }),
   },
   { additionalProperties: true },
 );
 
 export const UserRelationsInputCreate = t.Object(
   {
-    profilePicture: t.Optional(
+    profile: t.Optional(
       t.Object(
         {
           connect: t.Object(
             {
               id: t.String({ additionalProperties: true }),
             },
-            { additionalProperties: true },
-          ),
-        },
-        { additionalProperties: true },
-      ),
-    ),
-    auth: t.Optional(
-      t.Object(
-        {
-          connect: t.Object(
-            {
-              id: t.String({ additionalProperties: true }),
-            },
-            { additionalProperties: true },
-          ),
-        },
-        { additionalProperties: true },
-      ),
-    ),
-    session: t.Optional(
-      t.Object(
-        {
-          connect: t.Array(
-            t.Object(
-              {
-                id: t.String({ additionalProperties: true }),
-              },
-              { additionalProperties: true },
-            ),
             { additionalProperties: true },
           ),
         },
@@ -284,71 +134,7 @@ export const UserRelationsInputCreate = t.Object(
         { additionalProperties: true },
       ),
     ),
-    vehicleOwnerships: t.Optional(
-      t.Object(
-        {
-          connect: t.Array(
-            t.Object(
-              {
-                id: t.String({ additionalProperties: true }),
-              },
-              { additionalProperties: true },
-            ),
-            { additionalProperties: true },
-          ),
-        },
-        { additionalProperties: true },
-      ),
-    ),
-    documents: t.Optional(
-      t.Object(
-        {
-          connect: t.Array(
-            t.Object(
-              {
-                id: t.String({ additionalProperties: true }),
-              },
-              { additionalProperties: true },
-            ),
-            { additionalProperties: true },
-          ),
-        },
-        { additionalProperties: true },
-      ),
-    ),
-    events: t.Optional(
-      t.Object(
-        {
-          connect: t.Array(
-            t.Object(
-              {
-                id: t.String({ additionalProperties: true }),
-              },
-              { additionalProperties: true },
-            ),
-            { additionalProperties: true },
-          ),
-        },
-        { additionalProperties: true },
-      ),
-    ),
-    notificationSubs: t.Optional(
-      t.Object(
-        {
-          connect: t.Array(
-            t.Object(
-              {
-                id: t.String({ additionalProperties: true }),
-              },
-              { additionalProperties: true },
-            ),
-            { additionalProperties: true },
-          ),
-        },
-        { additionalProperties: true },
-      ),
-    ),
-    notifications: t.Optional(
+    sessions: t.Optional(
       t.Object(
         {
           connect: t.Array(
@@ -371,7 +157,7 @@ export const UserRelationsInputCreate = t.Object(
 export const UserRelationsInputUpdate = t.Partial(
   t.Object(
     {
-      profilePicture: t.Partial(
+      profile: t.Partial(
         t.Object(
           {
             connect: t.Object(
@@ -381,47 +167,6 @@ export const UserRelationsInputUpdate = t.Partial(
               { additionalProperties: true },
             ),
             disconnect: t.Boolean(),
-          },
-          { additionalProperties: true },
-        ),
-        { additionalProperties: true },
-      ),
-      auth: t.Partial(
-        t.Object(
-          {
-            connect: t.Object(
-              {
-                id: t.String({ additionalProperties: true }),
-              },
-              { additionalProperties: true },
-            ),
-            disconnect: t.Boolean(),
-          },
-          { additionalProperties: true },
-        ),
-        { additionalProperties: true },
-      ),
-      session: t.Partial(
-        t.Object(
-          {
-            connect: t.Array(
-              t.Object(
-                {
-                  id: t.String({ additionalProperties: true }),
-                },
-                { additionalProperties: true },
-              ),
-              { additionalProperties: true },
-            ),
-            disconnect: t.Array(
-              t.Object(
-                {
-                  id: t.String({ additionalProperties: true }),
-                },
-                { additionalProperties: true },
-              ),
-              { additionalProperties: true },
-            ),
           },
           { additionalProperties: true },
         ),
@@ -442,111 +187,7 @@ export const UserRelationsInputUpdate = t.Partial(
         ),
         { additionalProperties: true },
       ),
-      vehicleOwnerships: t.Partial(
-        t.Object(
-          {
-            connect: t.Array(
-              t.Object(
-                {
-                  id: t.String({ additionalProperties: true }),
-                },
-                { additionalProperties: true },
-              ),
-              { additionalProperties: true },
-            ),
-            disconnect: t.Array(
-              t.Object(
-                {
-                  id: t.String({ additionalProperties: true }),
-                },
-                { additionalProperties: true },
-              ),
-              { additionalProperties: true },
-            ),
-          },
-          { additionalProperties: true },
-        ),
-        { additionalProperties: true },
-      ),
-      documents: t.Partial(
-        t.Object(
-          {
-            connect: t.Array(
-              t.Object(
-                {
-                  id: t.String({ additionalProperties: true }),
-                },
-                { additionalProperties: true },
-              ),
-              { additionalProperties: true },
-            ),
-            disconnect: t.Array(
-              t.Object(
-                {
-                  id: t.String({ additionalProperties: true }),
-                },
-                { additionalProperties: true },
-              ),
-              { additionalProperties: true },
-            ),
-          },
-          { additionalProperties: true },
-        ),
-        { additionalProperties: true },
-      ),
-      events: t.Partial(
-        t.Object(
-          {
-            connect: t.Array(
-              t.Object(
-                {
-                  id: t.String({ additionalProperties: true }),
-                },
-                { additionalProperties: true },
-              ),
-              { additionalProperties: true },
-            ),
-            disconnect: t.Array(
-              t.Object(
-                {
-                  id: t.String({ additionalProperties: true }),
-                },
-                { additionalProperties: true },
-              ),
-              { additionalProperties: true },
-            ),
-          },
-          { additionalProperties: true },
-        ),
-        { additionalProperties: true },
-      ),
-      notificationSubs: t.Partial(
-        t.Object(
-          {
-            connect: t.Array(
-              t.Object(
-                {
-                  id: t.String({ additionalProperties: true }),
-                },
-                { additionalProperties: true },
-              ),
-              { additionalProperties: true },
-            ),
-            disconnect: t.Array(
-              t.Object(
-                {
-                  id: t.String({ additionalProperties: true }),
-                },
-                { additionalProperties: true },
-              ),
-              { additionalProperties: true },
-            ),
-          },
-          { additionalProperties: true },
-        ),
-        { additionalProperties: true },
-      ),
-      notifications: t.Partial(
+      sessions: t.Partial(
         t.Object(
           {
             connect: t.Array(
@@ -587,15 +228,17 @@ export const UserWhere = t.Partial(
           NOT: t.Union([Self, t.Array(Self, { additionalProperties: true })]),
           OR: t.Array(Self, { additionalProperties: true }),
           id: t.String({ additionalProperties: true }),
-          role: t.Union([t.Literal("admin"), t.Literal("user")], {
-            additionalProperties: true,
-          }),
-          firstName: t.String({ additionalProperties: true }),
-          lastName: t.String({ additionalProperties: true }),
           email: t.String({ additionalProperties: true }),
-          location: t.String({ additionalProperties: true }),
-          createdAt: t.Date({ additionalProperties: true }),
-          updatedAt: t.Date({ additionalProperties: true }),
+          firebaseUid: t.String({ additionalProperties: true }),
+          isEmailVerified: t.Boolean({ additionalProperties: true }),
+          accountStatus: t.Union(
+            [
+              t.Literal("ONBOARDING"),
+              t.Literal("SELECT_SUBSCRIPTION"),
+              t.Literal("ACTIVE"),
+            ],
+            { additionalProperties: true },
+          ),
         },
         { additionalProperties: true },
       ),
@@ -613,6 +256,7 @@ export const UserWhereUnique = t.Recursive(
             {
               id: t.String({ additionalProperties: true }),
               email: t.String({ additionalProperties: true }),
+              firebaseUid: t.String({ additionalProperties: true }),
             },
             { additionalProperties: true },
           ),
@@ -622,6 +266,7 @@ export const UserWhereUnique = t.Recursive(
           [
             t.Object({ id: t.String({ additionalProperties: true }) }),
             t.Object({ email: t.String({ additionalProperties: true }) }),
+            t.Object({ firebaseUid: t.String({ additionalProperties: true }) }),
           ],
           { additionalProperties: true },
         ),
@@ -635,14 +280,15 @@ export const UserWhereUnique = t.Recursive(
         ),
         t.Partial(
           t.Object({
-            role: t.Union([t.Literal("admin"), t.Literal("user")], {
-              additionalProperties: true,
-            }),
-            firstName: t.String({ additionalProperties: true }),
-            lastName: t.String({ additionalProperties: true }),
-            location: t.String({ additionalProperties: true }),
-            createdAt: t.Date({ additionalProperties: true }),
-            updatedAt: t.Date({ additionalProperties: true }),
+            isEmailVerified: t.Boolean({ additionalProperties: true }),
+            accountStatus: t.Union(
+              [
+                t.Literal("ONBOARDING"),
+                t.Literal("SELECT_SUBSCRIPTION"),
+                t.Literal("ACTIVE"),
+              ],
+              { additionalProperties: true },
+            ),
           }),
           { additionalProperties: true },
         ),

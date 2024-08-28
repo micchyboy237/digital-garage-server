@@ -5,43 +5,64 @@ import { __nullable__ } from "./__nullable__";
 export const SubscriptionPlain = t.Object(
   {
     id: t.String({ additionalProperties: true }),
-    name: t.String({ additionalProperties: true }),
-    freeTrialDuration: __nullable__(t.Integer({ additionalProperties: true })),
-    price: __nullable__(t.Number({ additionalProperties: true })),
-    currency: t.String({ additionalProperties: true }),
-    paymentInterval: t.Union([t.Literal("monthly")], {
-      additionalProperties: true,
-    }),
-    createdAt: t.Date({ additionalProperties: true }),
-    updatedAt: t.Date({ additionalProperties: true }),
+    productId: t.String({ additionalProperties: true }),
+    plan: __nullable__(
+      t.Union(
+        [
+          t.Literal("DAY"),
+          t.Literal("WEEK"),
+          t.Literal("MONTH"),
+          t.Literal("YEAR"),
+        ],
+        { additionalProperties: true },
+      ),
+    ),
+    status: t.Union(
+      [t.Literal("ACTIVE"), t.Literal("CANCELED"), t.Literal("EXPIRED")],
+      { additionalProperties: true },
+    ),
+    startDate: __nullable__(t.Date({ additionalProperties: true })),
+    endDate: __nullable__(t.Date({ additionalProperties: true })),
+    expiresAt: __nullable__(t.Date({ additionalProperties: true })),
+    userId: t.String({ additionalProperties: true }),
   },
   { additionalProperties: true },
 );
 
 export const SubscriptionRelations = t.Object(
   {
-    userSubscriptions: t.Array(
+    user: __nullable__(
       t.Object(
         {
           id: t.String({ additionalProperties: true }),
-          subscriptionId: t.String({ additionalProperties: true }),
-          userId: t.String({ additionalProperties: true }),
-          status: t.Union(
-            [t.Literal("active"), t.Literal("cancelled"), t.Literal("paused")],
+          email: t.String({ additionalProperties: true }),
+          firebaseUid: t.String({ additionalProperties: true }),
+          isEmailVerified: t.Boolean({ additionalProperties: true }),
+          accountStatus: t.Union(
+            [
+              t.Literal("ONBOARDING"),
+              t.Literal("SELECT_SUBSCRIPTION"),
+              t.Literal("ACTIVE"),
+            ],
             { additionalProperties: true },
           ),
-          trialStartDate: __nullable__(t.Date({ additionalProperties: true })),
-          trialEndDate: __nullable__(t.Date({ additionalProperties: true })),
-          startDate: __nullable__(t.Date({ additionalProperties: true })),
-          endDate: __nullable__(t.Date({ additionalProperties: true })),
-          stripeSubscriptionId: __nullable__(
-            t.String({ additionalProperties: true }),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+    payments: t.Array(
+      t.Object(
+        {
+          id: t.String({ additionalProperties: true }),
+          price: t.Number({ additionalProperties: true }),
+          currencyCode: t.String({ additionalProperties: true }),
+          status: t.Union(
+            [t.Literal("PAID"), t.Literal("REFUNDED"), t.Literal("FAILED")],
+            { additionalProperties: true },
           ),
-          iapSubscriptionId: __nullable__(
-            t.String({ additionalProperties: true }),
-          ),
-          createdAt: t.Date({ additionalProperties: true }),
-          updatedAt: t.Date({ additionalProperties: true }),
+          transactionId: t.String({ additionalProperties: true }),
+          transactionDate: t.Date({ additionalProperties: true }),
+          subscriptionId: t.String({ additionalProperties: true }),
         },
         { additionalProperties: true },
       ),
@@ -53,23 +74,46 @@ export const SubscriptionRelations = t.Object(
 
 export const SubscriptionPlainInput = t.Object(
   {
-    name: t.String({ additionalProperties: true }),
-    freeTrialDuration: t.Optional(
-      __nullable__(t.Integer({ additionalProperties: true })),
+    plan: t.Optional(
+      __nullable__(
+        t.Union(
+          [
+            t.Literal("DAY"),
+            t.Literal("WEEK"),
+            t.Literal("MONTH"),
+            t.Literal("YEAR"),
+          ],
+          { additionalProperties: true },
+        ),
+      ),
     ),
-    price: t.Optional(__nullable__(t.Number({ additionalProperties: true }))),
-    currency: t.String({ additionalProperties: true }),
-    paymentInterval: t.Union([t.Literal("monthly")], {
-      additionalProperties: true,
-    }),
-    updatedAt: t.Date({ additionalProperties: true }),
+    status: t.Union(
+      [t.Literal("ACTIVE"), t.Literal("CANCELED"), t.Literal("EXPIRED")],
+      { additionalProperties: true },
+    ),
+    startDate: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
+    endDate: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
+    expiresAt: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
   },
   { additionalProperties: true },
 );
 
 export const SubscriptionRelationsInputCreate = t.Object(
   {
-    userSubscriptions: t.Optional(
+    user: t.Optional(
+      t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+    payments: t.Optional(
       t.Object(
         {
           connect: t.Array(
@@ -92,7 +136,22 @@ export const SubscriptionRelationsInputCreate = t.Object(
 export const SubscriptionRelationsInputUpdate = t.Partial(
   t.Object(
     {
-      userSubscriptions: t.Partial(
+      user: t.Partial(
+        t.Object(
+          {
+            connect: t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+            disconnect: t.Boolean(),
+          },
+          { additionalProperties: true },
+        ),
+        { additionalProperties: true },
+      ),
+      payments: t.Partial(
         t.Object(
           {
             connect: t.Array(
@@ -133,15 +192,24 @@ export const SubscriptionWhere = t.Partial(
           NOT: t.Union([Self, t.Array(Self, { additionalProperties: true })]),
           OR: t.Array(Self, { additionalProperties: true }),
           id: t.String({ additionalProperties: true }),
-          name: t.String({ additionalProperties: true }),
-          freeTrialDuration: t.Integer({ additionalProperties: true }),
-          price: t.Number({ additionalProperties: true }),
-          currency: t.String({ additionalProperties: true }),
-          paymentInterval: t.Union([t.Literal("monthly")], {
-            additionalProperties: true,
-          }),
-          createdAt: t.Date({ additionalProperties: true }),
-          updatedAt: t.Date({ additionalProperties: true }),
+          productId: t.String({ additionalProperties: true }),
+          plan: t.Union(
+            [
+              t.Literal("DAY"),
+              t.Literal("WEEK"),
+              t.Literal("MONTH"),
+              t.Literal("YEAR"),
+            ],
+            { additionalProperties: true },
+          ),
+          status: t.Union(
+            [t.Literal("ACTIVE"), t.Literal("CANCELED"), t.Literal("EXPIRED")],
+            { additionalProperties: true },
+          ),
+          startDate: t.Date({ additionalProperties: true }),
+          endDate: t.Date({ additionalProperties: true }),
+          expiresAt: t.Date({ additionalProperties: true }),
+          userId: t.String({ additionalProperties: true }),
         },
         { additionalProperties: true },
       ),
@@ -156,14 +224,21 @@ export const SubscriptionWhereUnique = t.Recursive(
       [
         t.Partial(
           t.Object(
-            { id: t.String({ additionalProperties: true }) },
+            {
+              id: t.String({ additionalProperties: true }),
+              userId: t.String({ additionalProperties: true }),
+            },
             { additionalProperties: true },
           ),
           { additionalProperties: true },
         ),
-        t.Union([t.Object({ id: t.String({ additionalProperties: true }) })], {
-          additionalProperties: true,
-        }),
+        t.Union(
+          [
+            t.Object({ id: t.String({ additionalProperties: true }) }),
+            t.Object({ userId: t.String({ additionalProperties: true }) }),
+          ],
+          { additionalProperties: true },
+        ),
         t.Partial(
           t.Object({
             AND: t.Union([Self, t.Array(Self, { additionalProperties: true })]),
@@ -174,15 +249,27 @@ export const SubscriptionWhereUnique = t.Recursive(
         ),
         t.Partial(
           t.Object({
-            name: t.String({ additionalProperties: true }),
-            freeTrialDuration: t.Integer({ additionalProperties: true }),
-            price: t.Number({ additionalProperties: true }),
-            currency: t.String({ additionalProperties: true }),
-            paymentInterval: t.Union([t.Literal("monthly")], {
-              additionalProperties: true,
-            }),
-            createdAt: t.Date({ additionalProperties: true }),
-            updatedAt: t.Date({ additionalProperties: true }),
+            productId: t.String({ additionalProperties: true }),
+            plan: t.Union(
+              [
+                t.Literal("DAY"),
+                t.Literal("WEEK"),
+                t.Literal("MONTH"),
+                t.Literal("YEAR"),
+              ],
+              { additionalProperties: true },
+            ),
+            status: t.Union(
+              [
+                t.Literal("ACTIVE"),
+                t.Literal("CANCELED"),
+                t.Literal("EXPIRED"),
+              ],
+              { additionalProperties: true },
+            ),
+            startDate: t.Date({ additionalProperties: true }),
+            endDate: t.Date({ additionalProperties: true }),
+            expiresAt: t.Date({ additionalProperties: true }),
           }),
           { additionalProperties: true },
         ),

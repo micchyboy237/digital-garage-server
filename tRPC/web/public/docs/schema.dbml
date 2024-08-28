@@ -1,0 +1,99 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Project "Digital Garage" {
+  database_type: 'PostgreSQL'
+  Note: 'DB ERD Schema for Digital Garage'
+}
+
+Table User {
+  id String [pk]
+  email String [unique, not null]
+  password String
+  firebaseUid String [unique, not null]
+  provider AuthProvider [not null]
+  profile Profile
+  subscription Subscription
+  accountStatus AccountStatus [not null, default: 'ONBOARDING']
+  sessions Session [not null]
+}
+
+Table Session {
+  id String [pk]
+  token String [unique, not null]
+  expiresAt DateTime [not null]
+  userId String [not null]
+  user User
+}
+
+Table Profile {
+  id String [pk]
+  firstName String
+  lastName String
+  profilePicture String
+  location String
+  userId String [unique, not null]
+  user User
+}
+
+Table Subscription {
+  id String [pk]
+  plan SubscriptionPlan
+  status SubscriptionStatus [not null, default: 'ACTIVE']
+  startDate DateTime
+  endDate DateTime
+  userId String [unique, not null]
+  user User
+  payments Payment [not null]
+}
+
+Table Payment {
+  id String [pk]
+  amount Float [not null]
+  currency String [not null]
+  status PaymentStatus [not null]
+  transactionDate DateTime [not null]
+  subscriptionId String [not null]
+  subscription Subscription
+}
+
+Enum AuthProvider {
+  EMAIL_PASSWORD
+  GOOGLE
+  APPLE
+}
+
+Enum AccountStatus {
+  ONBOARDING
+  SELECT_SUBSCRIPTION
+  ACTIVE
+}
+
+Enum SubscriptionPlan {
+  MONTHLY
+  YEARLY
+  WEEKLY
+  CUSTOM
+}
+
+Enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  EXPIRED
+}
+
+Enum PaymentStatus {
+  PAID
+  REFUNDED
+  PENDING
+  FAILED
+}
+
+Ref: Session.userId > User.id [delete: Cascade]
+
+Ref: Profile.userId - User.id [delete: Cascade]
+
+Ref: Subscription.userId - User.id [delete: Cascade]
+
+Ref: Payment.subscriptionId > Subscription.id [delete: Cascade]

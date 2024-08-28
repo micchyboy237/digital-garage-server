@@ -1,18 +1,15 @@
 import { z } from "zod"
-import { UserRoleSchema } from "../enums/UserRole.schema"
+import { AccountStatusSchema } from "../enums/AccountStatus.schema"
 
 import type { Prisma } from "@prisma/client"
 
 const Schema: z.ZodType<Prisma.UserCreateManyInput> = z
   .object({
     id: z.string().optional(),
-    role: z.lazy(() => UserRoleSchema).optional(),
-    firstName: z.string().optional().nullable(),
-    lastName: z.string().optional().nullable(),
     email: z.string(),
-    location: z.string().optional().nullable(),
-    createdAt: z.coerce.date().optional(),
-    updatedAt: z.coerce.date().optional(),
+    firebaseUid: z.string(),
+    isEmailVerified: z.boolean().optional(),
+    accountStatus: z.lazy(() => AccountStatusSchema).optional(),
   })
   .strict()
 

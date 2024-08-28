@@ -4,7 +4,7 @@ import type { Prisma } from "@prisma/client"
 
 const Schema: z.ZodType<Prisma.PaymentAvgAggregateInputType> = z
   .object({
-    amount: z.literal(true).optional(),
+    price: z.literal(true).optional(),
   })
   .strict()
 

@@ -1,3 +1,3 @@
 import { z } from "zod"
 
-export const SessionScalarFieldEnumSchema = z.enum(["id", "token", "createdAt", "expiresAt", "userId"])
+export const SessionScalarFieldEnumSchema = z.enum(["id", "token", "expiresAt", "provider", "deviceFingerprint", "userId"])

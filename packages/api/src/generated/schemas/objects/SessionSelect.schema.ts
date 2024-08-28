@@ -7,8 +7,9 @@ const Schema: z.ZodType<Prisma.SessionSelect> = z
   .object({
     id: z.boolean().optional(),
     token: z.boolean().optional(),
-    createdAt: z.boolean().optional(),
     expiresAt: z.boolean().optional(),
+    provider: z.boolean().optional(),
+    deviceFingerprint: z.boolean().optional(),
     userId: z.boolean().optional(),
     user: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional(),
   })

@@ -1,11 +1,16 @@
 import { initTRPC } from "@trpc/server"
+import SuperJSON from "superjson"
 import { z, ZodObject, ZodTypeAny } from "zod"
 import { Context } from "../context"
 import { appRouter as generatedRouters } from "../generated/routers"
+import { protectedProcedure } from "../trpc"
 import { authRouter } from "./auth.route"
+import { meRouter } from "./me.route"
 import { userRouter } from "./user.route"
 
-const t = initTRPC.context<Context>().create()
+const t = initTRPC.context<Context>().create({
+  transformer: SuperJSON,
+})
 
 const nestAttributes = (flatAttributes: Record<string, string>): Record<string, any> => {
   const nestedAttributes: Record<string, any> = {}
@@ -151,20 +156,40 @@ const extractRelationships = (schema: ZodObject<any>): Relationship[] => {
   return relationships
 }
 
+const adminRouters = t.router({
+  admin: generatedRouters,
+})
 // Create a procedure to return the list of all routes
 const metaRouter = t.router({
-  getRoutes: t.procedure.query(() => {
-    const generatedRoutes = logRoutes(generatedRouters)
+  getRoutes: protectedProcedure.query(() => {
+    const generatedRoutes = logRoutes(adminRouters)
     return generatedRoutes
   }),
 })
+// Create a router for handling webhooks
+const webhookRouter = t.router({
+  handleWebhook: t.procedure
+    .input(
+      z.object({
+        event: z.string(),
+        data: z.any(),
+      }),
+    )
+    .mutation(({ input }) => {
+      console.log("Received webhook event:", input.event)
+      console.log("Data:", input.data)
+      // Process the webhook data here
+      return { success: true }
+    }),
+})
 
 const otherRouters = t.router({
-  oldAuth: authRouter,
-  oldUser: userRouter,
+  me: meRouter,
+  auth: authRouter,
+  user: userRouter,
   meta: metaRouter,
 })
 
-export const appRouter = t.mergeRouters(generatedRouters, otherRouters)
+export const appRouter = t.mergeRouters(otherRouters, adminRouters, webhookRouter)
 
 export type AppRouter = typeof appRouter

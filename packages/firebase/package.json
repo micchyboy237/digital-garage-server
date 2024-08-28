@@ -1,0 +1,11 @@
+{
+  "name": "@boilerplate/firebase",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "npx tsx index.ts"
+  },
+  "devDependencies": {
+    "firebase-admin": "^12.3.1",
+    "firebase-functions": "^5.0.1"
+  }
+}

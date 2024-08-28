@@ -10,8 +10,9 @@ const Schema: z.ZodType<Prisma.SessionOrderByWithAggregationInput> = z
   .object({
     id: z.lazy(() => SortOrderSchema).optional(),
     token: z.lazy(() => SortOrderSchema).optional(),
-    createdAt: z.lazy(() => SortOrderSchema).optional(),
     expiresAt: z.lazy(() => SortOrderSchema).optional(),
+    provider: z.lazy(() => SortOrderSchema).optional(),
+    deviceFingerprint: z.lazy(() => SortOrderSchema).optional(),
     userId: z.lazy(() => SortOrderSchema).optional(),
     _count: z.lazy(() => SessionCountOrderByAggregateInputObjectSchema).optional(),
     _max: z.lazy(() => SessionMaxOrderByAggregateInputObjectSchema).optional(),

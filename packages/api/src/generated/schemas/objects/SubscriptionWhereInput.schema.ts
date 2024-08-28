@@ -1,11 +1,13 @@
 import { z } from "zod"
 import { StringFilterObjectSchema } from "./StringFilter.schema"
-import { IntNullableFilterObjectSchema } from "./IntNullableFilter.schema"
-import { FloatNullableFilterObjectSchema } from "./FloatNullableFilter.schema"
-import { EnumPaymentIntervalFilterObjectSchema } from "./EnumPaymentIntervalFilter.schema"
-import { PaymentIntervalSchema } from "../enums/PaymentInterval.schema"
-import { DateTimeFilterObjectSchema } from "./DateTimeFilter.schema"
-import { UserSubscriptionListRelationFilterObjectSchema } from "./UserSubscriptionListRelationFilter.schema"
+import { EnumSubscriptionPlanNullableFilterObjectSchema } from "./EnumSubscriptionPlanNullableFilter.schema"
+import { SubscriptionPlanSchema } from "../enums/SubscriptionPlan.schema"
+import { EnumSubscriptionStatusFilterObjectSchema } from "./EnumSubscriptionStatusFilter.schema"
+import { SubscriptionStatusSchema } from "../enums/SubscriptionStatus.schema"
+import { DateTimeNullableFilterObjectSchema } from "./DateTimeNullableFilter.schema"
+import { UserRelationFilterObjectSchema } from "./UserRelationFilter.schema"
+import { UserWhereInputObjectSchema } from "./UserWhereInput.schema"
+import { PaymentListRelationFilterObjectSchema } from "./PaymentListRelationFilter.schema"
 
 import type { Prisma } from "@prisma/client"
 
@@ -22,22 +24,30 @@ const Schema: z.ZodType<Prisma.SubscriptionWhereInput> = z
       .union([z.lazy(() => SubscriptionWhereInputObjectSchema), z.lazy(() => SubscriptionWhereInputObjectSchema).array()])
       .optional(),
     id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-    name: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-    freeTrialDuration: z
-      .union([z.lazy(() => IntNullableFilterObjectSchema), z.number()])
+    productId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+    plan: z
+      .union([z.lazy(() => EnumSubscriptionPlanNullableFilterObjectSchema), z.lazy(() => SubscriptionPlanSchema)])
       .optional()
       .nullable(),
-    price: z
-      .union([z.lazy(() => FloatNullableFilterObjectSchema), z.number()])
+    status: z.union([z.lazy(() => EnumSubscriptionStatusFilterObjectSchema), z.lazy(() => SubscriptionStatusSchema)]).optional(),
+    startDate: z
+      .union([z.lazy(() => DateTimeNullableFilterObjectSchema), z.coerce.date()])
       .optional()
       .nullable(),
-    currency: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-    paymentInterval: z
-      .union([z.lazy(() => EnumPaymentIntervalFilterObjectSchema), z.lazy(() => PaymentIntervalSchema)])
-      .optional(),
-    createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
-    updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
-    userSubscriptions: z.lazy(() => UserSubscriptionListRelationFilterObjectSchema).optional(),
+    endDate: z
+      .union([z.lazy(() => DateTimeNullableFilterObjectSchema), z.coerce.date()])
+      .optional()
+      .nullable(),
+    expiresAt: z
+      .union([z.lazy(() => DateTimeNullableFilterObjectSchema), z.coerce.date()])
+      .optional()
+      .nullable(),
+    userId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+    user: z
+      .union([z.lazy(() => UserRelationFilterObjectSchema), z.lazy(() => UserWhereInputObjectSchema)])
+      .optional()
+      .nullable(),
+    payments: z.lazy(() => PaymentListRelationFilterObjectSchema).optional(),
   })
   .strict()
 
