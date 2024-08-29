@@ -32,10 +32,101 @@ const addVehicleDetailsSchema = z.object({
   registrationNumber: z.string(),
 })
 
+const addOrUpdateVehicleDetailsSchema = z.object({
+  registrationNumber: z.string(),
+  make: z.string(),
+  colour: z.string(),
+  yearOfManufacture: z.number(),
+  taxStatus: z.string(),
+  taxDueDate: z.date().optional(),
+  motStatus: z.string(),
+  engineCapacity: z.number(),
+  co2Emissions: z.number(),
+  fuelType: z.string(),
+  markedForExport: z.boolean(),
+  typeApproval: z.string(),
+  wheelplan: z.string(),
+  euroStatus: z.string().optional(),
+  dateOfLastV5CIssued: z.date().optional(),
+  monthOfFirstRegistration: z.date().optional(),
+  artEndDate: z.date().optional(),
+  motExpiryDate: z.date().optional(),
+  realDrivingEmissions: z.string().optional(),
+  revenueWeight: z.number().optional(),
+})
+
 export const vehicleRouter = t.router({
+  addOrUpdateVehicleDetails: protectedProcedure.input(addOrUpdateVehicleDetailsSchema).mutation(async ({ ctx, input }) => {
+    // Remove spaces from the registration number
+    const registrationNumber = input.registrationNumber.replace(/\s/g, "")
+
+    // Check if the vehicle details with the registration number already exist
+    const existingVehicleDetails = await ctx.prisma.vehicleDetails.findFirst({
+      where: { registrationNumber },
+    })
+
+    if (existingVehicleDetails) {
+      // Update existing vehicle details with new data
+      const updatedVehicleDetails = await ctx.prisma.vehicleDetails.update({
+        where: { registrationNumber },
+        data: {
+          make: input.make,
+          colour: input.colour,
+          yearOfManufacture: input.yearOfManufacture,
+          taxStatus: input.taxStatus,
+          taxDueDate: input.taxDueDate || null,
+          motStatus: input.motStatus,
+          engineCapacity: input.engineCapacity,
+          co2Emissions: input.co2Emissions,
+          fuelType: input.fuelType,
+          markedForExport: input.markedForExport,
+          typeApproval: input.typeApproval,
+          wheelplan: input.wheelplan,
+          euroStatus: input.euroStatus || null,
+          dateOfLastV5CIssued: input.dateOfLastV5CIssued || null,
+          monthOfFirstRegistration: input.monthOfFirstRegistration || null,
+          artEndDate: input.artEndDate || null,
+          motExpiryDate: input.motExpiryDate || null,
+          realDrivingEmissions: input.realDrivingEmissions || null,
+          revenueWeight: input.revenueWeight || null,
+        },
+      })
+
+      return updatedVehicleDetails
+    }
+
+    // If vehicle details do not exist, create new details
+    const newVehicleDetails = await ctx.prisma.vehicleDetails.create({
+      data: {
+        registrationNumber,
+        make: input.make,
+        colour: input.colour,
+        yearOfManufacture: input.yearOfManufacture,
+        taxStatus: input.taxStatus,
+        taxDueDate: input.taxDueDate || null,
+        motStatus: input.motStatus,
+        engineCapacity: input.engineCapacity,
+        co2Emissions: input.co2Emissions,
+        fuelType: input.fuelType,
+        markedForExport: input.markedForExport,
+        typeApproval: input.typeApproval,
+        wheelplan: input.wheelplan,
+        euroStatus: input.euroStatus || null,
+        dateOfLastV5CIssued: input.dateOfLastV5CIssued || null,
+        monthOfFirstRegistration: input.monthOfFirstRegistration || null,
+        artEndDate: input.artEndDate || null,
+        motExpiryDate: input.motExpiryDate || null,
+        realDrivingEmissions: input.realDrivingEmissions || null,
+        revenueWeight: input.revenueWeight || null,
+      },
+    })
+
+    return newVehicleDetails
+  }),
+
   addDVLADetails: protectedProcedure.input(addVehicleDetailsSchema).mutation(async ({ ctx, input }) => {
     // Remove spaces from the registration number
-    const registrationNumber = "RJ63 WTE".replace(/\s/g, "")
+    const registrationNumber = input.registrationNumber.replace(/\s/g, "")
     // Check if the vehicle details with the registration number already exist
     const existingVehicleDetails = await ctx.prisma.vehicleDetails.findFirst({
       where: { registrationNumber },
@@ -51,6 +142,10 @@ export const vehicleRouter = t.router({
       const vehicleDetails = await fetchVehicleData({
         registrationNumber: input.registrationNumber,
       })
+
+      if (!vehicleDetails) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Vehicle details not found" })
+      }
 
       // Create a new vehicle details record with all relevant fields
       const newVehicleDetails = await ctx.prisma.vehicleDetails.create({
@@ -99,7 +194,7 @@ const transformDate = (date?: string | null) => {
 }
 
 // Function to fetch vehicle data from the external API
-const fetchVehicleData = async ({ registrationNumber }: { registrationNumber: string }): Promise<DVLAApiResponse> => {
+const fetchVehicleData = async ({ registrationNumber }: { registrationNumber: string }): Promise<DVLAApiResponse | null> => {
   const response = await fetch("https://driver-vehicle-licensing.api.gov.uk/vehicle-enquiry/v1/vehicles", {
     method: "POST",
     headers: {
@@ -109,6 +204,11 @@ const fetchVehicleData = async ({ registrationNumber }: { registrationNumber: st
     },
     body: JSON.stringify({ registrationNumber }),
   })
+
+  if (!response.ok) {
+    return null
+  }
+
   const data = (await response.json()) as DVLAApiResponse
 
   return {
