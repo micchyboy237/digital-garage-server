@@ -7,6 +7,7 @@ import { protectedProcedure } from "../trpc"
 import { authRouter } from "./auth.route"
 import { meRouter } from "./me.route"
 import { userRouter } from "./user.route"
+import { vehicleRouter } from "./vehicle.route"
 
 const t = initTRPC.context<Context>().create({
   transformer: SuperJSON,
@@ -187,6 +188,7 @@ const otherRouters = t.router({
   me: meRouter,
   auth: authRouter,
   user: userRouter,
+  vehicle: vehicleRouter,
   meta: metaRouter,
 })
 

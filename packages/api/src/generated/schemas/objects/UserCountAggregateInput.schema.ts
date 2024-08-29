@@ -8,6 +8,10 @@ const Schema: z.ZodType<Prisma.UserCountAggregateInputType> = z
     email: z.literal(true).optional(),
     firebaseUid: z.literal(true).optional(),
     isEmailVerified: z.literal(true).optional(),
+    firstName: z.literal(true).optional(),
+    lastName: z.literal(true).optional(),
+    displayPicture: z.literal(true).optional(),
+    location: z.literal(true).optional(),
     accountStatus: z.literal(true).optional(),
     _all: z.literal(true).optional(),
   })

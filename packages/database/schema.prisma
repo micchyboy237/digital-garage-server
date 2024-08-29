@@ -14,17 +14,17 @@ generator kysely {
 }
 
 generator docs {
-  provider                  = "node node_modules/prisma-docs-generator"
-  output                    = env("DATABASE_DOCS_DIR")
-  includeRelationFields     = true
+  provider              = "node node_modules/prisma-docs-generator"
+  output                = env("DATABASE_DOCS_DIR")
+  includeRelationFields = true
 }
 
 generator dbml {
-  provider               = "prisma-dbml-generator"
-  output                 = env("DATABASE_DIAGRAMS_DIR")
-  projectName            = "Digital Garage"
-  projectDatabaseType    = "PostgreSQL"
-  projectNote            = "DB ERD Schema for Digital Garage"
+  provider            = "prisma-dbml-generator"
+  output              = env("DATABASE_DIAGRAMS_DIR")
+  projectName         = "Digital Garage"
+  projectDatabaseType = "PostgreSQL"
+  projectNote         = "DB ERD Schema for Digital Garage"
 }
 
 generator erd {
@@ -40,23 +40,23 @@ generator prismaClassGenerator {
 }
 
 generator prismabox {
-  provider                     = "prismabox"
-  output                       = env("API_TRPC_PRISMABOX_DIR")
-  typeboxImportVariableName    = "t"
-  typeboxImportDependencyName  = "elysia"
-  additionalProperties         = true
-  inputModel                   = true
+  provider                    = "prismabox"
+  output                      = env("API_TRPC_PRISMABOX_DIR")
+  typeboxImportVariableName   = "t"
+  typeboxImportDependencyName = "elysia"
+  additionalProperties        = true
+  inputModel                  = true
 }
 
 generator trpc {
-  provider             = "prisma-trpc-generator"
-  withZod              = true
-  withMiddleware       = true
-  withShield           = true
-  output               = env("API_TRPC_ROUTERS_ZOD_SCHEMAS_DIR")
-  contextPath          = "../api/src/trpc"
-  isGenerateSelect     = true
-  isGenerateInclude    = true
+  provider       = "prisma-trpc-generator"
+  withZod        = true
+  withMiddleware = true
+  withShield     = true
+  output         = env("API_TRPC_ROUTERS_ZOD_SCHEMAS_DIR")
+  contextPath    = "../api/src/trpc"
+  isGenerateSelect  = true
+  isGenerateInclude = true
 }
 
 generator custom_generator {
@@ -100,60 +100,187 @@ enum PaymentStatus {
   FAILED
 }
 
+enum TransferStatus {
+  REQUESTED
+  ACCEPTED
+  REJECTED
+}
+
+enum FieldType {
+  STRING
+  NUMBER
+  DATE
+  BOOLEAN
+}
+
+enum PostCategory {
+  GALLERY
+  HISTORY
+}
+
+enum PostType {
+  REMINDER
+  INVOICE
+  DOCUMENT
+}
+
 model User {
-  id                String          @id @default(uuid())
-  email             String          @unique
-  firebaseUid       String          @unique
-  isEmailVerified   Boolean         @default(false)  
-  profile           Profile?
-  subscription      Subscription?
-  accountStatus     AccountStatus   @default(ONBOARDING)
+  id                String            @id @default(uuid())
+  email             String            @unique
+  firebaseUid       String            @unique
+  isEmailVerified   Boolean           @default(false)
+  firstName         String?
+  lastName          String?
+  displayPicture    String?
+  location          String?
+  accountStatus     AccountStatus     @default(ONBOARDING)
   sessions          Session[]
+  vehicles          Vehicle[]
+  posts             VehiclePost[]
+  transfersReceived VehicleTransfer[] @relation("receivedTransfers")
+  transfersSent     VehicleTransfer[] @relation("sentTransfers")
+  subscription      Subscription?
+  ownerships        Ownership[]
 }
 
 model Session {
-  id         String   @id @default(uuid())
-  token      String   @unique
-  expiresAt  DateTime
-  provider   AuthProvider
-  deviceFingerprint String   @unique
-  userId     String
-  user       User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String        @id @default(uuid())
+  token             String        @unique
+  expiresAt         DateTime
+  provider          AuthProvider
+  deviceFingerprint String        @unique
+  userId            String
+  user              User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([deviceFingerprint, userId])
 }
 
-
-model Profile {
-  id                String          @id @default(uuid())
-  firstName         String?
-  lastName          String?
-  profilePicture    String?
-  location          String?
-  userId            String          @unique
-  user              User?           @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
 model Subscription {
-  id                String              @id @default(uuid())
-  productId         String
-  plan              SubscriptionPlan?
-  status            SubscriptionStatus  @default(ACTIVE)
-  startDate         DateTime?
-  endDate           DateTime?
-  expiresAt         DateTime?
-  userId            String              @unique
-  user              User?               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  payments          Payment[]           // Relation to Payment model
+  id            String              @id @default(uuid())
+  productId     String
+  plan          SubscriptionPlan?
+  status        SubscriptionStatus  @default(ACTIVE)
+  startDate     DateTime?
+  endDate       DateTime?
+  expiresAt     DateTime?
+  userId        String              @unique
+  user          User?               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments      Payment[]
 }
 
 model Payment {
-  id                String          @id @default(uuid())
-  price             Float
-  currencyCode      String
-  status            PaymentStatus
-  transactionId     String
-  transactionDate   DateTime
-  subscriptionId    String
-  subscription      Subscription?     @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  id              String        @id @default(uuid())
+  price           Float
+  currencyCode    String
+  status          PaymentStatus
+  transactionId   String
+  transactionDate DateTime
+  subscriptionId  String
+  subscription    Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+}
+
+model Photo {
+  id            String        @id @default(uuid())
+  url           String
+  thumbnailUrl  String
+  postId        String?
+  post          VehiclePost?  @relation(fields: [postId], references: [id], onDelete: Cascade)
+  ownershipId   String?       @unique
+  ownership     Ownership?    @relation(fields: [ownershipId], references: [id], onDelete: Cascade)
+}
+
+model Ownership {
+  id              String            @id @default(uuid())
+  userId          String
+  vehicleId       String
+  isCurrentOwner  Boolean           @default(true)
+  vehicleDisplayPhoto    Photo?
+  startDate       DateTime          @default(now())
+  endDate         DateTime?
+  user            User?             @relation(fields: [userId], references: [id])
+  vehicle         Vehicle?          @relation(fields: [vehicleId], references: [id])
+  posts           VehiclePost[]
+  documents       VehicleDocument[]
+  excludedPosts   String[]          // IDs of posts excluded for this owner
+  excludedPhotos  String[]          // IDs of photos excluded for this owner
+  excludedDocs    String[]          // IDs of documents excluded for this owner
+
+  @@unique([userId, vehicleId])
+}
+
+model Vehicle {
+  id                 String            @id @default(uuid())
+  make               String
+  model              String
+  registrationNumber String            @unique
+  details            VehicleDetails    @relation(fields: [registrationNumber], references: [registrationNumber])
+  ownerId            String
+  owner              User?             @relation(fields: [ownerId], references: [id])
+  ownerships         Ownership[]
+  transfers          VehicleTransfer[]
+}
+
+model VehicleDetails {
+  id                       String    @id @default(uuid())
+  make                     String
+  registrationNumber       String    @unique
+  colour                   String
+  yearOfManufacture        Int
+  taxStatus                String
+  taxDueDate               DateTime
+  motStatus                String
+  engineCapacity           Int
+  co2Emissions             Int
+  fuelType                 String
+  markedForExport          Boolean
+  typeApproval             String
+  wheelplan                String
+  // "artEndDate" may indicate that the vehicle is under some form of administrative restriction, which may prevent it from being used on public roads, sold, or transferred
+  artEndDate               DateTime?
+  motExpiryDate            DateTime?
+  monthOfFirstRegistration DateTime?
+  euroStatus               String?
+  dateOfLastV5CIssued      DateTime?
+  realDrivingEmissions     String?
+  revenueWeight            Int?
+  vehicle                  Vehicle?
+}
+
+model VehicleTransfer {
+  id            String          @id @default(uuid())
+  vehicleId     String
+  vehicle       Vehicle?        @relation(fields: [vehicleId], references: [id])
+  senderId      String
+  sender        User?           @relation("sentTransfers", fields: [senderId], references: [id])
+  recipientId   String
+  recipient     User?           @relation("receivedTransfers", fields: [recipientId], references: [id])
+  status        TransferStatus  @default(REQUESTED)
+  transferDate  DateTime        @default(now())
+  responseDate  DateTime?
+  reason        String?         // Reason for transfer
+}
+
+model VehicleDocument {
+  id            String          @id @default(uuid())
+  fileUrl       String
+  mimeType      String
+  postId        String?
+  post          VehiclePost?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  ownershipId   String?
+  ownership     Ownership?      @relation(fields: [ownershipId], references: [id], onDelete: Cascade)
+}
+
+model VehiclePost {
+  id           String          @id @default(uuid())
+  date         DateTime
+  title        String
+  category     PostCategory    @default(GALLERY)
+  description  String?
+  type         PostType?
+  photos       Photo[]
+  documents    VehicleDocument[]
+  createdById  String
+  createdBy    User?           @relation(fields: [createdById], references: [id])
+  ownershipId  String?
+  ownership    Ownership?      @relation(fields: [ownershipId], references: [id], onDelete: Cascade)
 }

@@ -23,10 +23,10 @@
     "db:generate": "pnpm with-env prisma generate",
     "db:info": "python _view_all_table_schemas.py",
     "db:studio": "pnpm with-env prisma studio --port 5555",
-    "db:reset": "pnpm with-env prisma migrate reset",
-    "db:migrate": "pnpm with-env prisma migrate dev",
+    "db:migrate": "pnpm with-env prisma migrate dev && pnpm db:seed",
     "db:migrate:clean": "rm -rf ./migrations && pnpm db:migrate --skip-generate",
     "db:seed": "pnpm with-env prisma db seed",
+    "db:reset": "pnpm with-env prisma migrate reset",
     "serve:docs": "pnpm with-env prisma-docs-generator serve --port 5556",
     "postinstall": "pnpm db:generate"
   },
@@ -44,6 +44,6 @@
   },
   "prisma": {
     "schema": "./schema.prisma",
-    "seed": "ts-node ./seed/seed-new.ts"
+    "seed": "ts-node ./seed/seed.ts"
   }
 }

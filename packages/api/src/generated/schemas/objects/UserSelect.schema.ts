@@ -1,7 +1,10 @@
 import { z } from "zod"
-import { ProfileArgsObjectSchema } from "./ProfileArgs.schema"
-import { SubscriptionArgsObjectSchema } from "./SubscriptionArgs.schema"
 import { SessionFindManySchema } from "../findManySession.schema"
+import { VehicleFindManySchema } from "../findManyVehicle.schema"
+import { VehiclePostFindManySchema } from "../findManyVehiclePost.schema"
+import { VehicleTransferFindManySchema } from "../findManyVehicleTransfer.schema"
+import { SubscriptionArgsObjectSchema } from "./SubscriptionArgs.schema"
+import { OwnershipFindManySchema } from "../findManyOwnership.schema"
 import { UserCountOutputTypeArgsObjectSchema } from "./UserCountOutputTypeArgs.schema"
 
 import type { Prisma } from "@prisma/client"
@@ -12,10 +15,18 @@ const Schema: z.ZodType<Prisma.UserSelect> = z
     email: z.boolean().optional(),
     firebaseUid: z.boolean().optional(),
     isEmailVerified: z.boolean().optional(),
-    profile: z.union([z.boolean(), z.lazy(() => ProfileArgsObjectSchema)]).optional(),
-    subscription: z.union([z.boolean(), z.lazy(() => SubscriptionArgsObjectSchema)]).optional(),
+    firstName: z.boolean().optional(),
+    lastName: z.boolean().optional(),
+    displayPicture: z.boolean().optional(),
+    location: z.boolean().optional(),
     accountStatus: z.boolean().optional(),
     sessions: z.union([z.boolean(), z.lazy(() => SessionFindManySchema)]).optional(),
+    vehicles: z.union([z.boolean(), z.lazy(() => VehicleFindManySchema)]).optional(),
+    posts: z.union([z.boolean(), z.lazy(() => VehiclePostFindManySchema)]).optional(),
+    transfersReceived: z.union([z.boolean(), z.lazy(() => VehicleTransferFindManySchema)]).optional(),
+    transfersSent: z.union([z.boolean(), z.lazy(() => VehicleTransferFindManySchema)]).optional(),
+    subscription: z.union([z.boolean(), z.lazy(() => SubscriptionArgsObjectSchema)]).optional(),
+    ownerships: z.union([z.boolean(), z.lazy(() => OwnershipFindManySchema)]).optional(),
     _count: z.union([z.boolean(), z.lazy(() => UserCountOutputTypeArgsObjectSchema)]).optional(),
   })
   .strict()

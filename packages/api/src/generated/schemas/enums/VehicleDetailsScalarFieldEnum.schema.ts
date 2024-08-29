@@ -1,0 +1,25 @@
+import { z } from "zod"
+
+export const VehicleDetailsScalarFieldEnumSchema = z.enum([
+  "id",
+  "make",
+  "registrationNumber",
+  "colour",
+  "yearOfManufacture",
+  "taxStatus",
+  "taxDueDate",
+  "motStatus",
+  "engineCapacity",
+  "co2Emissions",
+  "fuelType",
+  "markedForExport",
+  "typeApproval",
+  "wheelplan",
+  "artEndDate",
+  "motExpiryDate",
+  "monthOfFirstRegistration",
+  "euroStatus",
+  "dateOfLastV5CIssued",
+  "realDrivingEmissions",
+  "revenueWeight",
+])

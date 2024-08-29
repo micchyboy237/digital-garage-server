@@ -25,6 +25,7 @@
     "google-auth-library": "^9.11.0",
     "jsonwebtoken": "9.0.2",
     "kysely": "0.27.4",
+    "node-fetch": "^3.3.2",
     "nodemailer": "^6.9.14",
     "superjson": "^2.0.0",
     "trpc-shield": "0.4.4",

@@ -9,6 +9,10 @@ const Schema: z.ZodType<Prisma.UserMinOrderByAggregateInput> = z
     email: z.lazy(() => SortOrderSchema).optional(),
     firebaseUid: z.lazy(() => SortOrderSchema).optional(),
     isEmailVerified: z.lazy(() => SortOrderSchema).optional(),
+    firstName: z.lazy(() => SortOrderSchema).optional(),
+    lastName: z.lazy(() => SortOrderSchema).optional(),
+    displayPicture: z.lazy(() => SortOrderSchema).optional(),
+    location: z.lazy(() => SortOrderSchema).optional(),
     accountStatus: z.lazy(() => SortOrderSchema).optional(),
   })
   .strict()

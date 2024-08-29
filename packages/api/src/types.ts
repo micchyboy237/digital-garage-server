@@ -35,6 +35,41 @@ export const PaymentStatus = {
   FAILED: "FAILED",
 } as const
 export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
+export const TransferStatus = {
+  REQUESTED: "REQUESTED",
+  ACCEPTED: "ACCEPTED",
+  REJECTED: "REJECTED",
+} as const
+export type TransferStatus = (typeof TransferStatus)[keyof typeof TransferStatus]
+export const FieldType = {
+  STRING: "STRING",
+  NUMBER: "NUMBER",
+  DATE: "DATE",
+  BOOLEAN: "BOOLEAN",
+} as const
+export type FieldType = (typeof FieldType)[keyof typeof FieldType]
+export const PostCategory = {
+  GALLERY: "GALLERY",
+  HISTORY: "HISTORY",
+} as const
+export type PostCategory = (typeof PostCategory)[keyof typeof PostCategory]
+export const PostType = {
+  REMINDER: "REMINDER",
+  INVOICE: "INVOICE",
+  DOCUMENT: "DOCUMENT",
+} as const
+export type PostType = (typeof PostType)[keyof typeof PostType]
+export type Ownership = {
+  id: string
+  userId: string
+  vehicleId: string
+  isCurrentOwner: Generated<boolean>
+  startDate: Generated<Timestamp>
+  endDate: Timestamp | null
+  excludedPosts: string[]
+  excludedPhotos: string[]
+  excludedDocs: string[]
+}
 export type Payment = {
   id: string
   price: number
@@ -44,13 +79,12 @@ export type Payment = {
   transactionDate: Timestamp
   subscriptionId: string
 }
-export type Profile = {
+export type Photo = {
   id: string
-  firstName: string | null
-  lastName: string | null
-  profilePicture: string | null
-  location: string | null
-  userId: string
+  url: string
+  thumbnailUrl: string
+  postId: string | null
+  ownershipId: string | null
 }
 export type Session = {
   id: string
@@ -75,12 +109,79 @@ export type User = {
   email: string
   firebaseUid: string
   isEmailVerified: Generated<boolean>
+  firstName: string | null
+  lastName: string | null
+  displayPicture: string | null
+  location: string | null
   accountStatus: Generated<AccountStatus>
 }
+export type Vehicle = {
+  id: string
+  make: string
+  model: string
+  registrationNumber: string
+  ownerId: string
+}
+export type VehicleDetails = {
+  id: string
+  make: string
+  registrationNumber: string
+  colour: string
+  yearOfManufacture: number
+  taxStatus: string
+  taxDueDate: Timestamp
+  motStatus: string
+  engineCapacity: number
+  co2Emissions: number
+  fuelType: string
+  markedForExport: boolean
+  typeApproval: string
+  wheelplan: string
+  artEndDate: Timestamp | null
+  motExpiryDate: Timestamp | null
+  monthOfFirstRegistration: Timestamp | null
+  euroStatus: string | null
+  dateOfLastV5CIssued: Timestamp | null
+  realDrivingEmissions: string | null
+  revenueWeight: number | null
+}
+export type VehicleDocument = {
+  id: string
+  fileUrl: string
+  mimeType: string
+  postId: string | null
+  ownershipId: string | null
+}
+export type VehiclePost = {
+  id: string
+  date: Timestamp
+  title: string
+  category: Generated<PostCategory>
+  description: string | null
+  type: PostType | null
+  createdById: string
+  ownershipId: string | null
+}
+export type VehicleTransfer = {
+  id: string
+  vehicleId: string
+  senderId: string
+  recipientId: string
+  status: Generated<TransferStatus>
+  transferDate: Generated<Timestamp>
+  responseDate: Timestamp | null
+  reason: string | null
+}
 export type DB = {
+  Ownership: Ownership
   Payment: Payment
-  Profile: Profile
+  Photo: Photo
   Session: Session
   Subscription: Subscription
   User: User
+  Vehicle: Vehicle
+  VehicleDetails: VehicleDetails
+  VehicleDocument: VehicleDocument
+  VehiclePost: VehiclePost
+  VehicleTransfer: VehicleTransfer
 }

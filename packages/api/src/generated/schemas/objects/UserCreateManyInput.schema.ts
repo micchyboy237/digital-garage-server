@@ -9,6 +9,10 @@ const Schema: z.ZodType<Prisma.UserCreateManyInput> = z
     email: z.string(),
     firebaseUid: z.string(),
     isEmailVerified: z.boolean().optional(),
+    firstName: z.string().optional().nullable(),
+    lastName: z.string().optional().nullable(),
+    displayPicture: z.string().optional().nullable(),
+    location: z.string().optional().nullable(),
     accountStatus: z.lazy(() => AccountStatusSchema).optional(),
   })
   .strict()
