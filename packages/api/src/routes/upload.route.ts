@@ -1,4 +1,4 @@
-import { multerUpload, uploadImageAndThumbnail } from "@boilerplate/aws"
+import { multerUpload, S3File, uploadImageAndThumbnail } from "@boilerplate/aws"
 import { MediaFileType } from "@boilerplate/database"
 import { TRPCError } from "@trpc/server"
 import { RequestHandler } from "express"
@@ -61,7 +61,12 @@ export const uploadRouter = t.router({
         throw new TRPCError({ code: "BAD_REQUEST", message: "No file uploaded" })
       }
 
-      const { imageUrl, thumbnailUrl } = await uploadImageAndThumbnail(file, folder)
+      const s3File: S3File = {
+        originalname: file.originalname,
+        buffer: file.buffer,
+      }
+
+      const { imageUrl, thumbnailUrl } = await uploadImageAndThumbnail(s3File, folder)
 
       // Perform a transaction to save vehicle details and image URLs using Prisma
       const vehicle = await ctx.prisma.$transaction(async (prisma) => {

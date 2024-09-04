@@ -1,4 +1,7 @@
+import sizeOf from "image-size"
+import { ISizeCalculationResult } from "image-size/dist/types/interface"
 import sharp from "sharp"
+import { ImageOptions } from "src/utils/types"
 import { Readable } from "stream"
 
 /**
@@ -35,10 +38,58 @@ export const isValidFolderName = (folder: string): boolean => {
   return validFolderPattern.test(folder)
 }
 
-// Function to optimize the image dynamically
-export const optimizeImage = async (buffer: Buffer, maxWidth: number = 1200, maxHeight: number = 1200): Promise<Buffer> => {
+// Updated function to get image dimensions and aspect ratio
+export const getImageDimensions = (input: string | Buffer): ISizeCalculationResult => {
+  const sizeResult: ISizeCalculationResult = sizeOf(input)
+  return sizeResult
+}
+
+export const calculateNewHeightAspectRatio = ({
+  naturalWidth,
+  naturalHeight,
+  newWidth,
+}: {
+  naturalWidth: number
+  naturalHeight: number
+  newWidth: number
+}): number => {
+  const aspectRatio = naturalWidth / naturalHeight
+  return Math.round(newWidth / aspectRatio)
+}
+
+export const generateOptimizedDimensions = ({
+  naturalWidth,
+  naturalHeight,
+  maxWidth,
+}: {
+  naturalWidth: number
+  naturalHeight: number
+  maxWidth: number
+}): { newWidth: number; newHeight: number } => {
+  const maxWidthIsGreaterThanNaturalWidth = maxWidth > naturalWidth
+
+  const newWidth = maxWidthIsGreaterThanNaturalWidth ? naturalWidth : maxWidth
+  const newHeight = calculateNewHeightAspectRatio({ naturalWidth, naturalHeight, newWidth })
+
+  return { newWidth, newHeight }
+}
+
+// Updated optimizeImage function to preserve aspect ratio
+export const optimizeImage = async (buffer: Buffer, options?: ImageOptions): Promise<Buffer> => {
+  const { width: naturalWidth, height: naturalHeight } = getImageDimensions(buffer)
+
+  if (!naturalWidth || !naturalHeight) {
+    throw new Error("Could not read natural dimensions of the image")
+  }
+
+  const maxWidth = options?.maxWidth || 800
+  const { newWidth, newHeight } = generateOptimizedDimensions({ naturalWidth, naturalHeight, maxWidth })
+
+  console.log(`Natural dimensions: ${naturalWidth}x${naturalHeight}`)
+  console.log(`Optimized dimensions: ${newWidth}x${newHeight}`)
+
   const optimizedImageBuffer = await sharp(buffer)
-    .resize({ width: maxWidth, height: maxHeight, fit: "inside" }) // Dynamic dimensions
+    .resize({ width: newWidth, height: newHeight, fit: "inside" }) // Preserve aspect ratio
     .toFormat("jpeg")
     .jpeg({ quality: 80 })
     .toBuffer()
@@ -46,10 +97,21 @@ export const optimizeImage = async (buffer: Buffer, maxWidth: number = 1200, max
   return optimizedImageBuffer
 }
 
-// Function to generate a thumbnail dynamically
-export const generateThumbnail = async (buffer: Buffer, maxWidth: number = 200, maxHeight: number = 200): Promise<Buffer> => {
+// Updated generateThumbnail function to preserve aspect ratio
+export const generateThumbnail = async (buffer: Buffer, options?: ImageOptions): Promise<Buffer> => {
+  const { width: naturalWidth, height: naturalHeight } = getImageDimensions(buffer)
+
+  if (!naturalWidth || !naturalHeight) {
+    throw new Error("Could not read natural dimensions of the image")
+  }
+
+  const maxWidth = options?.maxWidth || 400
+  const { newWidth, newHeight } = generateOptimizedDimensions({ naturalWidth, naturalHeight, maxWidth })
+
+  console.log(`Thumbnail dimensions: ${newWidth}x${newHeight}`)
+
   const thumbnailBuffer = await sharp(buffer)
-    .resize({ width: maxWidth, height: maxHeight, fit: "inside" }) // Dynamic dimensions
+    .resize({ width: newWidth, height: newHeight, fit: "inside" }) // Preserve aspect ratio
     .toFormat("jpeg")
     .jpeg({ quality: 60 })
     .toBuffer()

@@ -7,9 +7,9 @@ import { streamToBuffer } from "src/utils"
 const filePath = path.join(__dirname, "../assets/sample-vehicle-display.jpeg")
 const fileStream = fs.createReadStream(filePath)
 
-const uploadS3 = async ({ folder }: S3UploadOptions = {}): Promise<{ imageUrl: string; thumbnailUrl: string }> => {
+const sampleUploadS3 = async ({ folder }: S3UploadOptions = {}): Promise<{ imageUrl: string; thumbnailUrl: string }> => {
   try {
-    console.info("Started uploadS3 function")
+    console.info("Started sampleUploadS3 function")
 
     console.info("Converting stream to buffer")
     const buffer = await streamToBuffer(fileStream)
@@ -46,9 +46,9 @@ const uploadS3 = async ({ folder }: S3UploadOptions = {}): Promise<{ imageUrl: s
 ;(async () => {
   try {
     const options: S3UploadOptions = {
-      folder: "images",
+      folder: "test",
     }
-    const fileUrls = await uploadS3(options)
+    const fileUrls = await sampleUploadS3(options)
     console.info("File uploaded to:", fileUrls)
   } catch (error) {
     console.error("Error in uploading file:", error)

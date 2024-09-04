@@ -1,11 +1,9 @@
 import { Upload } from "@aws-sdk/lib-storage"
-import * as fs from "fs"
-import path from "path"
 import { Readable } from "stream"
 
 import { awsConfig, s3Client } from "src/config"
 import { S3File, UploadResult } from "src/services/types"
-import { generateThumbnail, isValidFolderName, optimizeImage, streamToBuffer } from "src/utils/s3.utils"
+import { generateThumbnail, isValidFolderName, optimizeImage } from "src/utils/s3.utils"
 
 /**
  * Upload a single file to S3.
@@ -60,9 +58,8 @@ export const uploadS3 = async (file: S3File, folder?: string): Promise<string> =
 }
 
 export const uploadImageAndThumbnail = async (file: S3File, folder?: string): Promise<UploadResult> => {
-  // Optimize image and generate thumbnail
-  const optimizedBuffer = await optimizeImage(file.buffer)
-  const thumbnailBuffer = await generateThumbnail(file.buffer)
+  // Optimize image and generate thumbnail in parallel
+  const [optimizedBuffer, thumbnailBuffer] = await Promise.all([optimizeImage(file.buffer), generateThumbnail(file.buffer)])
 
   // Prepare files for upload
   const imageFileName = file.originalname
@@ -77,9 +74,8 @@ export const uploadImageAndThumbnail = async (file: S3File, folder?: string): Pr
     buffer: thumbnailBuffer,
   }
 
-  // Upload files to S3
-  const imageUrl = await uploadS3(imageFile, folder)
-  const thumbnailUrl = await uploadS3(thumbnailFile, folder)
+  // Upload files to S3 in parallel
+  const [imageUrl, thumbnailUrl] = await Promise.all([uploadS3(imageFile, folder), uploadS3(thumbnailFile, folder)])
 
   return { imageUrl, thumbnailUrl }
 }
@@ -87,26 +83,4 @@ export const uploadImageAndThumbnail = async (file: S3File, folder?: string): Pr
 export const generateKey = (file: S3File, folder?: string): string => {
   const key = folder ? `${folder}/${file.originalname}` : file.originalname
   return key
-}
-
-export const generateMemoryS3File = async (originalImagePath: string): Promise<S3File> => {
-  const filePath = path.join(__dirname, originalImagePath)
-  const fileStream = fs.createReadStream(filePath)
-  const fileBuffer = await streamToBuffer(fileStream)
-  const file: S3File = {
-    originalname: path.basename(filePath),
-    buffer: fileBuffer,
-  }
-  return file
-}
-
-export const generateMemoryMulterFile = async (originalImagePath: string): Promise<S3File> => {
-  const filePath = path.join(__dirname, originalImagePath)
-  const fileStream = fs.createReadStream(filePath)
-  const fileBuffer = await streamToBuffer(fileStream)
-  const file: S3File = {
-    originalname: path.basename(filePath),
-    buffer: fileBuffer,
-  }
-  return file
 }
