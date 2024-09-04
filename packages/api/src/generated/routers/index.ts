@@ -3,8 +3,8 @@ import { usersRouter } from "./User.router";
 import { sessionsRouter } from "./Session.router";
 import { subscriptionsRouter } from "./Subscription.router";
 import { paymentsRouter } from "./Payment.router";
-import { photosRouter } from "./Photo.router";
-import { ownershipsRouter } from "./Ownership.router";
+import { mediafilesRouter } from "./MediaFile.router";
+import { vehicleownershipsRouter } from "./VehicleOwnership.router";
 import { vehiclesRouter } from "./Vehicle.router";
 import { vehicledetailsRouter } from "./VehicleDetails.router";
 import { vehicletransfersRouter } from "./VehicleTransfer.router";
@@ -16,8 +16,8 @@ export const appRouter = t.router({
   session: sessionsRouter,
   subscription: subscriptionsRouter,
   payment: paymentsRouter,
-  photo: photosRouter,
-  ownership: ownershipsRouter,
+  mediafile: mediafilesRouter,
+  vehicleownership: vehicleownershipsRouter,
   vehicle: vehiclesRouter,
   vehicledetails: vehicledetailsRouter,
   vehicletransfer: vehicletransfersRouter,

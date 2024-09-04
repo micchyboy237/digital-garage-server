@@ -17,6 +17,8 @@ const Schema: z.ZodType<Prisma.SubscriptionSelect> = z
     userId: z.boolean().optional(),
     user: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional(),
     payments: z.union([z.boolean(), z.lazy(() => PaymentFindManySchema)]).optional(),
+    createdAt: z.boolean().optional(),
+    updatedAt: z.boolean().optional(),
     _count: z.union([z.boolean(), z.lazy(() => SubscriptionCountOutputTypeArgsObjectSchema)]).optional(),
   })
   .strict()

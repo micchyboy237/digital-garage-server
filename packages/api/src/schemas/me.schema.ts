@@ -30,7 +30,7 @@ export const documentSchema = z.object({
   mimeType: z.string(),
 })
 
-export const getVehicleSchema = z.object({
+export const getVehicleOwnershipSchema = z.object({
   vehicleId: z.string(),
 })
 
@@ -41,6 +41,9 @@ export const getVehiclePostsSchema = z.object({
 export const transferSchema = z.object({
   vehicleId: z.string(),
   recipientId: z.string(),
+  excludedPhotos: z.array(z.string()).optional(),
+  excludedVideos: z.array(z.string()).optional(),
+  excludedDocs: z.array(z.string()).optional(),
 })
 
 export const respondTransferSchema = z.object({

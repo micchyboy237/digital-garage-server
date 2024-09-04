@@ -16,6 +16,7 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
+    "@boilerplate/aws": "workspace:*",
     "@boilerplate/database": "workspace:*",
     "@trpc/server": "^10.16.0",
     "bcryptjs": "^2.4.3",

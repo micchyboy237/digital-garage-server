@@ -9,7 +9,7 @@ const Schema: z.ZodType<Prisma.UserCountOutputTypeSelect> = z
     posts: z.boolean().optional(),
     transfersReceived: z.boolean().optional(),
     transfersSent: z.boolean().optional(),
-    ownerships: z.boolean().optional(),
+    vehicleOwnerships: z.boolean().optional(),
   })
   .strict()
 

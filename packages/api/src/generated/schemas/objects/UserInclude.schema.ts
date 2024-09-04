@@ -4,7 +4,7 @@ import { VehicleFindManySchema } from "../findManyVehicle.schema"
 import { VehiclePostFindManySchema } from "../findManyVehiclePost.schema"
 import { VehicleTransferFindManySchema } from "../findManyVehicleTransfer.schema"
 import { SubscriptionArgsObjectSchema } from "./SubscriptionArgs.schema"
-import { OwnershipFindManySchema } from "../findManyOwnership.schema"
+import { VehicleOwnershipFindManySchema } from "../findManyVehicleOwnership.schema"
 import { UserCountOutputTypeArgsObjectSchema } from "./UserCountOutputTypeArgs.schema"
 
 import type { Prisma } from "@prisma/client"
@@ -17,7 +17,7 @@ const Schema: z.ZodType<Prisma.UserInclude> = z
     transfersReceived: z.union([z.boolean(), z.lazy(() => VehicleTransferFindManySchema)]).optional(),
     transfersSent: z.union([z.boolean(), z.lazy(() => VehicleTransferFindManySchema)]).optional(),
     subscription: z.union([z.boolean(), z.lazy(() => SubscriptionArgsObjectSchema)]).optional(),
-    ownerships: z.union([z.boolean(), z.lazy(() => OwnershipFindManySchema)]).optional(),
+    vehicleOwnerships: z.union([z.boolean(), z.lazy(() => VehicleOwnershipFindManySchema)]).optional(),
     _count: z.union([z.boolean(), z.lazy(() => UserCountOutputTypeArgsObjectSchema)]).optional(),
   })
   .strict()

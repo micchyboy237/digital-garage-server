@@ -7,9 +7,37 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator zod1 {
+  provider = "prisma-zod-generator"
+  output   = env("API_TRPC_DATA_MODEL_PRISMA_ZOD_DIR")
+}
+
+generator zod2 {
+  provider                 = "zod-prisma"
+  output                   = env("API_TRPC_DATA_MODEL_ZOD_PRISMA_DIR") // (default) the directory where generated zod schemas will be saved
+
+  relationModel            = true // (default) Create and export both plain and related models.
+  // relationModel         = "default" // Do not export model without relations.
+  // relationModel         = false // Do not generate related model
+
+  modelCase                = "PascalCase" // (default) Output models using pascal case (ex. UserModel, PostModel)
+  // modelCase             = "camelCase" // Output models using camel case (ex. userModel, postModel)
+
+  modelSuffix              = "Model" // (default) Suffix to apply to your prisma models when naming Zod schemas
+
+  // useDecimalJs          = false // (default) represent the prisma Decimal type using as a JS number
+  useDecimalJs             = true // represent the prisma Decimal type using Decimal.js (as Prisma does)
+
+  imports                  = null // (default) will import the referenced file in generated schemas to be used via imports.someExportedVariable
+
+  // https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-by-null-values
+  prismaJsonNullability    = true // (default) uses prisma's scheme for JSON field nullability
+  // prismaJsonNullability = false // allows null assignment to optional JSON fields
+}
+
 generator kysely {
   provider = "prisma-kysely"
-  output   = env("API_TRPC_DATA_MODEL_TYPES_DIR")
+  output   = env("API_TRPC_DATA_MODEL_KYSELY_TYPES_DIR")
   fileName = "types.ts"
 }
 
@@ -36,7 +64,7 @@ generator erd {
 
 generator prismaClassGenerator {
   provider = "prisma-class-generator"
-  // output = env("API_TRPC_DATA_MODEL_CLASSES_DIR")
+  output = env("API_TRPC_DATA_MODEL_CLASSES_DIR")
 }
 
 generator prismabox {
@@ -124,23 +152,32 @@ enum PostType {
   DOCUMENT
 }
 
+enum MediaFileType {
+  IMAGE
+  VIDEO
+  DOCUMENT
+}
+
 model User {
-  id                String            @id @default(uuid())
-  email             String            @unique
-  firebaseUid       String            @unique
-  isEmailVerified   Boolean           @default(false)
+  id                String                @id @default(uuid())
+  email             String                @unique
+  firebaseUid       String                @unique
+  isEmailVerified   Boolean               @default(false)
   firstName         String?
   lastName          String?
   displayPicture    String?
   location          String?
-  accountStatus     AccountStatus     @default(ONBOARDING)
+  accountStatus     AccountStatus         @default(ONBOARDING)
   sessions          Session[]
   vehicles          Vehicle[]
   posts             VehiclePost[]
-  transfersReceived VehicleTransfer[] @relation("receivedTransfers")
-  transfersSent     VehicleTransfer[] @relation("sentTransfers")
+  transfersReceived VehicleTransfer[]     @relation("receivedTransfers")
+  transfersSent     VehicleTransfer[]     @relation("sentTransfers")
   subscription      Subscription?
-  ownerships        Ownership[]
+  vehicleOwnerships VehicleOwnership[]    // Updated relation field
+
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
 }
 
 model Session {
@@ -153,6 +190,9 @@ model Session {
   user              User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([deviceFingerprint, userId])
+
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
 }
 
 model Subscription {
@@ -166,6 +206,9 @@ model Subscription {
   userId        String              @unique
   user          User?               @relation(fields: [userId], references: [id], onDelete: Cascade)
   payments      Payment[]
+
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
 }
 
 model Payment {
@@ -177,73 +220,98 @@ model Payment {
   transactionDate DateTime
   subscriptionId  String
   subscription    Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }
 
-model Photo {
-  id            String        @id @default(uuid())
-  url           String
-  thumbnailUrl  String
-  postId        String?
-  post          VehiclePost?  @relation(fields: [postId], references: [id], onDelete: Cascade)
-  ownershipId   String?       @unique
-  ownership     Ownership?    @relation(fields: [ownershipId], references: [id], onDelete: Cascade)
+model MediaFile {
+  id                    String              @id @default(uuid())
+  type                  MediaFileType
+  mimeType              String
+  fileName              String
+  url                   String
+  thumbnailUrl          String
+  postId                String?
+  post                  VehiclePost?        @relation(name: "PostPhotos", fields: [postId], references: [id], onDelete: Cascade)
+  displayPhotoOwnership VehicleOwnership?   @relation(name: "DisplayPhoto") // Updated relation
+  ownershipId           String?
+  ownership             VehicleOwnership?   @relation(name: "GalleryPhotos", fields: [ownershipId], references: [id]) // Updated relation
+  vehicleDocument       VehicleDocument?
+
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
 }
 
-model Ownership {
-  id              String            @id @default(uuid())
-  userId          String
-  vehicleId       String
-  isCurrentOwner  Boolean           @default(true)
-  vehicleDisplayPhoto    Photo?
-  startDate       DateTime          @default(now())
-  endDate         DateTime?
-  user            User?             @relation(fields: [userId], references: [id])
-  vehicle         Vehicle?          @relation(fields: [vehicleId], references: [id])
-  posts           VehiclePost[]
-  documents       VehicleDocument[]
-  excludedPosts   String[]          // IDs of posts excluded for this owner
-  excludedPhotos  String[]          // IDs of photos excluded for this owner
-  excludedDocs    String[]          // IDs of documents excluded for this owner
+model VehicleOwnership {  // Updated model name
+  id                String            @id @default(uuid())
+  userId            String
+  vehicleId         String
+  isCurrentOwner    Boolean           @default(true)
+  vehicleDisplayPhotoId String?       @unique
+  vehicleDisplayPhoto    MediaFile?   @relation("DisplayPhoto", fields: [vehicleDisplayPhotoId], references: [id])
+  startDate         DateTime          @default(now())
+  endDate           DateTime?
+  user              User?             @relation(fields: [userId], references: [id])
+  vehicle           Vehicle?          @relation(fields: [vehicleId], references: [id])
+  posts             VehiclePost[]
+  vehiclePhotos     MediaFile[]       @relation("GalleryPhotos")
+  vehicleDocuments  VehicleDocument[]
+  excludedPhotos    String[]          // IDs of photos excluded for this owner
+  excludedVideos    String[]          // IDs of videos excluded for this owner
+  excludedDocs      String[]          // IDs of documents excluded for this owner
+  vehicleDetails    VehicleDetails?
 
   @@unique([userId, vehicleId])
+
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
 }
 
 model Vehicle {
-  id                 String            @id @default(uuid())
+  id                 String              @id @default(uuid())
   make               String
   model              String
-  registrationNumber String            @unique
-  details            VehicleDetails    @relation(fields: [registrationNumber], references: [registrationNumber])
-  ownerId            String
-  owner              User?             @relation(fields: [ownerId], references: [id])
-  ownerships         Ownership[]
+  registrationNumber String              @unique
+  ownerId            String              @unique
+  owner              User?               @relation(fields: [ownerId], references: [id])
+  ownerships         VehicleOwnership[]  // Updated relation field
   transfers          VehicleTransfer[]
+
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
 }
 
 model VehicleDetails {
-  id                       String    @id @default(uuid())
+  id                       String              @id @default(uuid())
+  fromApi                  Boolean             @default(true)
+  registrationNumber       String              // Removed `@unique` constraint to allow multiple entries
   make                     String
-  registrationNumber       String    @unique
+  model                    String
   colour                   String
   yearOfManufacture        Int
   taxStatus                String
   taxDueDate               DateTime
   motStatus                String
-  engineCapacity           Int
-  co2Emissions             Int
-  fuelType                 String
-  markedForExport          Boolean
-  typeApproval             String
-  wheelplan                String
-  // "artEndDate" may indicate that the vehicle is under some form of administrative restriction, which may prevent it from being used on public roads, sold, or transferred
-  artEndDate               DateTime?
   motExpiryDate            DateTime?
+  engineCapacity           Int?
+  co2Emissions             Int?
+  fuelType                 String?
+  markedForExport          Boolean?
+  typeApproval             String?
+  wheelplan                String?
+  artEndDate               DateTime?
   monthOfFirstRegistration DateTime?
   euroStatus               String?
   dateOfLastV5CIssued      DateTime?
   realDrivingEmissions     String?
   revenueWeight            Int?
-  vehicle                  Vehicle?
+
+  ownershipId              String             @unique
+  ownership                VehicleOwnership?  @relation(fields: [ownershipId], references: [id]) // Updated relation
+
+  createdAt                DateTime           @default(now())
+  updatedAt                DateTime           @updatedAt
 }
 
 model VehicleTransfer {
@@ -258,29 +326,40 @@ model VehicleTransfer {
   transferDate  DateTime        @default(now())
   responseDate  DateTime?
   reason        String?         // Reason for transfer
+  excludedPhotos  String[]      // IDs of photos excluded for new owner
+  excludedVideos  String[]      // IDs of videos excluded for this owner
+  excludedDocs    String[]      // IDs of documents excluded for new owner
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
 }
 
 model VehicleDocument {
-  id            String          @id @default(uuid())
-  fileUrl       String
-  mimeType      String
+  id            String              @id @default(uuid())
+  fileId        String              @unique
+  file          MediaFile           @relation(fields: [fileId], references: [id])
   postId        String?
-  post          VehiclePost?    @relation(fields: [postId], references: [id], onDelete: Cascade)
-  ownershipId   String?
-  ownership     Ownership?      @relation(fields: [ownershipId], references: [id], onDelete: Cascade)
+  post          VehiclePost?        @relation(fields: [postId], references: [id], onDelete: Cascade)
+  ownershipId   String
+  ownership     VehicleOwnership?   @relation(fields: [ownershipId], references: [id], onDelete: Cascade) // Updated relation
+
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
 }
 
 model VehiclePost {
-  id           String          @id @default(uuid())
-  date         DateTime
+  id           String              @id @default(uuid())
   title        String
-  category     PostCategory    @default(GALLERY)
+  category     PostCategory        @default(GALLERY)
   description  String?
   type         PostType?
-  photos       Photo[]
+  photos       MediaFile[]         @relation("PostPhotos")
   documents    VehicleDocument[]
   createdById  String
-  createdBy    User?           @relation(fields: [createdById], references: [id])
-  ownershipId  String?
-  ownership    Ownership?      @relation(fields: [ownershipId], references: [id], onDelete: Cascade)
+  createdBy    User?               @relation(fields: [createdById], references: [id])
+  ownershipId  String
+  ownership    VehicleOwnership?   @relation(fields: [ownershipId], references: [id], onDelete: Cascade) // Updated relation
+
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
 }

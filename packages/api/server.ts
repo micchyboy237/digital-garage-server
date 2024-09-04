@@ -3,6 +3,8 @@ import cors from "cors"
 import express from "express"
 // Uncomment the following line to enable scheduled cleanup
 // import "./scripts/scheduleCleanup"
+import { multerUpload, uploadS3 } from "@boilerplate/aws"
+import { prisma } from "@boilerplate/database"
 import { createContext } from "./src/context"
 import { appRouter } from "./src/routes"
 import { WebhookRequestBody } from "./types.revenuecat"
@@ -47,6 +49,38 @@ app.post("/webhook/revenuecat", async (req: WebhookRequestBody, res) => {
 
   // Respond to RevenueCat
   res.status(200).send("Webhook received")
+})
+
+// Route for handling file uploads and processing them
+app.post("/trpc/uploadVehicleDetails", multerUpload.single("displayPhoto"), async (req, res) => {
+  const { registrationNumber } = req.body // Other form fields
+  const file = req.file // Image file
+
+  try {
+    if (file) {
+      const imageUrl = await uploadS3(file)
+
+      // Save vehicle details and image URL using Prisma
+      const vehicle = await prisma.vehicle.create({
+        data: {
+          registrationNumber,
+          imageUrl,
+          // Add other fields here...
+        },
+      })
+
+      res.status(200).json({ success: true, vehicle })
+    } else {
+      res.status(400).json({ error: "No file uploaded" })
+    }
+  } catch (error) {
+    console.error("Error uploading to S3 or saving to database:", error)
+    res.status(500).json({ error: "Error processing request" })
+  }
+})
+
+app.listen(4000, () => {
+  console.log("Server running on http://localhost:4000")
 })
 
 const PORT = process.env.APP_PORT || 3000

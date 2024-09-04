@@ -1,7 +1,6 @@
 import { z } from "zod"
-import { VehicleDetailsArgsObjectSchema } from "./VehicleDetailsArgs.schema"
 import { UserArgsObjectSchema } from "./UserArgs.schema"
-import { OwnershipFindManySchema } from "../findManyOwnership.schema"
+import { VehicleOwnershipFindManySchema } from "../findManyVehicleOwnership.schema"
 import { VehicleTransferFindManySchema } from "../findManyVehicleTransfer.schema"
 import { VehicleCountOutputTypeArgsObjectSchema } from "./VehicleCountOutputTypeArgs.schema"
 
@@ -13,11 +12,12 @@ const Schema: z.ZodType<Prisma.VehicleSelect> = z
     make: z.boolean().optional(),
     model: z.boolean().optional(),
     registrationNumber: z.boolean().optional(),
-    details: z.union([z.boolean(), z.lazy(() => VehicleDetailsArgsObjectSchema)]).optional(),
     ownerId: z.boolean().optional(),
     owner: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional(),
-    ownerships: z.union([z.boolean(), z.lazy(() => OwnershipFindManySchema)]).optional(),
+    ownerships: z.union([z.boolean(), z.lazy(() => VehicleOwnershipFindManySchema)]).optional(),
     transfers: z.union([z.boolean(), z.lazy(() => VehicleTransferFindManySchema)]).optional(),
+    createdAt: z.boolean().optional(),
+    updatedAt: z.boolean().optional(),
     _count: z.union([z.boolean(), z.lazy(() => VehicleCountOutputTypeArgsObjectSchema)]).optional(),
   })
   .strict()

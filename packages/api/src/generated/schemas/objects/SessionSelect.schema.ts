@@ -12,6 +12,8 @@ const Schema: z.ZodType<Prisma.SessionSelect> = z
     deviceFingerprint: z.boolean().optional(),
     userId: z.boolean().optional(),
     user: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional(),
+    createdAt: z.boolean().optional(),
+    updatedAt: z.boolean().optional(),
   })
   .strict()
 

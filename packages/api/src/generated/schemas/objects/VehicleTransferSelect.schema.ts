@@ -17,6 +17,11 @@ const Schema: z.ZodType<Prisma.VehicleTransferSelect> = z
     transferDate: z.boolean().optional(),
     responseDate: z.boolean().optional(),
     reason: z.boolean().optional(),
+    excludedPhotos: z.boolean().optional(),
+    excludedVideos: z.boolean().optional(),
+    excludedDocs: z.boolean().optional(),
+    createdAt: z.boolean().optional(),
+    updatedAt: z.boolean().optional(),
   })
   .strict()
 

@@ -13,6 +13,8 @@ const Schema: z.ZodType<Prisma.PaymentSelect> = z
     transactionDate: z.boolean().optional(),
     subscriptionId: z.boolean().optional(),
     subscription: z.union([z.boolean(), z.lazy(() => SubscriptionArgsObjectSchema)]).optional(),
+    createdAt: z.boolean().optional(),
+    updatedAt: z.boolean().optional(),
   })
   .strict()
 

@@ -1,6 +1,9 @@
+import { PutObjectCommand, s3, upload } from "@boilerplate/aws"
+import { prisma } from "@boilerplate/database"
 import { TRPCError } from "@trpc/server"
 import fetch from "node-fetch"
-import { z } from "zod"
+import { ValidationException } from "../exceptions"
+import { addOrUpdateVehicleDetailsSchema, addVehicleDetailsSchema, uploadVehicleDetailsSchema } from "../schemas/vehicle.schema"
 import { protectedProcedure, t } from "../trpc"
 
 // Define the TypeScript interface for the DVLA API response
@@ -27,35 +30,12 @@ interface DVLAApiResponse {
   revenueWeight?: number | null
 }
 
-// Define the schema for the input validation using Zod
-const addVehicleDetailsSchema = z.object({
-  registrationNumber: z.string(),
-})
-
-const addOrUpdateVehicleDetailsSchema = z.object({
-  registrationNumber: z.string(),
-  make: z.string(),
-  colour: z.string(),
-  yearOfManufacture: z.number(),
-  taxStatus: z.string(),
-  taxDueDate: z.date().optional(),
-  motStatus: z.string(),
-  engineCapacity: z.number(),
-  co2Emissions: z.number(),
-  fuelType: z.string(),
-  markedForExport: z.boolean(),
-  typeApproval: z.string(),
-  wheelplan: z.string(),
-  euroStatus: z.string().optional(),
-  dateOfLastV5CIssued: z.date().optional(),
-  monthOfFirstRegistration: z.date().optional(),
-  artEndDate: z.date().optional(),
-  motExpiryDate: z.date().optional(),
-  realDrivingEmissions: z.string().optional(),
-  revenueWeight: z.number().optional(),
-})
-
 export const vehicleRouter = t.router({
+  getVehicles: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.vehicle.findMany({
+      include: { transfers: true, details: true },
+    })
+  }),
   addOrUpdateVehicleDetails: protectedProcedure.input(addOrUpdateVehicleDetailsSchema).mutation(async ({ ctx, input }) => {
     // Remove spaces from the registration number
     const registrationNumber = input.registrationNumber.replace(/\s/g, "")
@@ -125,8 +105,7 @@ export const vehicleRouter = t.router({
   }),
 
   addDVLADetails: protectedProcedure.input(addVehicleDetailsSchema).mutation(async ({ ctx, input }) => {
-    // Remove spaces from the registration number
-    const registrationNumber = input.registrationNumber.replace(/\s/g, "")
+    const registrationNumber = input.registrationNumber
     // Check if the vehicle details with the registration number already exist
     const existingVehicleDetails = await ctx.prisma.vehicleDetails.findFirst({
       where: { registrationNumber },
@@ -140,7 +119,7 @@ export const vehicleRouter = t.router({
     if (!existingVehicleDetails) {
       // Fetch vehicle details from the external API
       const vehicleDetails = await fetchVehicleData({
-        registrationNumber: input.registrationNumber,
+        registrationNumber,
       })
 
       if (!vehicleDetails) {
@@ -177,6 +156,54 @@ export const vehicleRouter = t.router({
     }
 
     throw new TRPCError({ code: "BAD_REQUEST", message: "Vehicle details already exist" })
+  }),
+  uploadVehicleDetails: protectedProcedure.input(uploadVehicleDetailsSchema).mutation(async ({ input, ctx }) => {
+    try {
+      // Use multer to handle file upload
+      await new Promise<void>((resolve, reject) => {
+        upload.single("image")(ctx.req, ctx.res, (err) => {
+          if (err) {
+            return reject(new TRPCError({ code: "BAD_REQUEST", message: "Error uploading file" }))
+          }
+          resolve()
+        })
+      })
+
+      const { file } = ctx.req as any // Cast to any to access multer's file property
+      const { registrationNumber } = input
+
+      if (!file) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "No file uploaded" })
+      }
+
+      // Upload to S3
+      const uploadParams = {
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: file.originalname, // File name you want to save in S3
+        Body: file.buffer,
+      }
+
+      await s3.send(new PutObjectCommand(uploadParams))
+
+      const imageUrl = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${file.originalname}`
+
+      // Save vehicle details and image URL using Prisma
+      const vehicle = await prisma.vehicle.create({
+        data: {
+          registrationNumber,
+          imageUrl,
+          // Add other fields here...
+        },
+      })
+
+      return { success: true, vehicle }
+    } catch (error) {
+      if (error instanceof ValidationException) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: error.message })
+      }
+      console.error("Error uploading to S3 or saving to database:", error)
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Error processing request" })
+    }
   }),
 })
 
