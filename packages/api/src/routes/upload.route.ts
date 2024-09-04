@@ -1,4 +1,4 @@
-import { generateThumbnail, optimizeImage } from "@boilerplate/aws"
+import { multerUpload, uploadImageAndThumbnail } from "@boilerplate/aws"
 import { MediaFileType } from "@boilerplate/database"
 import { TRPCError } from "@trpc/server"
 import { RequestHandler } from "express"
@@ -39,17 +39,11 @@ const uploadVehicleDetailsSchema = z.object({
 // Multer middleware for handling single file uploads
 export const uploadSingle: RequestHandler = multer().single("displayPhoto")
 
-// Define type for Multer file to ensure type safety
-interface MulterFile {
-  originalname: string
-  buffer: Buffer
-  mimetype: string
-}
-
 // Create a tRPC router with file upload handling and transactions
 export const uploadRouter = t.router({
   uploadVehicleDetails: protectedProcedure.input(uploadVehicleDetailsSchema).mutation(async ({ input, ctx }) => {
     try {
+      const uploadSingle = multerUpload.single("displayPhoto")
       // Handle file upload using Multer
       await new Promise<void>((resolve, reject) => {
         uploadSingle(ctx.req, ctx.res, (err) => {
@@ -60,16 +54,14 @@ export const uploadRouter = t.router({
         })
       })
 
-      const { file } = ctx.req as { file: MulterFile | undefined } // Ensure type safety for req file
+      const { file, folder } = ctx.req as { file: Express.Multer.File | undefined; folder?: string } // Ensure type safety for req file
       const { registrationNumber } = input
 
       if (!file) {
         throw new TRPCError({ code: "BAD_REQUEST", message: "No file uploaded" })
       }
 
-      // Optimize image and generate thumbnail separately
-      const imageUrl = await optimizeImage(file.buffer, file.originalname)
-      const thumbnailUrl = await generateThumbnail(file.buffer, file.originalname)
+      const { imageUrl, thumbnailUrl } = await uploadImageAndThumbnail(file, folder)
 
       // Perform a transaction to save vehicle details and image URLs using Prisma
       const vehicle = await ctx.prisma.$transaction(async (prisma) => {
@@ -88,12 +80,13 @@ export const uploadRouter = t.router({
           data: {
             url: imageUrl,
             thumbnailUrl,
+            fileName: file.originalname,
             type: MediaFileType.IMAGE,
             mimeType: file.mimetype,
           },
         })
 
-        await prisma.ownership.create({
+        await prisma.vehicleOwnership.create({
           data: {
             userId: ctx.session?.userId!,
             vehicleId: createdVehicle.id,

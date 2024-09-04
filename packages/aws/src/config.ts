@@ -37,7 +37,7 @@ switch (env) {
 
 export const awsConfig = {
   region: process.env.AWS_REGION || "eu-west-2",
-  s3BucketName: process.env.AWS_S3_BUCKET_NAME,
+  s3BucketName: process.env.AWS_S3_BUCKET_NAME || "local-classic-garage-bucket",
 }
 
 // Configure AWS SDK JavaScript v3 credentials
@@ -65,3 +65,4 @@ const awsVariables = Object.keys(process.env)
 console.info("AWS environment variables:\n", JSON.stringify(awsVariables, null, 2))
 console.info("AWS S3 bucket:\n", JSON.stringify(awsConfig, null, 2))
 console.info("AWS S3 client configured successfully")
+console.info("\n")

@@ -5,7 +5,7 @@ import { fileURLToPath } from "url"
 
 // snippet-start:[s3.JavaScript.buckets.listBucketsV3]
 import { ListBucketsCommand } from "@aws-sdk/client-s3"
-import { s3Client } from ".."
+import { s3Client } from "../.."
 
 export const main = async () => {
   const command = new ListBucketsCommand({})

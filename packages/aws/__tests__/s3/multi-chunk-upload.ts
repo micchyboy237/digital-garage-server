@@ -7,7 +7,7 @@ import {
 import fs from "fs"
 import path from "path"
 import { fileURLToPath } from "url"
-import { awsConfig, s3Client } from ".."
+import { awsConfig, s3Client } from "../.."
 
 const filePath = path.join(__dirname, "assets/sample-vehicle-display.jpeg") // Replace with your actual image path
 const imageBuffer = fs.readFileSync(filePath)

@@ -1,9 +1,6 @@
-import { PutObjectCommand, s3, upload } from "@boilerplate/aws"
-import { prisma } from "@boilerplate/database"
 import { TRPCError } from "@trpc/server"
 import fetch from "node-fetch"
-import { ValidationException } from "../exceptions"
-import { addOrUpdateVehicleDetailsSchema, addVehicleDetailsSchema, uploadVehicleDetailsSchema } from "../schemas/vehicle.schema"
+import { addOrUpdateVehicleDetailsSchema, addVehicleDetailsSchema } from "../schemas/vehicle.schema"
 import { protectedProcedure, t } from "../trpc"
 
 // Define the TypeScript interface for the DVLA API response
@@ -156,54 +153,6 @@ export const vehicleRouter = t.router({
     }
 
     throw new TRPCError({ code: "BAD_REQUEST", message: "Vehicle details already exist" })
-  }),
-  uploadVehicleDetails: protectedProcedure.input(uploadVehicleDetailsSchema).mutation(async ({ input, ctx }) => {
-    try {
-      // Use multer to handle file upload
-      await new Promise<void>((resolve, reject) => {
-        upload.single("image")(ctx.req, ctx.res, (err) => {
-          if (err) {
-            return reject(new TRPCError({ code: "BAD_REQUEST", message: "Error uploading file" }))
-          }
-          resolve()
-        })
-      })
-
-      const { file } = ctx.req as any // Cast to any to access multer's file property
-      const { registrationNumber } = input
-
-      if (!file) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "No file uploaded" })
-      }
-
-      // Upload to S3
-      const uploadParams = {
-        Bucket: process.env.S3_BUCKET_NAME,
-        Key: file.originalname, // File name you want to save in S3
-        Body: file.buffer,
-      }
-
-      await s3.send(new PutObjectCommand(uploadParams))
-
-      const imageUrl = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${file.originalname}`
-
-      // Save vehicle details and image URL using Prisma
-      const vehicle = await prisma.vehicle.create({
-        data: {
-          registrationNumber,
-          imageUrl,
-          // Add other fields here...
-        },
-      })
-
-      return { success: true, vehicle }
-    } catch (error) {
-      if (error instanceof ValidationException) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: error.message })
-      }
-      console.error("Error uploading to S3 or saving to database:", error)
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Error processing request" })
-    }
   }),
 })
 

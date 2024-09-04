@@ -3,27 +3,127 @@ import fnmatch
 import argparse
 import subprocess
 
-DEFAULT_SYSTEM_MESSAGE = """
-Dont use memory
-""".strip()
-
-DEFAULT_MESSAGE = f"""
-How to correctly run s3.test.ts without generating new files?
-""".strip()
-
 exclude_files = [
     "node_modules",
 ]
 
 include_files = [
-    "src/**/*.ts",
-    "__tests__/**/*.ts",
-    '.env.local',
-    'package.json',
-    'tsconfig.json',
-    'src/config.ts',
-    'src/index.ts'
+    "run.s3-upload.ts",
+    "src/config.ts",
+    "s3.service.ts",
+    "s3.utils.ts",
+    "types.ts"
 ]
+
+DEFAULT_SYSTEM_MESSAGE = """
+Dont use memory
+""".strip()
+
+DEFAULT_MESSAGE = """
+Please correct uploadImageAndThumbnail response
+
+jethroestrada@Jethros-Mac-mini aws % pnpm test:s3
+
+> @boilerplate/aws@1.0.0 test:s3 /Users/jethroestrada/Desktop/External_Projects/DigitalGarage/digital-garage/packages/aws
+> npx tsx __tests__/s3/run.s3-upload.ts
+
+Environment variables loaded from .env.local
+AWS environment variables:
+ {
+  "AWS_S3_BUCKET_NAME": "local-classic-garage-bucket",
+  "AWS_PROFILE": "classic-garage-s3-local",
+  "AWS_REGION": "eu-west-2",
+  "AWS_S3_ENDPOINT": "https://s3.eu-west-2.amazonaws.com"
+}
+AWS S3 bucket:
+ {
+  "region": "eu-west-2",
+  "s3BucketName": "local-classic-garage-bucket"
+}
+AWS S3 client configured successfully
+
+
+Started uploadS3 function
+Converting stream to buffer
+Uploading image and thumbnail to S3:
+ {
+  "originalname": "sample-vehicle-display.jpeg",
+  "bufferLength": 178073
+}
+Starting the file upload process...
+Folder specified: images
+Uploading file to bucket: local-classic-garage-bucket, with key: images/sample-vehicle-display.jpeg
+Sending upload request to S3...
+Upload progress: {
+  loaded: 207653,
+  total: 207653,
+  part: 1,
+  Key: 'images/sample-vehicle-display.jpeg',
+  Bucket: 'local-classic-garage-bucket'
+}
+Upload request sent successfully
+Image successfully uploaded to: https://local-classic-garage-bucket.s3.async () => {
+    if (runtimeConfig.region === void 0) {
+      throw new Error("Region is missing from runtimeConfig");
+    }
+    const region = runtimeConfig.region;
+    if (typeof region === "string") {
+      return region;
+    }
+    return region();
+  }.amazonaws.com/images/sample-vehicle-display.jpeg
+Starting the file upload process...
+Folder specified: images
+Uploading file to bucket: local-classic-garage-bucket, with key: images/sample-vehicle-display_thumb.jpeg
+Sending upload request to S3...
+Upload progress: {
+  loaded: 5908,
+  total: 5908,
+  part: 1,
+  Key: 'images/sample-vehicle-display_thumb.jpeg',
+  Bucket: 'local-classic-garage-bucket'
+}
+Upload request sent successfully
+Image successfully uploaded to: https://local-classic-garage-bucket.s3.async () => {
+    if (runtimeConfig.region === void 0) {
+      throw new Error("Region is missing from runtimeConfig");
+    }
+    const region = runtimeConfig.region;
+    if (typeof region === "string") {
+      return region;
+    }
+    return region();
+  }.amazonaws.com/images/sample-vehicle-display_thumb.jpeg
+File upload completed successfully:
+ {
+  "imageUrl": "https://local-classic-garage-bucket.s3.async () => {\n    if (runtimeConfig.region === void 0) {\n      throw new Error(\"Region is missing from runtimeConfig\");\n    }\n    const region = runtimeConfig.region;\n    if (typeof region === \"string\") {\n      return region;\n    }\n    return region();\n  }.amazonaws.com/images/sample-vehicle-display.jpeg",
+  "thumbnailUrl": "https://local-classic-garage-bucket.s3.async () => {\n    if (runtimeConfig.region === void 0) {\n      throw new Error(\"Region is missing from runtimeConfig\");\n    }\n    const region = runtimeConfig.region;\n    if (typeof region === \"string\") {\n      return region;\n    }\n    return region();\n  }.amazonaws.com/images/sample-vehicle-display_thumb.jpeg"
+}
+File uploaded to: {
+  imageUrl: 'https://local-classic-garage-bucket.s3.async () => {\n' +
+    '    if (runtimeConfig.region === void 0) {\n' +
+    '      throw new Error("Region is missing from runtimeConfig");\n' +
+    '    }\n' +
+    '    const region = runtimeConfig.region;\n' +
+    '    if (typeof region === "string") {\n' +
+    '      return region;\n' +
+    '    }\n' +
+    '    return region();\n' +
+    '  }.amazonaws.com/images/sample-vehicle-display.jpeg',
+  thumbnailUrl: 'https://local-classic-garage-bucket.s3.async () => {\n' +
+    '    if (runtimeConfig.region === void 0) {\n' +
+    '      throw new Error("Region is missing from runtimeConfig");\n' +
+    '    }\n' +
+    '    const region = runtimeConfig.region;\n' +
+    '    if (typeof region === "string") {\n' +
+    '      return region;\n' +
+    '    }\n' +
+    '    return region();\n' +
+    '  }.amazonaws.com/images/sample-vehicle-display_thumb.jpeg'
+}
+jethroestrada@Jethros-Mac-mini aws %
+""".strip()
+
 
 # base_dir should be actual file directory
 file_dir = os.path.dirname(os.path.realpath(__file__))

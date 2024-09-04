@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "main": "src/index.ts",
   "scripts": {
-    "test": "jest --config jest.config.ts --silent",
-    "test:s3": "npx tsx __tests__/s3.test.ts"
+    "test": "jest --config jest.config.ts",
+    "test:s3": "npx tsx __tests__/s3/run.s3-upload.ts",
+    "test:s3:multi": "npx tsx __tests__/s3/multi-chunk-upload.ts"
   },
   "author": "",
   "license": "ISC",
