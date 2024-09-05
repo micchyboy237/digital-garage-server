@@ -7,7 +7,6 @@ import Decimal from 'decimal.js';
 export function fakeUser() {
   return {
     email: faker.internet.email(),
-    firebaseUid: faker.lorem.words(5),
     firstName: undefined,
     lastName: undefined,
     displayPicture: undefined,
@@ -19,8 +18,6 @@ export function fakeUserComplete() {
   return {
     id: faker.string.uuid(),
     email: faker.internet.email(),
-    firebaseUid: faker.lorem.words(5),
-    isEmailVerified: false,
     firstName: undefined,
     lastName: undefined,
     displayPicture: undefined,
@@ -33,8 +30,8 @@ export function fakeUserComplete() {
 export function fakeAccount() {
   return {
     provider: faker.helpers.arrayElement([AuthProvider.EMAIL_PASSWORD, AuthProvider.GOOGLE, AuthProvider.APPLE] as const),
+    firebaseUid: faker.lorem.words(5),
     lastLogin: undefined,
-    email: faker.internet.email(),
     updatedAt: faker.date.anytime(),
   };
 }
@@ -42,9 +39,10 @@ export function fakeAccountComplete() {
   return {
     id: faker.string.uuid(),
     provider: faker.helpers.arrayElement([AuthProvider.EMAIL_PASSWORD, AuthProvider.GOOGLE, AuthProvider.APPLE] as const),
+    email: faker.string.uuid(),
+    firebaseUid: faker.lorem.words(5),
+    isEmailVerified: false,
     lastLogin: undefined,
-    userId: faker.string.uuid(),
-    email: faker.internet.email(),
     createdAt: new Date(),
     updatedAt: faker.date.anytime(),
   };

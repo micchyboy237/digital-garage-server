@@ -1,6 +1,5 @@
 import { z } from "zod"
 import { StringFilterObjectSchema } from "./StringFilter.schema"
-import { BoolFilterObjectSchema } from "./BoolFilter.schema"
 import { StringNullableFilterObjectSchema } from "./StringNullableFilter.schema"
 import { EnumAccountStatusFilterObjectSchema } from "./EnumAccountStatusFilter.schema"
 import { AccountStatusSchema } from "../enums/AccountStatus.schema"
@@ -26,8 +25,6 @@ const Schema: z.ZodType<Prisma.UserWhereInput> = z
     NOT: z.union([z.lazy(() => UserWhereInputObjectSchema), z.lazy(() => UserWhereInputObjectSchema).array()]).optional(),
     id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
     email: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-    firebaseUid: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-    isEmailVerified: z.union([z.lazy(() => BoolFilterObjectSchema), z.boolean()]).optional(),
     firstName: z
       .union([z.lazy(() => StringNullableFilterObjectSchema), z.string()])
       .optional()

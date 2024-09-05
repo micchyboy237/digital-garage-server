@@ -14,8 +14,6 @@ const Schema: z.ZodType<Prisma.UserSelect> = z
   .object({
     id: z.boolean().optional(),
     email: z.boolean().optional(),
-    firebaseUid: z.boolean().optional(),
-    isEmailVerified: z.boolean().optional(),
     firstName: z.boolean().optional(),
     lastName: z.boolean().optional(),
     displayPicture: z.boolean().optional(),

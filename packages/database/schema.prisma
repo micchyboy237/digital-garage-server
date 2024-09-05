@@ -161,8 +161,6 @@ enum MediaFileType {
 model User {
   id                String                @id @default(uuid())
   email             String                @unique
-  firebaseUid       String                @unique
-  isEmailVerified   Boolean               @default(false)
   firstName         String?
   lastName          String?
   displayPicture    String?
@@ -184,16 +182,17 @@ model User {
 model Account {
   id              String        @id @default(uuid())
   provider        AuthProvider
-  lastLogin       DateTime?
-  userId          String
-  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   email           String
+  user            User          @relation(fields: [email], references: [email], onDelete: Cascade)
+  firebaseUid     String
+  isEmailVerified Boolean       @default(false)
+  lastLogin       DateTime?
   sessions        Session[]
 
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 
-  @@unique([provider, userId])
+  @@unique([provider, email])
 }
 
 model Session {

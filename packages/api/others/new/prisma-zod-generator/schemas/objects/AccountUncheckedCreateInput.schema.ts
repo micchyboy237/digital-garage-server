@@ -8,9 +8,10 @@ const Schema: z.ZodType<Prisma.AccountUncheckedCreateInput> = z
   .object({
     id: z.string().optional(),
     provider: z.lazy(() => AuthProviderSchema),
-    lastLogin: z.coerce.date().optional().nullable(),
-    userId: z.string(),
     email: z.string(),
+    firebaseUid: z.string(),
+    isEmailVerified: z.boolean().optional(),
+    lastLogin: z.coerce.date().optional().nullable(),
     createdAt: z.coerce.date().optional(),
     updatedAt: z.coerce.date().optional(),
     sessions: z.lazy(() => SessionUncheckedCreateNestedManyWithoutAccountInputObjectSchema).optional(),

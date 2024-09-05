@@ -11,8 +11,6 @@ const Schema: z.ZodType<Prisma.UserOrderByWithAggregationInput> = z
   .object({
     id: z.lazy(() => SortOrderSchema).optional(),
     email: z.lazy(() => SortOrderSchema).optional(),
-    firebaseUid: z.lazy(() => SortOrderSchema).optional(),
-    isEmailVerified: z.lazy(() => SortOrderSchema).optional(),
     firstName: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
     lastName: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
     displayPicture: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),

@@ -1,6 +1,5 @@
 import { z } from "zod"
 import { StringWithAggregatesFilterObjectSchema } from "./StringWithAggregatesFilter.schema"
-import { BoolWithAggregatesFilterObjectSchema } from "./BoolWithAggregatesFilter.schema"
 import { StringNullableWithAggregatesFilterObjectSchema } from "./StringNullableWithAggregatesFilter.schema"
 import { EnumAccountStatusWithAggregatesFilterObjectSchema } from "./EnumAccountStatusWithAggregatesFilter.schema"
 import { AccountStatusSchema } from "../enums/AccountStatus.schema"
@@ -28,8 +27,6 @@ const Schema: z.ZodType<Prisma.UserScalarWhereWithAggregatesInput> = z
       .optional(),
     id: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
     email: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
-    firebaseUid: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
-    isEmailVerified: z.union([z.lazy(() => BoolWithAggregatesFilterObjectSchema), z.boolean()]).optional(),
     firstName: z
       .union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()])
       .optional()

@@ -6,8 +6,6 @@ export const UserPlain = t.Object(
   {
     id: t.String({ additionalProperties: true }),
     email: t.String({ additionalProperties: true }),
-    firebaseUid: t.String({ additionalProperties: true }),
-    isEmailVerified: t.Boolean({ additionalProperties: true }),
     firstName: __nullable__(t.String({ additionalProperties: true })),
     lastName: __nullable__(t.String({ additionalProperties: true })),
     displayPicture: __nullable__(t.String({ additionalProperties: true })),
@@ -204,9 +202,10 @@ export const UserRelations = t.Object(
             ],
             { additionalProperties: true },
           ),
-          lastLogin: __nullable__(t.Date({ additionalProperties: true })),
-          userId: t.String({ additionalProperties: true }),
           email: t.String({ additionalProperties: true }),
+          firebaseUid: t.String({ additionalProperties: true }),
+          isEmailVerified: t.Boolean({ additionalProperties: true }),
+          lastLogin: __nullable__(t.Date({ additionalProperties: true })),
           createdAt: t.Date({ additionalProperties: true }),
           updatedAt: t.Date({ additionalProperties: true }),
         },
@@ -220,7 +219,6 @@ export const UserRelations = t.Object(
 export const UserPlainInputCreate = t.Object(
   {
     email: t.String({ additionalProperties: true }),
-    isEmailVerified: t.Boolean({ additionalProperties: true }),
     firstName: t.Optional(
       __nullable__(t.String({ additionalProperties: true })),
     ),
@@ -248,7 +246,6 @@ export const UserPlainInputCreate = t.Object(
 export const UserPlainInputUpdate = t.Object(
   {
     email: t.String({ additionalProperties: true }),
-    isEmailVerified: t.Boolean({ additionalProperties: true }),
     firstName: t.Optional(
       __nullable__(t.String({ additionalProperties: true })),
     ),
@@ -598,8 +595,6 @@ export const UserWhere = t.Partial(
         OR: t.Array(Self),
         id: t.String(),
         email: t.String(),
-        firebaseUid: t.String(),
-        isEmailVerified: t.Boolean(),
         firstName: t.String(),
         lastName: t.String(),
         displayPicture: t.String(),
@@ -623,18 +618,8 @@ export const UserWhere = t.Partial(
 export const UserWhereUnique = t.Recursive(
   (Self) =>
     t.Intersect([
-      t.Partial(
-        t.Object({
-          id: t.String(),
-          email: t.String(),
-          firebaseUid: t.String(),
-        }),
-      ),
-      t.Union([
-        t.Object({ id: t.String() }),
-        t.Object({ email: t.String() }),
-        t.Object({ firebaseUid: t.String() }),
-      ]),
+      t.Partial(t.Object({ id: t.String(), email: t.String() })),
+      t.Union([t.Object({ id: t.String() }), t.Object({ email: t.String() })]),
       t.Partial(
         t.Object({
           AND: t.Union([Self, t.Array(Self)]),
@@ -647,8 +632,6 @@ export const UserWhereUnique = t.Recursive(
           {
             id: t.String(),
             email: t.String(),
-            firebaseUid: t.String(),
-            isEmailVerified: t.Boolean(),
             firstName: t.String(),
             lastName: t.String(),
             displayPicture: t.String(),

@@ -1,3 +1,12 @@
 import { z } from "zod"
 
-export const AccountScalarFieldEnumSchema = z.enum(["id", "provider", "lastLogin", "userId", "email", "createdAt", "updatedAt"])
+export const AccountScalarFieldEnumSchema = z.enum([
+  "id",
+  "provider",
+  "email",
+  "firebaseUid",
+  "isEmailVerified",
+  "lastLogin",
+  "createdAt",
+  "updatedAt",
+])

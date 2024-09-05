@@ -68,9 +68,10 @@ export type MediaFileType = (typeof MediaFileType)[keyof typeof MediaFileType]
 export type Account = {
   id: string
   provider: AuthProvider
-  lastLogin: Timestamp | null
-  userId: string
   email: string
+  firebaseUid: string
+  isEmailVerified: Generated<boolean>
+  lastLogin: Timestamp | null
   createdAt: Generated<Timestamp>
   updatedAt: Timestamp
 }
@@ -122,8 +123,6 @@ export type Subscription = {
 export type User = {
   id: string
   email: string
-  firebaseUid: string
-  isEmailVerified: Generated<boolean>
   firstName: string | null
   lastName: string | null
   displayPicture: string | null

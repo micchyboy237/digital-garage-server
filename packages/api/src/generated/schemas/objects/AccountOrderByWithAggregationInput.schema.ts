@@ -11,9 +11,10 @@ const Schema: z.ZodType<Prisma.AccountOrderByWithAggregationInput> = z
   .object({
     id: z.lazy(() => SortOrderSchema).optional(),
     provider: z.lazy(() => SortOrderSchema).optional(),
-    lastLogin: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
-    userId: z.lazy(() => SortOrderSchema).optional(),
     email: z.lazy(() => SortOrderSchema).optional(),
+    firebaseUid: z.lazy(() => SortOrderSchema).optional(),
+    isEmailVerified: z.lazy(() => SortOrderSchema).optional(),
+    lastLogin: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
     createdAt: z.lazy(() => SortOrderSchema).optional(),
     updatedAt: z.lazy(() => SortOrderSchema).optional(),
     _count: z.lazy(() => AccountCountOrderByAggregateInputObjectSchema).optional(),

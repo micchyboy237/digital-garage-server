@@ -32,8 +32,6 @@ CREATE TYPE "MediaFileType" AS ENUM ('IMAGE', 'VIDEO', 'DOCUMENT');
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "firebaseUid" TEXT NOT NULL,
-    "isEmailVerified" BOOLEAN NOT NULL DEFAULT false,
     "firstName" TEXT,
     "lastName" TEXT,
     "displayPicture" TEXT,
@@ -49,9 +47,10 @@ CREATE TABLE "User" (
 CREATE TABLE "Account" (
     "id" TEXT NOT NULL,
     "provider" "AuthProvider" NOT NULL,
-    "lastLogin" TIMESTAMP(3),
-    "userId" TEXT NOT NULL,
     "email" TEXT NOT NULL,
+    "firebaseUid" TEXT NOT NULL,
+    "isEmailVerified" BOOLEAN NOT NULL DEFAULT false,
+    "lastLogin" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -215,10 +214,7 @@ CREATE TABLE "VehiclePost" (
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_firebaseUid_key" ON "User"("firebaseUid");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Account_provider_userId_key" ON "Account"("provider", "userId");
+CREATE UNIQUE INDEX "Account_provider_email_key" ON "Account"("provider", "email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Session_token_key" ON "Session"("token");
@@ -248,7 +244,7 @@ CREATE UNIQUE INDEX "Vehicle_ownerId_key" ON "Vehicle"("ownerId");
 CREATE UNIQUE INDEX "VehicleDetails_ownershipId_key" ON "VehicleDetails"("ownershipId");
 
 -- AddForeignKey
-ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Account" ADD CONSTRAINT "Account_email_fkey" FOREIGN KEY ("email") REFERENCES "User"("email") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Session" ADD CONSTRAINT "Session_accountId_fkey" FOREIGN KEY ("accountId") REFERENCES "Account"("id") ON DELETE CASCADE ON UPDATE CASCADE;

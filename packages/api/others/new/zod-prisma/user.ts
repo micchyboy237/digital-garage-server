@@ -6,8 +6,6 @@ import { CompleteSession, RelatedSessionModel, CompleteVehicle, RelatedVehicleMo
 export const UserModel = z.object({
   id: z.string(),
   email: z.string(),
-  firebaseUid: z.string(),
-  isEmailVerified: z.boolean(),
   firstName: z.string().nullish(),
   lastName: z.string().nullish(),
   displayPicture: z.string().nullish(),

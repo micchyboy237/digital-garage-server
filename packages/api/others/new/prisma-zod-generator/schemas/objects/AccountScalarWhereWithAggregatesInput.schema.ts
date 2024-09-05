@@ -2,6 +2,7 @@ import { z } from "zod"
 import { StringWithAggregatesFilterObjectSchema } from "./StringWithAggregatesFilter.schema"
 import { EnumAuthProviderWithAggregatesFilterObjectSchema } from "./EnumAuthProviderWithAggregatesFilter.schema"
 import { AuthProviderSchema } from "../enums/AuthProvider.schema"
+import { BoolWithAggregatesFilterObjectSchema } from "./BoolWithAggregatesFilter.schema"
 import { DateTimeNullableWithAggregatesFilterObjectSchema } from "./DateTimeNullableWithAggregatesFilter.schema"
 import { DateTimeWithAggregatesFilterObjectSchema } from "./DateTimeWithAggregatesFilter.schema"
 
@@ -29,12 +30,13 @@ const Schema: z.ZodType<Prisma.AccountScalarWhereWithAggregatesInput> = z
     provider: z
       .union([z.lazy(() => EnumAuthProviderWithAggregatesFilterObjectSchema), z.lazy(() => AuthProviderSchema)])
       .optional(),
+    email: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
+    firebaseUid: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
+    isEmailVerified: z.union([z.lazy(() => BoolWithAggregatesFilterObjectSchema), z.boolean()]).optional(),
     lastLogin: z
       .union([z.lazy(() => DateTimeNullableWithAggregatesFilterObjectSchema), z.coerce.date()])
       .optional()
       .nullable(),
-    userId: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
-    email: z.union([z.lazy(() => StringWithAggregatesFilterObjectSchema), z.string()]).optional(),
     createdAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
     updatedAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
   })

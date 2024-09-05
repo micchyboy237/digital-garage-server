@@ -38,8 +38,6 @@ export const SubscriptionRelations = t.Object(
         {
           id: t.String({ additionalProperties: true }),
           email: t.String({ additionalProperties: true }),
-          firebaseUid: t.String({ additionalProperties: true }),
-          isEmailVerified: t.Boolean({ additionalProperties: true }),
           firstName: __nullable__(t.String({ additionalProperties: true })),
           lastName: __nullable__(t.String({ additionalProperties: true })),
           displayPicture: __nullable__(

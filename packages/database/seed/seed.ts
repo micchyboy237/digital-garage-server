@@ -4,17 +4,33 @@ async function main() {
   // Create Users and Sessions
   const user1 = await createUser("user-1", "john.doe@example.com", "John", "Doe")
   const user2 = await createUser("user-2", "jane.smith@example.com", "Jane", "Smith")
+
   // Create Accounts for Auth Providers
-  const user1Account1 = await createAccount(user1.id, "EMAIL_PASSWORD", "john.doe@example.com")
-  const user1Account2 = await createAccount(user1.id, "APPLE", "john.doe@example.com")
-  const user2Account1 = await createAccount(user2.id, "GOOGLE", "jane.smith@example.com")
+  const user1Account1 = await createAccount("EMAIL_PASSWORD", "john.doe@example.com")
+  const user1Account2 = await createAccount("APPLE", "john.doe@example.com")
+  const user2Account1 = await createAccount("GOOGLE", "jane.smith@example.com")
 
   const user1DeviceFingerprint = `${user1.id}-device`
   const user2DeviceFingerprint = `${user2.id}-device`
 
-  await createSession("session-token-0", user1Account1.id, user1DeviceFingerprint)
-  await updateSession("session-token-1", user1Account2.id, user1DeviceFingerprint)
-  await createSession("session-token-2", user2Account1.id, user2DeviceFingerprint)
+  await createOrUpdateSession({
+    token: "session-token-0",
+    accountId: user1Account1.id,
+    userId: user1.id,
+    deviceFingerprint: user1DeviceFingerprint,
+  })
+  await createOrUpdateSession({
+    token: "session-token-1",
+    accountId: user1Account2.id,
+    userId: user1.id,
+    deviceFingerprint: user1DeviceFingerprint,
+  })
+  await createOrUpdateSession({
+    token: "session-token-2",
+    accountId: user2Account1.id,
+    userId: user2.id,
+    deviceFingerprint: user2DeviceFingerprint,
+  })
 
   // Create Subscriptions and Payments
   const subscription1 = await createSubscription(user1.id, "MONTH")
@@ -86,52 +102,61 @@ async function createUser(id: string, email: string, firstName: string, lastName
     data: {
       id,
       email,
-      firebaseUid: `${email}-uid`,
       firstName,
       lastName,
-      isEmailVerified: true,
     },
   })
 }
 
-async function createSession(token: string, accountId: string, deviceFingerprint: string) {
-  const account = await prisma.account.findUnique({ where: { id: accountId } })
-  const userId = account?.userId
-
-  if (!userId) {
-    throw new Error(`Account not found for ID: ${accountId}`)
-  }
-
-  return prisma.session.create({
-    data: {
-      token,
-      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
-      deviceFingerprint,
-      accountId,
-      userId,
-    },
-  })
-}
-
-async function updateSession(token: string, accountId: string, deviceFingerprint: string) {
-  const session = await prisma.session.update({
+async function createOrUpdateSession({
+  token,
+  accountId,
+  userId,
+  deviceFingerprint,
+}: {
+  token: string
+  accountId: string
+  userId: string
+  deviceFingerprint: string
+}) {
+  // Find existing session by device fingerprint
+  const existingSession = await prisma.session.findFirst({
     where: { deviceFingerprint },
-    data: {
-      token,
-      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
-      accountId,
-    },
   })
-  return session
+
+  if (existingSession) {
+    // Update existing session
+    return prisma.session.update({
+      where: { id: existingSession.id },
+      data: {
+        token,
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        accountId,
+        userId,
+      },
+    })
+  } else {
+    // Create new session
+    return prisma.session.create({
+      data: {
+        token,
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        deviceFingerprint,
+        accountId,
+        userId,
+      },
+    })
+  }
 }
 
-async function createAccount(userId: string, provider: "EMAIL_PASSWORD" | "GOOGLE" | "APPLE", email: string) {
+async function createAccount(provider: "EMAIL_PASSWORD" | "GOOGLE" | "APPLE", email: string) {
   return prisma.account.create({
     data: {
       provider,
       lastLogin: new Date(),
-      userId,
       email,
+      firebaseUid: `${email}-uid`,
+      isEmailVerified: provider !== "EMAIL_PASSWORD",
     },
   })
 }
