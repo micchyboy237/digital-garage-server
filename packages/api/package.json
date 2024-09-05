@@ -5,7 +5,8 @@
   "sideEffects": false,
   "scripts": {
     "start": "pnpm with-env ts-node server.ts",
-    "dev": "pnpm with-env npx tsx watch server.ts",
+    "dev": "NODE_ENV=local pnpm with-env npx tsx watch server.ts",
+    "dev:upload": "pnpm with-env npx tsx watch server-upload.ts",
     "data:gen": "pnpm with-env ts-node src/dataGenerator.ts",
     "lint:fix": "eslint --config .eslintrc.commit.js --fix --cache --ext .ts,.tsx src",
     "lint": "eslint --config .eslintrc.js --ext .ts,.tsx src",

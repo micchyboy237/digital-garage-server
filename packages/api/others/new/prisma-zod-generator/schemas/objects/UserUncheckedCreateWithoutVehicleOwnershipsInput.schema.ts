@@ -16,7 +16,7 @@ const Schema: z.ZodType<Prisma.UserUncheckedCreateWithoutVehicleOwnershipsInput>
     email: z.string(),
     firstName: z.string().optional().nullable(),
     lastName: z.string().optional().nullable(),
-    displayPicture: z.string().optional().nullable(),
+    displayPictureId: z.string().optional().nullable(),
     location: z.string().optional().nullable(),
     accountStatus: z.lazy(() => AccountStatusSchema).optional(),
     createdAt: z.coerce.date().optional(),

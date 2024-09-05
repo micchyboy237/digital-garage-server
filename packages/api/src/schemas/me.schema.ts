@@ -1,4 +1,29 @@
+import { SubscriptionPlan, SubscriptionStatus } from "@boilerplate/database"
 import { z } from "zod"
+import { ErrorMessages } from "../exceptions"
+
+export const onboardUserSchema = z.object({
+  firstName: z.string().min(2, { message: ErrorMessages.FIRST_NAME_TOO_SHORT }),
+  lastName: z.string().min(2, { message: ErrorMessages.LAST_NAME_TOO_SHORT }),
+  location: z.string(),
+  displayPicture: z.string().nullish(),
+})
+
+export const updateProfileSchema = z.object({
+  firstName: z.string().min(2, { message: ErrorMessages.FIRST_NAME_TOO_SHORT }).nullish(),
+  lastName: z.string().min(2, { message: ErrorMessages.LAST_NAME_TOO_SHORT }).nullish(),
+  location: z.string().nullish(),
+  displayPicture: z.string().nullish(),
+})
+
+export const subscribeSchema = z.object({
+  productId: z.string(),
+  plan: z.nativeEnum(SubscriptionPlan).nullish(),
+  status: z.nativeEnum(SubscriptionStatus).nullish(),
+  startDate: z.date().nullish(),
+  endDate: z.date().nullish(),
+  expiresAt: z.date().nullish(),
+})
 
 export const vehicleSchema = z.object({
   brand: z.string(),

@@ -24,7 +24,7 @@ export const VehicleRelations = t.Object(
           email: t.String({ additionalProperties: true }),
           firstName: __nullable__(t.String({ additionalProperties: true })),
           lastName: __nullable__(t.String({ additionalProperties: true })),
-          displayPicture: __nullable__(
+          displayPictureId: __nullable__(
             t.String({ additionalProperties: true }),
           ),
           location: __nullable__(t.String({ additionalProperties: true })),

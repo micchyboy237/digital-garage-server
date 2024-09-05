@@ -4,6 +4,8 @@ import { StringNullableFilterObjectSchema } from "./StringNullableFilter.schema"
 import { EnumAccountStatusFilterObjectSchema } from "./EnumAccountStatusFilter.schema"
 import { AccountStatusSchema } from "../enums/AccountStatus.schema"
 import { DateTimeFilterObjectSchema } from "./DateTimeFilter.schema"
+import { MediaFileRelationFilterObjectSchema } from "./MediaFileRelationFilter.schema"
+import { MediaFileWhereInputObjectSchema } from "./MediaFileWhereInput.schema"
 import { SessionListRelationFilterObjectSchema } from "./SessionListRelationFilter.schema"
 import { VehicleListRelationFilterObjectSchema } from "./VehicleListRelationFilter.schema"
 import { VehiclePostListRelationFilterObjectSchema } from "./VehiclePostListRelationFilter.schema"
@@ -33,7 +35,7 @@ const Schema: z.ZodType<Prisma.UserWhereInput> = z
       .union([z.lazy(() => StringNullableFilterObjectSchema), z.string()])
       .optional()
       .nullable(),
-    displayPicture: z
+    displayPictureId: z
       .union([z.lazy(() => StringNullableFilterObjectSchema), z.string()])
       .optional()
       .nullable(),
@@ -44,6 +46,10 @@ const Schema: z.ZodType<Prisma.UserWhereInput> = z
     accountStatus: z.union([z.lazy(() => EnumAccountStatusFilterObjectSchema), z.lazy(() => AccountStatusSchema)]).optional(),
     createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
     updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
+    displayPicture: z
+      .union([z.lazy(() => MediaFileRelationFilterObjectSchema), z.lazy(() => MediaFileWhereInputObjectSchema)])
+      .optional()
+      .nullable(),
     sessions: z.lazy(() => SessionListRelationFilterObjectSchema).optional(),
     vehicles: z.lazy(() => VehicleListRelationFilterObjectSchema).optional(),
     posts: z.lazy(() => VehiclePostListRelationFilterObjectSchema).optional(),

@@ -17,6 +17,7 @@ const loadEnvFile = (envFileName: string) => {
 
 // Determine the environment and load the corresponding .env file
 const env = process.env.NODE_ENV || "local" // Default to 'local' if NODE_ENV is not set
+console.log(`Environment: ${env}`)
 switch (env) {
   case "local":
     loadEnvFile(".env.local")

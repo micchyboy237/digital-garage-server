@@ -35,7 +35,7 @@ const Schema: z.ZodType<Prisma.UserScalarWhereWithAggregatesInput> = z
       .union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()])
       .optional()
       .nullable(),
-    displayPicture: z
+    displayPictureId: z
       .union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()])
       .optional()
       .nullable(),

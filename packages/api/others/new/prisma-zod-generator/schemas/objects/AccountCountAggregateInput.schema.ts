@@ -6,7 +6,7 @@ const Schema: z.ZodType<Prisma.AccountCountAggregateInputType> = z
   .object({
     id: z.literal(true).optional(),
     provider: z.literal(true).optional(),
-    email: z.literal(true).optional(),
+    userId: z.literal(true).optional(),
     firebaseUid: z.literal(true).optional(),
     isEmailVerified: z.literal(true).optional(),
     lastLogin: z.literal(true).optional(),

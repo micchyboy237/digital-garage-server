@@ -1,23 +1,42 @@
-import { PostCategory } from "@boilerplate/database"
+import { PostCategory, Subscription, User } from "@boilerplate/database"
 import { TRPCError } from "@trpc/server"
 import {
   documentSchema,
   getVehicleOwnershipSchema,
+  onboardUserSchema,
   postSchema,
   respondTransferSchema,
+  subscribeSchema,
   transferSchema,
+  updateProfileSchema,
   updateVehicleSchema,
   vehicleSchema,
 } from "../schemas/me.schema"
 import { meService } from "../services"
+import { createOrUpdateSubscription } from "../services/model.service"
 import { protectedProcedure, publicProcedure, t } from "../trpc"
 
 export const meRouter = t.router({
+  onboard: protectedProcedure.input(onboardUserSchema).mutation(async ({ ctx, input }): Promise<User> => {
+    const userId = ctx.user?.id!
+    return await meService.updateUser(userId, { ...input, accountStatus: "SELECT_SUBSCRIPTION" })
+  }),
+  subscribe: protectedProcedure.input(subscribeSchema).mutation(async ({ ctx, input }): Promise<Subscription> => {
+    const userId = ctx.user?.id!
+    const subscription = await createOrUpdateSubscription(input, userId)
+    // Update user account status
+    await meService.updateUser(userId, { accountStatus: "ACTIVE" })
+    return subscription
+  }),
+  updateProfile: protectedProcedure.input(updateProfileSchema).mutation(async ({ ctx, input }): Promise<User> => {
+    const userId = ctx.user?.id!
+    return await meService.updateUser(userId, input)
+  }),
   getSession: publicProcedure.query(({ ctx }) => {
     return ctx.session
   }),
-  getUser: protectedProcedure.query(({ ctx }) => {
-    return ctx.user
+  getUser: protectedProcedure.query(async ({ ctx }): Promise<User> => {
+    return await meService.getUser(ctx.user?.id!)
   }),
   getSubscription: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.user?.id!

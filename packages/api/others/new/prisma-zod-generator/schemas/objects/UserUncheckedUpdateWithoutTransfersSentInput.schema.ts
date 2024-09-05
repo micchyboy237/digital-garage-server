@@ -26,7 +26,7 @@ const Schema: z.ZodType<Prisma.UserUncheckedUpdateWithoutTransfersSentInput> = z
       .union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)])
       .optional()
       .nullable(),
-    displayPicture: z
+    displayPictureId: z
       .union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)])
       .optional()
       .nullable(),

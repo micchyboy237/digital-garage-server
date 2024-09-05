@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { MediaFileTypeSchema } from "../enums/MediaFileType.schema"
+import { UserCreateNestedOneWithoutDisplayPictureInputObjectSchema } from "./UserCreateNestedOneWithoutDisplayPictureInput.schema"
 import { VehicleOwnershipCreateNestedOneWithoutVehicleDisplayPhotoInputObjectSchema } from "./VehicleOwnershipCreateNestedOneWithoutVehicleDisplayPhotoInput.schema"
 import { VehicleOwnershipCreateNestedOneWithoutVehicleFilesInputObjectSchema } from "./VehicleOwnershipCreateNestedOneWithoutVehicleFilesInput.schema"
 
@@ -15,7 +16,10 @@ const Schema: z.ZodType<Prisma.MediaFileCreateWithoutPostInput> = z
     thumbnailUrl: z.string(),
     createdAt: z.coerce.date().optional(),
     updatedAt: z.coerce.date().optional(),
-    displayPhotoOwnership: z.lazy(() => VehicleOwnershipCreateNestedOneWithoutVehicleDisplayPhotoInputObjectSchema).optional(),
+    userDisplayPicture: z.lazy(() => UserCreateNestedOneWithoutDisplayPictureInputObjectSchema).optional(),
+    vehicleDisplayPhotoOwnership: z
+      .lazy(() => VehicleOwnershipCreateNestedOneWithoutVehicleDisplayPhotoInputObjectSchema)
+      .optional(),
     ownership: z.lazy(() => VehicleOwnershipCreateNestedOneWithoutVehicleFilesInputObjectSchema).optional(),
   })
   .strict()

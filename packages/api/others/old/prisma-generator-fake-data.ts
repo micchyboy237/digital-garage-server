@@ -9,7 +9,6 @@ export function fakeUser() {
     email: faker.internet.email(),
     firstName: undefined,
     lastName: undefined,
-    displayPicture: undefined,
     location: undefined,
     updatedAt: faker.date.anytime(),
   };
@@ -20,7 +19,7 @@ export function fakeUserComplete() {
     email: faker.internet.email(),
     firstName: undefined,
     lastName: undefined,
-    displayPicture: undefined,
+    displayPictureId: undefined,
     location: undefined,
     accountStatus: AccountStatus.ONBOARDING,
     createdAt: new Date(),
@@ -39,7 +38,7 @@ export function fakeAccountComplete() {
   return {
     id: faker.string.uuid(),
     provider: faker.helpers.arrayElement([AuthProvider.EMAIL_PASSWORD, AuthProvider.GOOGLE, AuthProvider.APPLE] as const),
-    email: faker.string.uuid(),
+    userId: faker.string.uuid(),
     firebaseUid: faker.lorem.words(5),
     isEmailVerified: false,
     lastLogin: undefined,

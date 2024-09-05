@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { MediaFileArgsObjectSchema } from "./MediaFileArgs.schema"
 import { SessionFindManySchema } from "../findManySession.schema"
 import { VehicleFindManySchema } from "../findManyVehicle.schema"
 import { VehiclePostFindManySchema } from "../findManyVehiclePost.schema"
@@ -16,7 +17,8 @@ const Schema: z.ZodType<Prisma.UserSelect> = z
     email: z.boolean().optional(),
     firstName: z.boolean().optional(),
     lastName: z.boolean().optional(),
-    displayPicture: z.boolean().optional(),
+    displayPictureId: z.boolean().optional(),
+    displayPicture: z.union([z.boolean(), z.lazy(() => MediaFileArgsObjectSchema)]).optional(),
     location: z.boolean().optional(),
     accountStatus: z.boolean().optional(),
     sessions: z.union([z.boolean(), z.lazy(() => SessionFindManySchema)]).optional(),

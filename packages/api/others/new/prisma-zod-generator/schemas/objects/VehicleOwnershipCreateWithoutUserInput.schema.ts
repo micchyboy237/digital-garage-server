@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { MediaFileCreateNestedOneWithoutDisplayPhotoOwnershipInputObjectSchema } from "./MediaFileCreateNestedOneWithoutDisplayPhotoOwnershipInput.schema"
+import { MediaFileCreateNestedOneWithoutVehicleDisplayPhotoOwnershipInputObjectSchema } from "./MediaFileCreateNestedOneWithoutVehicleDisplayPhotoOwnershipInput.schema"
 import { VehicleCreateNestedOneWithoutOwnershipsInputObjectSchema } from "./VehicleCreateNestedOneWithoutOwnershipsInput.schema"
 import { VehiclePostCreateNestedManyWithoutOwnershipInputObjectSchema } from "./VehiclePostCreateNestedManyWithoutOwnershipInput.schema"
 import { MediaFileCreateNestedManyWithoutOwnershipInputObjectSchema } from "./MediaFileCreateNestedManyWithoutOwnershipInput.schema"
@@ -15,7 +15,7 @@ const Schema: z.ZodType<Prisma.VehicleOwnershipCreateWithoutUserInput> = z
     endDate: z.coerce.date().optional().nullable(),
     createdAt: z.coerce.date().optional(),
     updatedAt: z.coerce.date().optional(),
-    vehicleDisplayPhoto: z.lazy(() => MediaFileCreateNestedOneWithoutDisplayPhotoOwnershipInputObjectSchema).optional(),
+    vehicleDisplayPhoto: z.lazy(() => MediaFileCreateNestedOneWithoutVehicleDisplayPhotoOwnershipInputObjectSchema).optional(),
     vehicle: z.lazy(() => VehicleCreateNestedOneWithoutOwnershipsInputObjectSchema).optional(),
     posts: z.lazy(() => VehiclePostCreateNestedManyWithoutOwnershipInputObjectSchema).optional(),
     vehicleFiles: z.lazy(() => MediaFileCreateNestedManyWithoutOwnershipInputObjectSchema).optional(),

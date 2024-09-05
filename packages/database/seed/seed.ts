@@ -6,9 +6,9 @@ async function main() {
   const user2 = await createUser("user-2", "jane.smith@example.com", "Jane", "Smith")
 
   // Create Accounts for Auth Providers
-  const user1Account1 = await createAccount("EMAIL_PASSWORD", "john.doe@example.com")
-  const user1Account2 = await createAccount("APPLE", "john.doe@example.com")
-  const user2Account1 = await createAccount("GOOGLE", "jane.smith@example.com")
+  const user1Account1 = await createAccount("EMAIL_PASSWORD", user1.id)
+  const user1Account2 = await createAccount("APPLE", user1.id)
+  const user2Account1 = await createAccount("GOOGLE", user2.id)
 
   const user1DeviceFingerprint = `${user1.id}-device`
   const user2DeviceFingerprint = `${user2.id}-device`
@@ -149,13 +149,13 @@ async function createOrUpdateSession({
   }
 }
 
-async function createAccount(provider: "EMAIL_PASSWORD" | "GOOGLE" | "APPLE", email: string) {
+async function createAccount(provider: "EMAIL_PASSWORD" | "GOOGLE" | "APPLE", userId: string) {
   return prisma.account.create({
     data: {
       provider,
       lastLogin: new Date(),
-      email,
-      firebaseUid: `${email}-uid`,
+      userId,
+      firebaseUid: `${userId}-uid`,
       isEmailVerified: provider !== "EMAIL_PASSWORD",
     },
   })

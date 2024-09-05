@@ -1,17 +1,10 @@
-import { initTRPC } from "@trpc/server"
-import SuperJSON from "superjson"
 import { z, ZodObject, ZodTypeAny } from "zod"
-import { Context } from "../context"
 import { appRouter as generatedRouters } from "../generated/routers"
-import { protectedProcedure } from "../trpc"
+import { protectedProcedure, t } from "../trpc"
 import { authRouter } from "./auth.route"
 import { meRouter } from "./me.route"
 import { userRouter } from "./user.route"
 import { vehicleRouter } from "./vehicle.route"
-
-const t = initTRPC.context<Context>().create({
-  transformer: SuperJSON,
-})
 
 const nestAttributes = (flatAttributes: Record<string, string>): Record<string, any> => {
   const nestedAttributes: Record<string, any> = {}

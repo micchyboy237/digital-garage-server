@@ -1,14 +1,14 @@
 import * as z from "zod"
 import * as imports from "../../../../database/null"
 import { AccountStatus } from "@prisma/client"
-import { CompleteSession, RelatedSessionModel, CompleteVehicle, RelatedVehicleModel, CompleteVehiclePost, RelatedVehiclePostModel, CompleteVehicleTransfer, RelatedVehicleTransferModel, CompleteSubscription, RelatedSubscriptionModel, CompleteVehicleOwnership, RelatedVehicleOwnershipModel, CompleteAccount, RelatedAccountModel } from "./index"
+import { CompleteMediaFile, RelatedMediaFileModel, CompleteSession, RelatedSessionModel, CompleteVehicle, RelatedVehicleModel, CompleteVehiclePost, RelatedVehiclePostModel, CompleteVehicleTransfer, RelatedVehicleTransferModel, CompleteSubscription, RelatedSubscriptionModel, CompleteVehicleOwnership, RelatedVehicleOwnershipModel, CompleteAccount, RelatedAccountModel } from "./index"
 
 export const UserModel = z.object({
   id: z.string(),
   email: z.string(),
   firstName: z.string().nullish(),
   lastName: z.string().nullish(),
-  displayPicture: z.string().nullish(),
+  displayPictureId: z.string().nullish(),
   location: z.string().nullish(),
   accountStatus: z.nativeEnum(AccountStatus),
   createdAt: z.date(),
@@ -16,6 +16,7 @@ export const UserModel = z.object({
 })
 
 export interface CompleteUser extends z.infer<typeof UserModel> {
+  displayPicture?: CompleteMediaFile | null
   sessions: CompleteSession[]
   vehicles: CompleteVehicle[]
   posts: CompleteVehiclePost[]
@@ -32,6 +33,7 @@ export interface CompleteUser extends z.infer<typeof UserModel> {
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
 export const RelatedUserModel: z.ZodSchema<CompleteUser> = z.lazy(() => UserModel.extend({
+  displayPicture: RelatedMediaFileModel.nullish(),
   sessions: RelatedSessionModel.array(),
   vehicles: RelatedVehicleModel.array(),
   posts: RelatedVehiclePostModel.array(),

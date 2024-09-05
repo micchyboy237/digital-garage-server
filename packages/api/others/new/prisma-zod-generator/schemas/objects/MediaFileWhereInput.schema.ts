@@ -6,6 +6,8 @@ import { StringNullableFilterObjectSchema } from "./StringNullableFilter.schema"
 import { DateTimeFilterObjectSchema } from "./DateTimeFilter.schema"
 import { VehiclePostRelationFilterObjectSchema } from "./VehiclePostRelationFilter.schema"
 import { VehiclePostWhereInputObjectSchema } from "./VehiclePostWhereInput.schema"
+import { UserRelationFilterObjectSchema } from "./UserRelationFilter.schema"
+import { UserWhereInputObjectSchema } from "./UserWhereInput.schema"
 import { VehicleOwnershipRelationFilterObjectSchema } from "./VehicleOwnershipRelationFilter.schema"
 import { VehicleOwnershipWhereInputObjectSchema } from "./VehicleOwnershipWhereInput.schema"
 
@@ -43,7 +45,11 @@ const Schema: z.ZodType<Prisma.MediaFileWhereInput> = z
       .union([z.lazy(() => VehiclePostRelationFilterObjectSchema), z.lazy(() => VehiclePostWhereInputObjectSchema)])
       .optional()
       .nullable(),
-    displayPhotoOwnership: z
+    userDisplayPicture: z
+      .union([z.lazy(() => UserRelationFilterObjectSchema), z.lazy(() => UserWhereInputObjectSchema)])
+      .optional()
+      .nullable(),
+    vehicleDisplayPhotoOwnership: z
       .union([z.lazy(() => VehicleOwnershipRelationFilterObjectSchema), z.lazy(() => VehicleOwnershipWhereInputObjectSchema)])
       .optional()
       .nullable(),

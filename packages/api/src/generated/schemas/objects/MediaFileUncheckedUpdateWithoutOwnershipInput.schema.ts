@@ -4,6 +4,7 @@ import { MediaFileTypeSchema } from "../enums/MediaFileType.schema"
 import { EnumMediaFileTypeFieldUpdateOperationsInputObjectSchema } from "./EnumMediaFileTypeFieldUpdateOperationsInput.schema"
 import { NullableStringFieldUpdateOperationsInputObjectSchema } from "./NullableStringFieldUpdateOperationsInput.schema"
 import { DateTimeFieldUpdateOperationsInputObjectSchema } from "./DateTimeFieldUpdateOperationsInput.schema"
+import { UserUncheckedUpdateOneWithoutDisplayPictureNestedInputObjectSchema } from "./UserUncheckedUpdateOneWithoutDisplayPictureNestedInput.schema"
 import { VehicleOwnershipUncheckedUpdateOneWithoutVehicleDisplayPhotoNestedInputObjectSchema } from "./VehicleOwnershipUncheckedUpdateOneWithoutVehicleDisplayPhotoNestedInput.schema"
 
 import type { Prisma } from "@prisma/client"
@@ -24,7 +25,8 @@ const Schema: z.ZodType<Prisma.MediaFileUncheckedUpdateWithoutOwnershipInput> = 
       .nullable(),
     createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
     updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-    displayPhotoOwnership: z
+    userDisplayPicture: z.lazy(() => UserUncheckedUpdateOneWithoutDisplayPictureNestedInputObjectSchema).optional(),
+    vehicleDisplayPhotoOwnership: z
       .lazy(() => VehicleOwnershipUncheckedUpdateOneWithoutVehicleDisplayPhotoNestedInputObjectSchema)
       .optional(),
   })

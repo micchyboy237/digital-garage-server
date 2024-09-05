@@ -8,7 +8,7 @@ export const UserPlain = t.Object(
     email: t.String({ additionalProperties: true }),
     firstName: __nullable__(t.String({ additionalProperties: true })),
     lastName: __nullable__(t.String({ additionalProperties: true })),
-    displayPicture: __nullable__(t.String({ additionalProperties: true })),
+    displayPictureId: __nullable__(t.String({ additionalProperties: true })),
     location: __nullable__(t.String({ additionalProperties: true })),
     accountStatus: t.Union(
       [
@@ -26,6 +26,26 @@ export const UserPlain = t.Object(
 
 export const UserRelations = t.Object(
   {
+    displayPicture: __nullable__(
+      t.Object(
+        {
+          id: t.String({ additionalProperties: true }),
+          type: t.Union(
+            [t.Literal("IMAGE"), t.Literal("VIDEO"), t.Literal("DOCUMENT")],
+            { additionalProperties: true },
+          ),
+          mimeType: t.String({ additionalProperties: true }),
+          fileName: t.String({ additionalProperties: true }),
+          url: t.String({ additionalProperties: true }),
+          thumbnailUrl: t.String({ additionalProperties: true }),
+          postId: __nullable__(t.String({ additionalProperties: true })),
+          ownershipId: __nullable__(t.String({ additionalProperties: true })),
+          createdAt: t.Date({ additionalProperties: true }),
+          updatedAt: t.Date({ additionalProperties: true }),
+        },
+        { additionalProperties: true },
+      ),
+    ),
     sessions: t.Array(
       t.Object(
         {
@@ -202,7 +222,7 @@ export const UserRelations = t.Object(
             ],
             { additionalProperties: true },
           ),
-          email: t.String({ additionalProperties: true }),
+          userId: t.String({ additionalProperties: true }),
           firebaseUid: t.String({ additionalProperties: true }),
           isEmailVerified: t.Boolean({ additionalProperties: true }),
           lastLogin: __nullable__(t.Date({ additionalProperties: true })),
@@ -223,9 +243,6 @@ export const UserPlainInputCreate = t.Object(
       __nullable__(t.String({ additionalProperties: true })),
     ),
     lastName: t.Optional(
-      __nullable__(t.String({ additionalProperties: true })),
-    ),
-    displayPicture: t.Optional(
       __nullable__(t.String({ additionalProperties: true })),
     ),
     location: t.Optional(
@@ -252,9 +269,6 @@ export const UserPlainInputUpdate = t.Object(
     lastName: t.Optional(
       __nullable__(t.String({ additionalProperties: true })),
     ),
-    displayPicture: t.Optional(
-      __nullable__(t.String({ additionalProperties: true })),
-    ),
     location: t.Optional(
       __nullable__(t.String({ additionalProperties: true })),
     ),
@@ -272,6 +286,19 @@ export const UserPlainInputUpdate = t.Object(
 
 export const UserRelationsInputCreate = t.Object(
   {
+    displayPicture: t.Optional(
+      t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
     sessions: t.Optional(
       t.Object(
         {
@@ -397,6 +424,21 @@ export const UserRelationsInputCreate = t.Object(
 export const UserRelationsInputUpdate = t.Partial(
   t.Object(
     {
+      displayPicture: t.Partial(
+        t.Object(
+          {
+            connect: t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+            disconnect: t.Boolean(),
+          },
+          { additionalProperties: true },
+        ),
+        { additionalProperties: true },
+      ),
       sessions: t.Partial(
         t.Object(
           {
@@ -597,7 +639,7 @@ export const UserWhere = t.Partial(
         email: t.String(),
         firstName: t.String(),
         lastName: t.String(),
-        displayPicture: t.String(),
+        displayPictureId: t.String(),
         location: t.String(),
         accountStatus: t.Union(
           [
@@ -618,8 +660,18 @@ export const UserWhere = t.Partial(
 export const UserWhereUnique = t.Recursive(
   (Self) =>
     t.Intersect([
-      t.Partial(t.Object({ id: t.String(), email: t.String() })),
-      t.Union([t.Object({ id: t.String() }), t.Object({ email: t.String() })]),
+      t.Partial(
+        t.Object({
+          id: t.String(),
+          email: t.String(),
+          displayPictureId: t.String(),
+        }),
+      ),
+      t.Union([
+        t.Object({ id: t.String() }),
+        t.Object({ email: t.String() }),
+        t.Object({ displayPictureId: t.String() }),
+      ]),
       t.Partial(
         t.Object({
           AND: t.Union([Self, t.Array(Self)]),
@@ -634,7 +686,7 @@ export const UserWhereUnique = t.Recursive(
             email: t.String(),
             firstName: t.String(),
             lastName: t.String(),
-            displayPicture: t.String(),
+            displayPictureId: t.String(),
             location: t.String(),
             accountStatus: t.Union(
               [

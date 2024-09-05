@@ -50,7 +50,32 @@ export const MediaFileRelations = t.Object(
         { additionalProperties: true },
       ),
     ),
-    displayPhotoOwnership: __nullable__(
+    userDisplayPicture: __nullable__(
+      t.Object(
+        {
+          id: t.String({ additionalProperties: true }),
+          email: t.String({ additionalProperties: true }),
+          firstName: __nullable__(t.String({ additionalProperties: true })),
+          lastName: __nullable__(t.String({ additionalProperties: true })),
+          displayPictureId: __nullable__(
+            t.String({ additionalProperties: true }),
+          ),
+          location: __nullable__(t.String({ additionalProperties: true })),
+          accountStatus: t.Union(
+            [
+              t.Literal("ONBOARDING"),
+              t.Literal("SELECT_SUBSCRIPTION"),
+              t.Literal("ACTIVE"),
+            ],
+            { additionalProperties: true },
+          ),
+          createdAt: t.Date({ additionalProperties: true }),
+          updatedAt: t.Date({ additionalProperties: true }),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+    vehicleDisplayPhotoOwnership: __nullable__(
       t.Object(
         {
           id: t.String({ additionalProperties: true }),
@@ -133,7 +158,20 @@ export const MediaFileRelationsInputCreate = t.Object(
         { additionalProperties: true },
       ),
     ),
-    displayPhotoOwnership: t.Optional(
+    userDisplayPicture: t.Optional(
+      t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+    vehicleDisplayPhotoOwnership: t.Optional(
       t.Object(
         {
           connect: t.Object(
@@ -181,7 +219,22 @@ export const MediaFileRelationsInputUpdate = t.Partial(
         ),
         { additionalProperties: true },
       ),
-      displayPhotoOwnership: t.Partial(
+      userDisplayPicture: t.Partial(
+        t.Object(
+          {
+            connect: t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+            disconnect: t.Boolean(),
+          },
+          { additionalProperties: true },
+        ),
+        { additionalProperties: true },
+      ),
+      vehicleDisplayPhotoOwnership: t.Partial(
         t.Object(
           {
             connect: t.Object(

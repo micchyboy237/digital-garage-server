@@ -19,10 +19,6 @@ const Schema: z.ZodType<Prisma.UserUpdateManyMutationInput> = z
       .union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)])
       .optional()
       .nullable(),
-    displayPicture: z
-      .union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)])
-      .optional()
-      .nullable(),
     location: z
       .union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)])
       .optional()

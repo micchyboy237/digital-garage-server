@@ -4,6 +4,7 @@ import { NullableStringFieldUpdateOperationsInputObjectSchema } from "./Nullable
 import { AccountStatusSchema } from "../enums/AccountStatus.schema"
 import { EnumAccountStatusFieldUpdateOperationsInputObjectSchema } from "./EnumAccountStatusFieldUpdateOperationsInput.schema"
 import { DateTimeFieldUpdateOperationsInputObjectSchema } from "./DateTimeFieldUpdateOperationsInput.schema"
+import { MediaFileUpdateOneWithoutUserDisplayPictureNestedInputObjectSchema } from "./MediaFileUpdateOneWithoutUserDisplayPictureNestedInput.schema"
 import { SessionUpdateManyWithoutUserNestedInputObjectSchema } from "./SessionUpdateManyWithoutUserNestedInput.schema"
 import { VehicleUpdateManyWithoutOwnerNestedInputObjectSchema } from "./VehicleUpdateManyWithoutOwnerNestedInput.schema"
 import { VehicleTransferUpdateManyWithoutRecipientNestedInputObjectSchema } from "./VehicleTransferUpdateManyWithoutRecipientNestedInput.schema"
@@ -26,10 +27,6 @@ const Schema: z.ZodType<Prisma.UserUpdateWithoutPostsInput> = z
       .union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)])
       .optional()
       .nullable(),
-    displayPicture: z
-      .union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)])
-      .optional()
-      .nullable(),
     location: z
       .union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)])
       .optional()
@@ -39,6 +36,7 @@ const Schema: z.ZodType<Prisma.UserUpdateWithoutPostsInput> = z
       .optional(),
     createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
     updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
+    displayPicture: z.lazy(() => MediaFileUpdateOneWithoutUserDisplayPictureNestedInputObjectSchema).optional(),
     sessions: z.lazy(() => SessionUpdateManyWithoutUserNestedInputObjectSchema).optional(),
     vehicles: z.lazy(() => VehicleUpdateManyWithoutOwnerNestedInputObjectSchema).optional(),
     transfersReceived: z.lazy(() => VehicleTransferUpdateManyWithoutRecipientNestedInputObjectSchema).optional(),

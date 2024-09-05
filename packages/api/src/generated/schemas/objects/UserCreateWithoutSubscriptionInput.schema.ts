@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { AccountStatusSchema } from "../enums/AccountStatus.schema"
+import { MediaFileCreateNestedOneWithoutUserDisplayPictureInputObjectSchema } from "./MediaFileCreateNestedOneWithoutUserDisplayPictureInput.schema"
 import { SessionCreateNestedManyWithoutUserInputObjectSchema } from "./SessionCreateNestedManyWithoutUserInput.schema"
 import { VehicleCreateNestedManyWithoutOwnerInputObjectSchema } from "./VehicleCreateNestedManyWithoutOwnerInput.schema"
 import { VehiclePostCreateNestedManyWithoutCreatedByInputObjectSchema } from "./VehiclePostCreateNestedManyWithoutCreatedByInput.schema"
@@ -16,11 +17,11 @@ const Schema: z.ZodType<Prisma.UserCreateWithoutSubscriptionInput> = z
     email: z.string(),
     firstName: z.string().optional().nullable(),
     lastName: z.string().optional().nullable(),
-    displayPicture: z.string().optional().nullable(),
     location: z.string().optional().nullable(),
     accountStatus: z.lazy(() => AccountStatusSchema).optional(),
     createdAt: z.coerce.date().optional(),
     updatedAt: z.coerce.date().optional(),
+    displayPicture: z.lazy(() => MediaFileCreateNestedOneWithoutUserDisplayPictureInputObjectSchema).optional(),
     sessions: z.lazy(() => SessionCreateNestedManyWithoutUserInputObjectSchema).optional(),
     vehicles: z.lazy(() => VehicleCreateNestedManyWithoutOwnerInputObjectSchema).optional(),
     posts: z.lazy(() => VehiclePostCreateNestedManyWithoutCreatedByInputObjectSchema).optional(),

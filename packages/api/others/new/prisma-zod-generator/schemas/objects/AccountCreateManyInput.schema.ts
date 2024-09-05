@@ -7,7 +7,7 @@ const Schema: z.ZodType<Prisma.AccountCreateManyInput> = z
   .object({
     id: z.string().optional(),
     provider: z.lazy(() => AuthProviderSchema),
-    email: z.string(),
+    userId: z.string(),
     firebaseUid: z.string(),
     isEmailVerified: z.boolean().optional(),
     lastLogin: z.coerce.date().optional().nullable(),

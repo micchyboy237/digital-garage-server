@@ -9,7 +9,7 @@ const Schema: z.ZodType<Prisma.AccountSelect> = z
   .object({
     id: z.boolean().optional(),
     provider: z.boolean().optional(),
-    email: z.boolean().optional(),
+    userId: z.boolean().optional(),
     user: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional(),
     firebaseUid: z.boolean().optional(),
     isEmailVerified: z.boolean().optional(),

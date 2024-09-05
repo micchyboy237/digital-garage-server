@@ -1,6 +1,7 @@
 import { z } from "zod"
 import { SortOrderSchema } from "../enums/SortOrder.schema"
 import { SortOrderInputObjectSchema } from "./SortOrderInput.schema"
+import { MediaFileOrderByWithRelationInputObjectSchema } from "./MediaFileOrderByWithRelationInput.schema"
 import { SessionOrderByRelationAggregateInputObjectSchema } from "./SessionOrderByRelationAggregateInput.schema"
 import { VehicleOrderByRelationAggregateInputObjectSchema } from "./VehicleOrderByRelationAggregateInput.schema"
 import { VehiclePostOrderByRelationAggregateInputObjectSchema } from "./VehiclePostOrderByRelationAggregateInput.schema"
@@ -17,11 +18,12 @@ const Schema: z.ZodType<Prisma.UserOrderByWithRelationInput> = z
     email: z.lazy(() => SortOrderSchema).optional(),
     firstName: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
     lastName: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
-    displayPicture: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
+    displayPictureId: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
     location: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
     accountStatus: z.lazy(() => SortOrderSchema).optional(),
     createdAt: z.lazy(() => SortOrderSchema).optional(),
     updatedAt: z.lazy(() => SortOrderSchema).optional(),
+    displayPicture: z.lazy(() => MediaFileOrderByWithRelationInputObjectSchema).optional(),
     sessions: z.lazy(() => SessionOrderByRelationAggregateInputObjectSchema).optional(),
     vehicles: z.lazy(() => VehicleOrderByRelationAggregateInputObjectSchema).optional(),
     posts: z.lazy(() => VehiclePostOrderByRelationAggregateInputObjectSchema).optional(),

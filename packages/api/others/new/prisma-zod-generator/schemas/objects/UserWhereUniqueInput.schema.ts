@@ -6,6 +6,7 @@ const Schema: z.ZodType<Prisma.UserWhereUniqueInput> = z
   .object({
     id: z.string().optional(),
     email: z.string().optional(),
+    displayPictureId: z.string().optional(),
   })
   .strict()
 

@@ -28,7 +28,9 @@ export const calculateNewHeightAspectRatio = ({
 }
 
 export const optimizeImage = async (buffer: Buffer, maxWidth: number = 800): Promise<Buffer> => {
+  console.log("Optimizing image...", buffer.length)
   const { width: naturalWidth, height: naturalHeight } = getImageDimensions(buffer)
+  console.log(`Natural dimensions: ${naturalWidth}x${naturalHeight}`)
 
   if (!naturalWidth || !naturalHeight) {
     throw new Error("Could not read natural dimensions of the image")
@@ -72,7 +74,9 @@ export const generateOptimizedDimensions = ({
  * @returns {Promise<Buffer>} - A promise that resolves to the thumbnail buffer.
  */
 export const generateImageThumbnail = async (buffer: Buffer, maxWidth: number = 400): Promise<Buffer> => {
+  console.log("Generating image thumbnail...", buffer.length)
   const { width: naturalWidth, height: naturalHeight } = getImageDimensions(buffer)
+  console.log(`Natural dimensions: ${naturalWidth}x${naturalHeight}`)
 
   if (!naturalWidth || !naturalHeight) {
     throw new Error("Could not read natural dimensions of the image")

@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { MediaFileArgsObjectSchema } from "./MediaFileArgs.schema"
 import { SessionFindManySchema } from "../findManySession.schema"
 import { VehicleFindManySchema } from "../findManyVehicle.schema"
 import { VehiclePostFindManySchema } from "../findManyVehiclePost.schema"
@@ -12,6 +13,7 @@ import type { Prisma } from "@prisma/client"
 
 const Schema: z.ZodType<Prisma.UserInclude> = z
   .object({
+    displayPicture: z.union([z.boolean(), z.lazy(() => MediaFileArgsObjectSchema)]).optional(),
     sessions: z.union([z.boolean(), z.lazy(() => SessionFindManySchema)]).optional(),
     vehicles: z.union([z.boolean(), z.lazy(() => VehicleFindManySchema)]).optional(),
     posts: z.union([z.boolean(), z.lazy(() => VehiclePostFindManySchema)]).optional(),

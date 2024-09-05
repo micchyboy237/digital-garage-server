@@ -59,7 +59,9 @@ export const uploadS3 = async (file: S3File, folder?: string): Promise<string> =
 
 export const uploadImageAndThumbnail = async (file: S3File, folder?: string): Promise<UploadResult> => {
   // Optimize image and generate thumbnail in parallel
+  console.info("Optimizing image and generating thumbnail...")
   const [optimizedBuffer, thumbnailBuffer] = await Promise.all([optimizeImage(file.buffer), generateImageThumbnail(file.buffer)])
+  console.info("Image and thumbnail optimized successfully")
 
   // Prepare files for upload
   const imageFileName = file.originalname
@@ -67,15 +69,20 @@ export const uploadImageAndThumbnail = async (file: S3File, folder?: string): Pr
     originalname: imageFileName,
     buffer: optimizedBuffer,
   }
+  console.info("imageFile:", imageFile)
   // Append _thumb to the original file name before the extension
   const thumbnailFileName = imageFileName.replace(/(\.[\w\d_-]+)$/, "_thumb$1")
   const thumbnailFile: S3File = {
     originalname: thumbnailFileName,
     buffer: thumbnailBuffer,
   }
+  console.info("thumbnailFile:", thumbnailFile)
 
   // Upload files to S3 in parallel
+  console.info("Uploading image and thumbnail to S3...")
   const [imageUrl, thumbnailUrl] = await Promise.all([uploadS3(imageFile, folder), uploadS3(thumbnailFile, folder)])
+
+  console.info("Image and thumbnail uploaded successfully", { imageUrl, thumbnailUrl })
 
   return { imageUrl, thumbnailUrl }
 }

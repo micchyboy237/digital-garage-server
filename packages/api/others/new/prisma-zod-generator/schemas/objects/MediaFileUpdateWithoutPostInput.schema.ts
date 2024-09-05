@@ -3,6 +3,7 @@ import { StringFieldUpdateOperationsInputObjectSchema } from "./StringFieldUpdat
 import { MediaFileTypeSchema } from "../enums/MediaFileType.schema"
 import { EnumMediaFileTypeFieldUpdateOperationsInputObjectSchema } from "./EnumMediaFileTypeFieldUpdateOperationsInput.schema"
 import { DateTimeFieldUpdateOperationsInputObjectSchema } from "./DateTimeFieldUpdateOperationsInput.schema"
+import { UserUpdateOneWithoutDisplayPictureNestedInputObjectSchema } from "./UserUpdateOneWithoutDisplayPictureNestedInput.schema"
 import { VehicleOwnershipUpdateOneWithoutVehicleDisplayPhotoNestedInputObjectSchema } from "./VehicleOwnershipUpdateOneWithoutVehicleDisplayPhotoNestedInput.schema"
 import { VehicleOwnershipUpdateOneWithoutVehicleFilesNestedInputObjectSchema } from "./VehicleOwnershipUpdateOneWithoutVehicleFilesNestedInput.schema"
 
@@ -20,7 +21,10 @@ const Schema: z.ZodType<Prisma.MediaFileUpdateWithoutPostInput> = z
     thumbnailUrl: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
     createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
     updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-    displayPhotoOwnership: z.lazy(() => VehicleOwnershipUpdateOneWithoutVehicleDisplayPhotoNestedInputObjectSchema).optional(),
+    userDisplayPicture: z.lazy(() => UserUpdateOneWithoutDisplayPictureNestedInputObjectSchema).optional(),
+    vehicleDisplayPhotoOwnership: z
+      .lazy(() => VehicleOwnershipUpdateOneWithoutVehicleDisplayPhotoNestedInputObjectSchema)
+      .optional(),
     ownership: z.lazy(() => VehicleOwnershipUpdateOneWithoutVehicleFilesNestedInputObjectSchema).optional(),
   })
   .strict()

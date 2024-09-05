@@ -1,4 +1,4 @@
-import { prisma } from "@boilerplate/database"
+import { AccountStatus, MediaFile, prisma, User } from "@boilerplate/database"
 
 export const meService = {
   getActiveSubscription: async (userId: string) => {
@@ -14,6 +14,40 @@ export const meService = {
       })
 
       return activeSubscription
+    })
+  },
+  getUser: async (userId: string): Promise<User> => {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { displayPicture: true },
+    })
+
+    if (!user) {
+      throw new Error("User not found")
+    }
+
+    return user
+  },
+  updateUser: async (
+    userId: string,
+    input: {
+      firstName?: string
+      lastName?: string
+      location?: string
+      displayPicture?: MediaFile
+      accountStatus?: AccountStatus
+    },
+  ): Promise<User> => {
+    const { displayPicture, ...rest } = input
+    return prisma.user.update({
+      where: { id: userId },
+      data: {
+        ...rest,
+        displayPicture: {
+          create: displayPicture,
+        },
+      },
+      include: { displayPicture: true },
     })
   },
 }

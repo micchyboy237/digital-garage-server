@@ -22,7 +22,7 @@ const Schema: z.ZodType<Prisma.AccountScalarWhereInput> = z
       .optional(),
     id: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
     provider: z.union([z.lazy(() => EnumAuthProviderFilterObjectSchema), z.lazy(() => AuthProviderSchema)]).optional(),
-    email: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+    userId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
     firebaseUid: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
     isEmailVerified: z.union([z.lazy(() => BoolFilterObjectSchema), z.boolean()]).optional(),
     lastLogin: z

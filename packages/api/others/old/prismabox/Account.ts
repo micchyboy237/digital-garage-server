@@ -9,7 +9,7 @@ export const AccountPlain = t.Object(
       [t.Literal("EMAIL_PASSWORD"), t.Literal("GOOGLE"), t.Literal("APPLE")],
       { additionalProperties: true },
     ),
-    email: t.String({ additionalProperties: true }),
+    userId: t.String({ additionalProperties: true }),
     firebaseUid: t.String({ additionalProperties: true }),
     isEmailVerified: t.Boolean({ additionalProperties: true }),
     lastLogin: __nullable__(t.Date({ additionalProperties: true })),
@@ -27,7 +27,9 @@ export const AccountRelations = t.Object(
         email: t.String({ additionalProperties: true }),
         firstName: __nullable__(t.String({ additionalProperties: true })),
         lastName: __nullable__(t.String({ additionalProperties: true })),
-        displayPicture: __nullable__(t.String({ additionalProperties: true })),
+        displayPictureId: __nullable__(
+          t.String({ additionalProperties: true }),
+        ),
         location: __nullable__(t.String({ additionalProperties: true })),
         accountStatus: t.Union(
           [
@@ -67,7 +69,6 @@ export const AccountPlainInputCreate = t.Object(
       [t.Literal("EMAIL_PASSWORD"), t.Literal("GOOGLE"), t.Literal("APPLE")],
       { additionalProperties: true },
     ),
-    email: t.String({ additionalProperties: true }),
     isEmailVerified: t.Boolean({ additionalProperties: true }),
     lastLogin: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
   },
@@ -80,7 +81,6 @@ export const AccountPlainInputUpdate = t.Object(
       [t.Literal("EMAIL_PASSWORD"), t.Literal("GOOGLE"), t.Literal("APPLE")],
       { additionalProperties: true },
     ),
-    email: t.String({ additionalProperties: true }),
     isEmailVerified: t.Boolean({ additionalProperties: true }),
     lastLogin: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
   },
@@ -179,7 +179,7 @@ export const AccountWhere = t.Partial(
           ],
           { additionalProperties: true },
         ),
-        email: t.String(),
+        userId: t.String(),
         firebaseUid: t.String(),
         isEmailVerified: t.Boolean(),
         lastLogin: t.Date(),
@@ -197,7 +197,7 @@ export const AccountWhereUnique = t.Recursive(
       t.Partial(
         t.Object({
           id: t.String(),
-          provider_email: t.Object({
+          provider_userId: t.Object({
             provider: t.Union(
               [
                 t.Literal("EMAIL_PASSWORD"),
@@ -206,14 +206,14 @@ export const AccountWhereUnique = t.Recursive(
               ],
               { additionalProperties: true },
             ),
-            email: t.String(),
+            userId: t.String(),
           }),
         }),
       ),
       t.Union([
         t.Object({ id: t.String() }),
         t.Object({
-          provider_email: t.Object({
+          provider_userId: t.Object({
             provider: t.Union(
               [
                 t.Literal("EMAIL_PASSWORD"),
@@ -222,7 +222,7 @@ export const AccountWhereUnique = t.Recursive(
               ],
               { additionalProperties: true },
             ),
-            email: t.String(),
+            userId: t.String(),
           }),
         }),
       ]),
@@ -245,7 +245,7 @@ export const AccountWhereUnique = t.Recursive(
               ],
               { additionalProperties: true },
             ),
-            email: t.String(),
+            userId: t.String(),
             firebaseUid: t.String(),
             isEmailVerified: t.Boolean(),
             lastLogin: t.Date(),

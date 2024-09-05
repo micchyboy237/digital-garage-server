@@ -1,8 +1,11 @@
 import { initTRPC, TRPCError } from "@trpc/server"
+import SuperJSON from "superjson"
 import { Context } from "./context"
 import { permissions } from "./middlewares"
 
-export const t = initTRPC.context<Context>().create()
+export const t = initTRPC.context<Context>().create({
+  transformer: SuperJSON,
+})
 
 export const permissionsMiddleware = t.middleware(permissions)
 

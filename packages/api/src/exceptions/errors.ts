@@ -4,6 +4,8 @@ export const ErrorMessages = {
   INVALID_CREDENTIALS: "Invalid email or password",
   INVALID_EMAIL_ADDRESS: "Invalid email address",
   PASSWORD_TOO_SHORT: "Password must be at least 6 characters long",
+  FIRST_NAME_TOO_SHORT: "First name must be at least 2 characters long",
+  LAST_NAME_TOO_SHORT: "Last name must be at least 2 characters long",
   UNAUTHORIZED: "Please authenticate",
   EMAIL_NOT_VERIFIED: "Email not verified",
   EMAIL_ALREADY_VERIFIED: "Email already verified",

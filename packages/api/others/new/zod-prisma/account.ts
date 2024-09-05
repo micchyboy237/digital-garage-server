@@ -6,7 +6,7 @@ import { CompleteUser, RelatedUserModel, CompleteSession, RelatedSessionModel } 
 export const AccountModel = z.object({
   id: z.string(),
   provider: z.nativeEnum(AuthProvider),
-  email: z.string(),
+  userId: z.string(),
   firebaseUid: z.string(),
   isEmailVerified: z.boolean(),
   lastLogin: z.date().nullish(),

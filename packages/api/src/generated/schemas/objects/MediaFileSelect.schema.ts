@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { VehiclePostArgsObjectSchema } from "./VehiclePostArgs.schema"
+import { UserArgsObjectSchema } from "./UserArgs.schema"
 import { VehicleOwnershipArgsObjectSchema } from "./VehicleOwnershipArgs.schema"
 
 import type { Prisma } from "@prisma/client"
@@ -14,7 +15,8 @@ const Schema: z.ZodType<Prisma.MediaFileSelect> = z
     thumbnailUrl: z.boolean().optional(),
     postId: z.boolean().optional(),
     post: z.union([z.boolean(), z.lazy(() => VehiclePostArgsObjectSchema)]).optional(),
-    displayPhotoOwnership: z.union([z.boolean(), z.lazy(() => VehicleOwnershipArgsObjectSchema)]).optional(),
+    userDisplayPicture: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional(),
+    vehicleDisplayPhotoOwnership: z.union([z.boolean(), z.lazy(() => VehicleOwnershipArgsObjectSchema)]).optional(),
     ownershipId: z.boolean().optional(),
     ownership: z.union([z.boolean(), z.lazy(() => VehicleOwnershipArgsObjectSchema)]).optional(),
     createdAt: z.boolean().optional(),

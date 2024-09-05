@@ -29,7 +29,7 @@ export const SessionRelations = t.Object(
           ],
           { additionalProperties: true },
         ),
-        email: t.String({ additionalProperties: true }),
+        userId: t.String({ additionalProperties: true }),
         firebaseUid: t.String({ additionalProperties: true }),
         isEmailVerified: t.Boolean({ additionalProperties: true }),
         lastLogin: __nullable__(t.Date({ additionalProperties: true })),
@@ -45,7 +45,7 @@ export const SessionRelations = t.Object(
           email: t.String({ additionalProperties: true }),
           firstName: __nullable__(t.String({ additionalProperties: true })),
           lastName: __nullable__(t.String({ additionalProperties: true })),
-          displayPicture: __nullable__(
+          displayPictureId: __nullable__(
             t.String({ additionalProperties: true }),
           ),
           location: __nullable__(t.String({ additionalProperties: true })),

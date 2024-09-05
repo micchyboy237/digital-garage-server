@@ -7,7 +7,7 @@ const Schema: z.ZodType<Prisma.AccountCountOrderByAggregateInput> = z
   .object({
     id: z.lazy(() => SortOrderSchema).optional(),
     provider: z.lazy(() => SortOrderSchema).optional(),
-    email: z.lazy(() => SortOrderSchema).optional(),
+    userId: z.lazy(() => SortOrderSchema).optional(),
     firebaseUid: z.lazy(() => SortOrderSchema).optional(),
     isEmailVerified: z.lazy(() => SortOrderSchema).optional(),
     lastLogin: z.lazy(() => SortOrderSchema).optional(),
