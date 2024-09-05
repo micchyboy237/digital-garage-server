@@ -175,16 +175,33 @@ model User {
   transfersSent     VehicleTransfer[]     @relation("sentTransfers")
   subscription      Subscription?
   vehicleOwnerships VehicleOwnership[]    // Updated relation field
+  accounts          Account[]             // New relation to the Account model
 
   createdAt         DateTime              @default(now())
   updatedAt         DateTime              @updatedAt
+}
+
+model Account {
+  id              String        @id @default(uuid())
+  provider        AuthProvider
+  lastLogin       DateTime?
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  email           String
+  sessions        Session[]
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@unique([provider, userId])
 }
 
 model Session {
   id                String        @id @default(uuid())
   token             String        @unique
   expiresAt         DateTime
-  provider          AuthProvider
+  accountId         String
+  account           Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
   deviceFingerprint String        @unique
   userId            String
   user              User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -233,11 +250,10 @@ model MediaFile {
   url                   String
   thumbnailUrl          String
   postId                String?
-  post                  VehiclePost?        @relation(name: "PostPhotos", fields: [postId], references: [id], onDelete: Cascade)
+  post                  VehiclePost?        @relation(name: "GalleryOrHistoryFiles", fields: [postId], references: [id], onDelete: Cascade)
   displayPhotoOwnership VehicleOwnership?   @relation(name: "DisplayPhoto") // Updated relation
   ownershipId           String?
-  ownership             VehicleOwnership?   @relation(name: "GalleryPhotos", fields: [ownershipId], references: [id]) // Updated relation
-  vehicleDocument       VehicleDocument?
+  ownership             VehicleOwnership?   @relation(name: "OwnershipGalleryOrHistoryFiles", fields: [ownershipId], references: [id]) // Updated relation
 
   createdAt             DateTime            @default(now())
   updatedAt             DateTime            @updatedAt
@@ -255,11 +271,7 @@ model VehicleOwnership {  // Updated model name
   user              User?             @relation(fields: [userId], references: [id])
   vehicle           Vehicle?          @relation(fields: [vehicleId], references: [id])
   posts             VehiclePost[]
-  vehiclePhotos     MediaFile[]       @relation("GalleryPhotos")
-  vehicleDocuments  VehicleDocument[]
-  excludedPhotos    String[]          // IDs of photos excluded for this owner
-  excludedVideos    String[]          // IDs of videos excluded for this owner
-  excludedDocs      String[]          // IDs of documents excluded for this owner
+  vehicleFiles      MediaFile[]       @relation("OwnershipGalleryOrHistoryFiles")
   vehicleDetails    VehicleDetails?
 
   @@unique([userId, vehicleId])
@@ -326,25 +338,10 @@ model VehicleTransfer {
   transferDate  DateTime        @default(now())
   responseDate  DateTime?
   reason        String?         // Reason for transfer
-  excludedPhotos  String[]      // IDs of photos excluded for new owner
-  excludedVideos  String[]      // IDs of videos excluded for this owner
-  excludedDocs    String[]      // IDs of documents excluded for new owner
+  excludedMediaFileTypes MediaFileType[]
 
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
-}
-
-model VehicleDocument {
-  id            String              @id @default(uuid())
-  fileId        String              @unique
-  file          MediaFile           @relation(fields: [fileId], references: [id])
-  postId        String?
-  post          VehiclePost?        @relation(fields: [postId], references: [id], onDelete: Cascade)
-  ownershipId   String
-  ownership     VehicleOwnership?   @relation(fields: [ownershipId], references: [id], onDelete: Cascade) // Updated relation
-
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
 }
 
 model VehiclePost {
@@ -353,8 +350,7 @@ model VehiclePost {
   category     PostCategory        @default(GALLERY)
   description  String?
   type         PostType?
-  photos       MediaFile[]         @relation("PostPhotos")
-  documents    VehicleDocument[]
+  files        MediaFile[]         @relation("GalleryOrHistoryFiles")
   createdById  String
   createdBy    User?               @relation(fields: [createdById], references: [id])
   ownershipId  String

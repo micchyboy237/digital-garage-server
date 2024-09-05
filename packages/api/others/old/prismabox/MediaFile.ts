@@ -62,9 +62,6 @@ export const MediaFileRelations = t.Object(
           ),
           startDate: t.Date({ additionalProperties: true }),
           endDate: __nullable__(t.Date({ additionalProperties: true })),
-          excludedPhotos: t.Array(t.String({ additionalProperties: true })),
-          excludedVideos: t.Array(t.String({ additionalProperties: true })),
-          excludedDocs: t.Array(t.String({ additionalProperties: true })),
           createdAt: t.Date({ additionalProperties: true }),
           updatedAt: t.Date({ additionalProperties: true }),
         },
@@ -83,22 +80,6 @@ export const MediaFileRelations = t.Object(
           ),
           startDate: t.Date({ additionalProperties: true }),
           endDate: __nullable__(t.Date({ additionalProperties: true })),
-          excludedPhotos: t.Array(t.String({ additionalProperties: true })),
-          excludedVideos: t.Array(t.String({ additionalProperties: true })),
-          excludedDocs: t.Array(t.String({ additionalProperties: true })),
-          createdAt: t.Date({ additionalProperties: true }),
-          updatedAt: t.Date({ additionalProperties: true }),
-        },
-        { additionalProperties: true },
-      ),
-    ),
-    vehicleDocument: __nullable__(
-      t.Object(
-        {
-          id: t.String({ additionalProperties: true }),
-          fileId: t.String({ additionalProperties: true }),
-          postId: __nullable__(t.String({ additionalProperties: true })),
-          ownershipId: t.String({ additionalProperties: true }),
           createdAt: t.Date({ additionalProperties: true }),
           updatedAt: t.Date({ additionalProperties: true }),
         },
@@ -178,19 +159,6 @@ export const MediaFileRelationsInputCreate = t.Object(
         { additionalProperties: true },
       ),
     ),
-    vehicleDocument: t.Optional(
-      t.Object(
-        {
-          connect: t.Object(
-            {
-              id: t.String({ additionalProperties: true }),
-            },
-            { additionalProperties: true },
-          ),
-        },
-        { additionalProperties: true },
-      ),
-    ),
   },
   { additionalProperties: true },
 );
@@ -229,21 +197,6 @@ export const MediaFileRelationsInputUpdate = t.Partial(
         { additionalProperties: true },
       ),
       ownership: t.Partial(
-        t.Object(
-          {
-            connect: t.Object(
-              {
-                id: t.String({ additionalProperties: true }),
-              },
-              { additionalProperties: true },
-            ),
-            disconnect: t.Boolean(),
-          },
-          { additionalProperties: true },
-        ),
-        { additionalProperties: true },
-      ),
-      vehicleDocument: t.Partial(
         t.Object(
           {
             connect: t.Object(

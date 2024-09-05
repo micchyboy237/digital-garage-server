@@ -5,9 +5,8 @@ import { EnumTransferStatusFieldUpdateOperationsInputObjectSchema } from "./Enum
 import { DateTimeFieldUpdateOperationsInputObjectSchema } from "./DateTimeFieldUpdateOperationsInput.schema"
 import { NullableDateTimeFieldUpdateOperationsInputObjectSchema } from "./NullableDateTimeFieldUpdateOperationsInput.schema"
 import { NullableStringFieldUpdateOperationsInputObjectSchema } from "./NullableStringFieldUpdateOperationsInput.schema"
-import { VehicleTransferUpdateexcludedPhotosInputObjectSchema } from "./VehicleTransferUpdateexcludedPhotosInput.schema"
-import { VehicleTransferUpdateexcludedVideosInputObjectSchema } from "./VehicleTransferUpdateexcludedVideosInput.schema"
-import { VehicleTransferUpdateexcludedDocsInputObjectSchema } from "./VehicleTransferUpdateexcludedDocsInput.schema"
+import { VehicleTransferUpdateexcludedMediaFileTypesInputObjectSchema } from "./VehicleTransferUpdateexcludedMediaFileTypesInput.schema"
+import { MediaFileTypeSchema } from "../enums/MediaFileType.schema"
 
 import type { Prisma } from "@prisma/client"
 
@@ -28,9 +27,12 @@ const Schema: z.ZodType<Prisma.VehicleTransferUncheckedUpdateWithoutRecipientInp
       .union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputObjectSchema)])
       .optional()
       .nullable(),
-    excludedPhotos: z.union([z.lazy(() => VehicleTransferUpdateexcludedPhotosInputObjectSchema), z.string().array()]).optional(),
-    excludedVideos: z.union([z.lazy(() => VehicleTransferUpdateexcludedVideosInputObjectSchema), z.string().array()]).optional(),
-    excludedDocs: z.union([z.lazy(() => VehicleTransferUpdateexcludedDocsInputObjectSchema), z.string().array()]).optional(),
+    excludedMediaFileTypes: z
+      .union([
+        z.lazy(() => VehicleTransferUpdateexcludedMediaFileTypesInputObjectSchema),
+        z.lazy(() => MediaFileTypeSchema).array(),
+      ])
+      .optional(),
     createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
     updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
   })

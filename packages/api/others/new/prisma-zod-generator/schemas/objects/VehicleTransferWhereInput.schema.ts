@@ -5,7 +5,7 @@ import { TransferStatusSchema } from "../enums/TransferStatus.schema"
 import { DateTimeFilterObjectSchema } from "./DateTimeFilter.schema"
 import { DateTimeNullableFilterObjectSchema } from "./DateTimeNullableFilter.schema"
 import { StringNullableFilterObjectSchema } from "./StringNullableFilter.schema"
-import { StringNullableListFilterObjectSchema } from "./StringNullableListFilter.schema"
+import { EnumMediaFileTypeNullableListFilterObjectSchema } from "./EnumMediaFileTypeNullableListFilter.schema"
 import { VehicleRelationFilterObjectSchema } from "./VehicleRelationFilter.schema"
 import { VehicleWhereInputObjectSchema } from "./VehicleWhereInput.schema"
 import { UserRelationFilterObjectSchema } from "./UserRelationFilter.schema"
@@ -39,9 +39,7 @@ const Schema: z.ZodType<Prisma.VehicleTransferWhereInput> = z
       .union([z.lazy(() => StringNullableFilterObjectSchema), z.string()])
       .optional()
       .nullable(),
-    excludedPhotos: z.lazy(() => StringNullableListFilterObjectSchema).optional(),
-    excludedVideos: z.lazy(() => StringNullableListFilterObjectSchema).optional(),
-    excludedDocs: z.lazy(() => StringNullableListFilterObjectSchema).optional(),
+    excludedMediaFileTypes: z.lazy(() => EnumMediaFileTypeNullableListFilterObjectSchema).optional(),
     createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
     updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
     vehicle: z

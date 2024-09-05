@@ -1,7 +1,7 @@
 import * as z from "zod"
 import * as imports from "../../../../database/null"
 import { AccountStatus } from "@prisma/client"
-import { CompleteSession, RelatedSessionModel, CompleteVehicle, RelatedVehicleModel, CompleteVehiclePost, RelatedVehiclePostModel, CompleteVehicleTransfer, RelatedVehicleTransferModel, CompleteSubscription, RelatedSubscriptionModel, CompleteVehicleOwnership, RelatedVehicleOwnershipModel } from "./index"
+import { CompleteSession, RelatedSessionModel, CompleteVehicle, RelatedVehicleModel, CompleteVehiclePost, RelatedVehiclePostModel, CompleteVehicleTransfer, RelatedVehicleTransferModel, CompleteSubscription, RelatedSubscriptionModel, CompleteVehicleOwnership, RelatedVehicleOwnershipModel, CompleteAccount, RelatedAccountModel } from "./index"
 
 export const UserModel = z.object({
   id: z.string(),
@@ -25,6 +25,7 @@ export interface CompleteUser extends z.infer<typeof UserModel> {
   transfersSent: CompleteVehicleTransfer[]
   subscription?: CompleteSubscription | null
   vehicleOwnerships: CompleteVehicleOwnership[]
+  accounts: CompleteAccount[]
 }
 
 /**
@@ -40,4 +41,5 @@ export const RelatedUserModel: z.ZodSchema<CompleteUser> = z.lazy(() => UserMode
   transfersSent: RelatedVehicleTransferModel.array(),
   subscription: RelatedSubscriptionModel.nullish(),
   vehicleOwnerships: RelatedVehicleOwnershipModel.array(),
+  accounts: RelatedAccountModel.array(),
 }))

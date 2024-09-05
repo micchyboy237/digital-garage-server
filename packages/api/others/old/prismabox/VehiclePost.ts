@@ -26,7 +26,7 @@ export const VehiclePostPlain = t.Object(
 
 export const VehiclePostRelations = t.Object(
   {
-    photos: t.Array(
+    files: t.Array(
       t.Object(
         {
           id: t.String({ additionalProperties: true }),
@@ -40,19 +40,6 @@ export const VehiclePostRelations = t.Object(
           thumbnailUrl: t.String({ additionalProperties: true }),
           postId: __nullable__(t.String({ additionalProperties: true })),
           ownershipId: __nullable__(t.String({ additionalProperties: true })),
-          createdAt: t.Date({ additionalProperties: true }),
-          updatedAt: t.Date({ additionalProperties: true }),
-        },
-        { additionalProperties: true },
-      ),
-    ),
-    documents: t.Array(
-      t.Object(
-        {
-          id: t.String({ additionalProperties: true }),
-          fileId: t.String({ additionalProperties: true }),
-          postId: __nullable__(t.String({ additionalProperties: true })),
-          ownershipId: t.String({ additionalProperties: true }),
           createdAt: t.Date({ additionalProperties: true }),
           updatedAt: t.Date({ additionalProperties: true }),
         },
@@ -98,9 +85,6 @@ export const VehiclePostRelations = t.Object(
           ),
           startDate: t.Date({ additionalProperties: true }),
           endDate: __nullable__(t.Date({ additionalProperties: true })),
-          excludedPhotos: t.Array(t.String({ additionalProperties: true })),
-          excludedVideos: t.Array(t.String({ additionalProperties: true })),
-          excludedDocs: t.Array(t.String({ additionalProperties: true })),
           createdAt: t.Date({ additionalProperties: true }),
           updatedAt: t.Date({ additionalProperties: true }),
         },
@@ -155,22 +139,7 @@ export const VehiclePostPlainInputUpdate = t.Object(
 
 export const VehiclePostRelationsInputCreate = t.Object(
   {
-    photos: t.Optional(
-      t.Object(
-        {
-          connect: t.Array(
-            t.Object(
-              {
-                id: t.String({ additionalProperties: true }),
-              },
-              { additionalProperties: true },
-            ),
-          ),
-        },
-        { additionalProperties: true },
-      ),
-    ),
-    documents: t.Optional(
+    files: t.Optional(
       t.Object(
         {
           connect: t.Array(
@@ -218,31 +187,7 @@ export const VehiclePostRelationsInputCreate = t.Object(
 export const VehiclePostRelationsInputUpdate = t.Partial(
   t.Object(
     {
-      photos: t.Partial(
-        t.Object(
-          {
-            connect: t.Array(
-              t.Object(
-                {
-                  id: t.String({ additionalProperties: true }),
-                },
-                { additionalProperties: true },
-              ),
-            ),
-            disconnect: t.Array(
-              t.Object(
-                {
-                  id: t.String({ additionalProperties: true }),
-                },
-                { additionalProperties: true },
-              ),
-            ),
-          },
-          { additionalProperties: true },
-        ),
-        { additionalProperties: true },
-      ),
-      documents: t.Partial(
+      files: t.Partial(
         t.Object(
           {
             connect: t.Array(

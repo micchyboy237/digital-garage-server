@@ -1,5 +1,6 @@
 // s3.utils.spec.ts
-import { isValidFolderName } from "src/utils/s3.utils"
+
+import { isValidFolderName } from "./s3.utils"
 
 describe("isValidFolderName", () => {
   it("should return true for valid folder names", () => {

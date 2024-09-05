@@ -4,7 +4,6 @@ import { BoolFilterObjectSchema } from "./BoolFilter.schema"
 import { StringNullableFilterObjectSchema } from "./StringNullableFilter.schema"
 import { DateTimeFilterObjectSchema } from "./DateTimeFilter.schema"
 import { DateTimeNullableFilterObjectSchema } from "./DateTimeNullableFilter.schema"
-import { StringNullableListFilterObjectSchema } from "./StringNullableListFilter.schema"
 import { MediaFileRelationFilterObjectSchema } from "./MediaFileRelationFilter.schema"
 import { MediaFileWhereInputObjectSchema } from "./MediaFileWhereInput.schema"
 import { UserRelationFilterObjectSchema } from "./UserRelationFilter.schema"
@@ -13,7 +12,6 @@ import { VehicleRelationFilterObjectSchema } from "./VehicleRelationFilter.schem
 import { VehicleWhereInputObjectSchema } from "./VehicleWhereInput.schema"
 import { VehiclePostListRelationFilterObjectSchema } from "./VehiclePostListRelationFilter.schema"
 import { MediaFileListRelationFilterObjectSchema } from "./MediaFileListRelationFilter.schema"
-import { VehicleDocumentListRelationFilterObjectSchema } from "./VehicleDocumentListRelationFilter.schema"
 import { VehicleDetailsRelationFilterObjectSchema } from "./VehicleDetailsRelationFilter.schema"
 import { VehicleDetailsWhereInputObjectSchema } from "./VehicleDetailsWhereInput.schema"
 
@@ -44,9 +42,6 @@ const Schema: z.ZodType<Prisma.VehicleOwnershipWhereInput> = z
       .union([z.lazy(() => DateTimeNullableFilterObjectSchema), z.coerce.date()])
       .optional()
       .nullable(),
-    excludedPhotos: z.lazy(() => StringNullableListFilterObjectSchema).optional(),
-    excludedVideos: z.lazy(() => StringNullableListFilterObjectSchema).optional(),
-    excludedDocs: z.lazy(() => StringNullableListFilterObjectSchema).optional(),
     createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
     updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
     vehicleDisplayPhoto: z
@@ -62,8 +57,7 @@ const Schema: z.ZodType<Prisma.VehicleOwnershipWhereInput> = z
       .optional()
       .nullable(),
     posts: z.lazy(() => VehiclePostListRelationFilterObjectSchema).optional(),
-    vehiclePhotos: z.lazy(() => MediaFileListRelationFilterObjectSchema).optional(),
-    vehicleDocuments: z.lazy(() => VehicleDocumentListRelationFilterObjectSchema).optional(),
+    vehicleFiles: z.lazy(() => MediaFileListRelationFilterObjectSchema).optional(),
     vehicleDetails: z
       .union([z.lazy(() => VehicleDetailsRelationFilterObjectSchema), z.lazy(() => VehicleDetailsWhereInputObjectSchema)])
       .optional()

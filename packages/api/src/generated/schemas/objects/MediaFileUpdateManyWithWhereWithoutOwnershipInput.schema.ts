@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { MediaFileScalarWhereInputObjectSchema } from "./MediaFileScalarWhereInput.schema"
 import { MediaFileUpdateManyMutationInputObjectSchema } from "./MediaFileUpdateManyMutationInput.schema"
-import { MediaFileUncheckedUpdateManyWithoutVehiclePhotosInputObjectSchema } from "./MediaFileUncheckedUpdateManyWithoutVehiclePhotosInput.schema"
+import { MediaFileUncheckedUpdateManyWithoutVehicleFilesInputObjectSchema } from "./MediaFileUncheckedUpdateManyWithoutVehicleFilesInput.schema"
 
 import type { Prisma } from "@prisma/client"
 
@@ -10,7 +10,7 @@ const Schema: z.ZodType<Prisma.MediaFileUpdateManyWithWhereWithoutOwnershipInput
     where: z.lazy(() => MediaFileScalarWhereInputObjectSchema),
     data: z.union([
       z.lazy(() => MediaFileUpdateManyMutationInputObjectSchema),
-      z.lazy(() => MediaFileUncheckedUpdateManyWithoutVehiclePhotosInputObjectSchema),
+      z.lazy(() => MediaFileUncheckedUpdateManyWithoutVehicleFilesInputObjectSchema),
     ]),
   })
   .strict()

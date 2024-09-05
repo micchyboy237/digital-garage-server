@@ -8,9 +8,6 @@ export const VehicleOwnershipScalarFieldEnumSchema = z.enum([
   "vehicleDisplayPhotoId",
   "startDate",
   "endDate",
-  "excludedPhotos",
-  "excludedVideos",
-  "excludedDocs",
   "createdAt",
   "updatedAt",
 ])

@@ -2,7 +2,6 @@ import { z } from "zod"
 import { PostCategorySchema } from "../enums/PostCategory.schema"
 import { PostTypeSchema } from "../enums/PostType.schema"
 import { MediaFileCreateNestedManyWithoutPostInputObjectSchema } from "./MediaFileCreateNestedManyWithoutPostInput.schema"
-import { VehicleDocumentCreateNestedManyWithoutPostInputObjectSchema } from "./VehicleDocumentCreateNestedManyWithoutPostInput.schema"
 import { UserCreateNestedOneWithoutPostsInputObjectSchema } from "./UserCreateNestedOneWithoutPostsInput.schema"
 import { VehicleOwnershipCreateNestedOneWithoutPostsInputObjectSchema } from "./VehicleOwnershipCreateNestedOneWithoutPostsInput.schema"
 
@@ -20,8 +19,7 @@ const Schema: z.ZodType<Prisma.VehiclePostCreateInput> = z
       .nullable(),
     createdAt: z.coerce.date().optional(),
     updatedAt: z.coerce.date().optional(),
-    photos: z.lazy(() => MediaFileCreateNestedManyWithoutPostInputObjectSchema).optional(),
-    documents: z.lazy(() => VehicleDocumentCreateNestedManyWithoutPostInputObjectSchema).optional(),
+    files: z.lazy(() => MediaFileCreateNestedManyWithoutPostInputObjectSchema).optional(),
     createdBy: z.lazy(() => UserCreateNestedOneWithoutPostsInputObjectSchema).optional(),
     ownership: z.lazy(() => VehicleOwnershipCreateNestedOneWithoutPostsInputObjectSchema).optional(),
   })

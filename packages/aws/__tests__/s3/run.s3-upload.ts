@@ -1,7 +1,7 @@
 import * as fs from "fs"
 import path from "path"
-import { S3File, S3UploadOptions, uploadImageAndThumbnail } from "src/services"
-import { streamToBuffer } from "src/utils"
+import { S3File, S3UploadOptions, uploadImageAndThumbnail } from "../../src/services"
+import { streamToBuffer } from "../../src/utils"
 
 // Define the path to the original image
 const filePath = path.join(__dirname, "../assets/sample-vehicle-display.jpeg")

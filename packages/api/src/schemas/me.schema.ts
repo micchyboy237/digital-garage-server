@@ -34,10 +34,6 @@ export const getVehicleOwnershipSchema = z.object({
   vehicleId: z.string(),
 })
 
-export const getVehiclePostsSchema = z.object({
-  vehicleId: z.string(),
-})
-
 export const transferSchema = z.object({
   vehicleId: z.string(),
   recipientId: z.string(),

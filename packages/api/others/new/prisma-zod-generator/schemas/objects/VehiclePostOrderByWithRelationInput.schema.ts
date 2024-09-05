@@ -2,7 +2,6 @@ import { z } from "zod"
 import { SortOrderSchema } from "../enums/SortOrder.schema"
 import { SortOrderInputObjectSchema } from "./SortOrderInput.schema"
 import { MediaFileOrderByRelationAggregateInputObjectSchema } from "./MediaFileOrderByRelationAggregateInput.schema"
-import { VehicleDocumentOrderByRelationAggregateInputObjectSchema } from "./VehicleDocumentOrderByRelationAggregateInput.schema"
 import { UserOrderByWithRelationInputObjectSchema } from "./UserOrderByWithRelationInput.schema"
 import { VehicleOwnershipOrderByWithRelationInputObjectSchema } from "./VehicleOwnershipOrderByWithRelationInput.schema"
 
@@ -19,8 +18,7 @@ const Schema: z.ZodType<Prisma.VehiclePostOrderByWithRelationInput> = z
     ownershipId: z.lazy(() => SortOrderSchema).optional(),
     createdAt: z.lazy(() => SortOrderSchema).optional(),
     updatedAt: z.lazy(() => SortOrderSchema).optional(),
-    photos: z.lazy(() => MediaFileOrderByRelationAggregateInputObjectSchema).optional(),
-    documents: z.lazy(() => VehicleDocumentOrderByRelationAggregateInputObjectSchema).optional(),
+    files: z.lazy(() => MediaFileOrderByRelationAggregateInputObjectSchema).optional(),
     createdBy: z.lazy(() => UserOrderByWithRelationInputObjectSchema).optional(),
     ownership: z.lazy(() => VehicleOwnershipOrderByWithRelationInputObjectSchema).optional(),
   })

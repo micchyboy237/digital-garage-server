@@ -11,6 +11,7 @@ import { VehiclePostUncheckedUpdateManyWithoutCreatedByNestedInputObjectSchema }
 import { VehicleTransferUncheckedUpdateManyWithoutRecipientNestedInputObjectSchema } from "./VehicleTransferUncheckedUpdateManyWithoutRecipientNestedInput.schema"
 import { VehicleTransferUncheckedUpdateManyWithoutSenderNestedInputObjectSchema } from "./VehicleTransferUncheckedUpdateManyWithoutSenderNestedInput.schema"
 import { VehicleOwnershipUncheckedUpdateManyWithoutUserNestedInputObjectSchema } from "./VehicleOwnershipUncheckedUpdateManyWithoutUserNestedInput.schema"
+import { AccountUncheckedUpdateManyWithoutUserNestedInputObjectSchema } from "./AccountUncheckedUpdateManyWithoutUserNestedInput.schema"
 
 import type { Prisma } from "@prisma/client"
 
@@ -47,6 +48,7 @@ const Schema: z.ZodType<Prisma.UserUncheckedUpdateWithoutSubscriptionInput> = z
     transfersReceived: z.lazy(() => VehicleTransferUncheckedUpdateManyWithoutRecipientNestedInputObjectSchema).optional(),
     transfersSent: z.lazy(() => VehicleTransferUncheckedUpdateManyWithoutSenderNestedInputObjectSchema).optional(),
     vehicleOwnerships: z.lazy(() => VehicleOwnershipUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
+    accounts: z.lazy(() => AccountUncheckedUpdateManyWithoutUserNestedInputObjectSchema).optional(),
   })
   .strict()
 

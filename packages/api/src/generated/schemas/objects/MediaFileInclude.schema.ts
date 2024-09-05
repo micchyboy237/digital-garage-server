@@ -1,7 +1,6 @@
 import { z } from "zod"
 import { VehiclePostArgsObjectSchema } from "./VehiclePostArgs.schema"
 import { VehicleOwnershipArgsObjectSchema } from "./VehicleOwnershipArgs.schema"
-import { VehicleDocumentArgsObjectSchema } from "./VehicleDocumentArgs.schema"
 
 import type { Prisma } from "@prisma/client"
 
@@ -10,7 +9,6 @@ const Schema: z.ZodType<Prisma.MediaFileInclude> = z
     post: z.union([z.boolean(), z.lazy(() => VehiclePostArgsObjectSchema)]).optional(),
     displayPhotoOwnership: z.union([z.boolean(), z.lazy(() => VehicleOwnershipArgsObjectSchema)]).optional(),
     ownership: z.union([z.boolean(), z.lazy(() => VehicleOwnershipArgsObjectSchema)]).optional(),
-    vehicleDocument: z.union([z.boolean(), z.lazy(() => VehicleDocumentArgsObjectSchema)]).optional(),
   })
   .strict()
 

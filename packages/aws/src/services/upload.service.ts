@@ -1,6 +1,6 @@
 import multer from "multer"
 import multerS3 from "multer-s3"
-import { awsConfig, s3Client } from "src/config"
+import { awsConfig, s3Client } from "../config"
 
 export const multerUpload = multer()
 

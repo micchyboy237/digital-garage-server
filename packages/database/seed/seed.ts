@@ -2,10 +2,19 @@ import { MediaFileType, PostCategory, PostType, prisma } from ".."
 
 async function main() {
   // Create Users and Sessions
-  const user1 = await createUser("john.doe@example.com", "John", "Doe")
-  const user2 = await createUser("jane.smith@example.com", "Jane", "Smith")
-  await createSession(user1.id, "EMAIL_PASSWORD")
-  await createSession(user2.id, "GOOGLE")
+  const user1 = await createUser("user-1", "john.doe@example.com", "John", "Doe")
+  const user2 = await createUser("user-2", "jane.smith@example.com", "Jane", "Smith")
+  // Create Accounts for Auth Providers
+  const user1Account1 = await createAccount(user1.id, "EMAIL_PASSWORD", "john.doe@example.com")
+  const user1Account2 = await createAccount(user1.id, "APPLE", "john.doe@example.com")
+  const user2Account1 = await createAccount(user2.id, "GOOGLE", "jane.smith@example.com")
+
+  const user1DeviceFingerprint = `${user1.id}-device`
+  const user2DeviceFingerprint = `${user2.id}-device`
+
+  await createSession("session-token-0", user1Account1.id, user1DeviceFingerprint)
+  await updateSession("session-token-1", user1Account2.id, user1DeviceFingerprint)
+  await createSession("session-token-2", user2Account1.id, user2DeviceFingerprint)
 
   // Create Subscriptions and Payments
   const subscription1 = await createSubscription(user1.id, "MONTH")
@@ -15,40 +24,33 @@ async function main() {
   await createPayment(subscription2.id, 299.99, "USD", "PAID")
 
   // Add Vehicles and Ownerships
-  const vehicle1 = await createVehicle("ABC123", "Toyota", "Corolla", user1.id)
+  const vehicle1 = await createVehicle("vehicle-1", "ABC123", "Toyota", "Corolla", user1.id)
   const ownership1 = await createOwnership(user1.id, vehicle1.id)
 
-  const vehicle2 = await createVehicle("XYZ789", "Honda", "Civic", user2.id)
+  const vehicle2 = await createVehicle("vehicle-2", "XYZ789", "Honda", "Civic", user2.id)
   const ownership2 = await createOwnership(user2.id, vehicle2.id)
 
   // Add Vehicle Details and Documents
   await createVehicleDetails(vehicle1.id, "Toyota", "Corolla", 2020, ownership1.id)
   await createVehicleDetails(vehicle2.id, "Honda", "Civic", 2021, ownership2.id)
 
-  // Create Vehicle Documents and Posts
-  const document1 = await createVehicleDocument(
-    user1.id,
-    ownership1.id,
-    "service_invoice.pdf",
-    "Service Invoice",
-    MediaFileType.DOCUMENT,
-  )
-  const document2 = await createVehicleDocument(
-    user2.id,
-    ownership2.id,
-    "registration.pdf",
-    "Registration Document",
-    MediaFileType.DOCUMENT,
-  )
-
-  // Add Vehicle Posts and Media Files
-  await createVehiclePost(user1.id, ownership1.id, "Maintenance Log", PostCategory.HISTORY, PostType.REMINDER)
+  // Create Vehicle Posts and Media Files
+  const galleryPost1 = await createVehicleGalleryPost(user1.id, ownership1.id, "Maintenance Log")
   const photo1 = await createMediaFile(
-    "maintenance_photo.jpg",
+    "maintenance_photo1.jpg",
     MediaFileType.IMAGE,
     "image/jpeg",
-    "https://example.com/media/maintenance_photo.jpg",
+    "https://example.com/media/maintenance_photo1.jpg",
     ownership1.id,
+    galleryPost1.id,
+  )
+  const photo2 = await createMediaFile(
+    "maintenance_photo2.jpg",
+    MediaFileType.IMAGE,
+    "image/jpeg",
+    "https://example.com/media/maintenance_photo2.jpg",
+    ownership1.id,
+    galleryPost1.id,
   )
   const video1 = await createMediaFile(
     "maintenance_video.mp4",
@@ -56,10 +58,22 @@ async function main() {
     "video/mp4",
     "https://example.com/media/maintenance_video.mp4",
     ownership1.id,
+    galleryPost1.id,
+  )
+
+  const historyPost1 = await createVehicleHistoryPost(user1.id, ownership1.id, "Service History", PostType.DOCUMENT)
+
+  const pdfDoc1 = await createMediaFile(
+    "service_history.pdf",
+    MediaFileType.DOCUMENT,
+    "application/pdf",
+    "https://example.com/media/service_history.pdf",
+    ownership1.id,
+    historyPost1.id,
   )
 
   // Handle Vehicle Transfer with Media Exclusion
-  const transfer1 = await createVehicleTransfer(vehicle1.id, user1.id, user2.id, "REQUESTED", [photo1.id], [], [document1.id])
+  const transfer1 = await createVehicleTransfer(vehicle1.id, user1.id, user2.id, "REQUESTED", [MediaFileType.IMAGE])
 
   // Accept Transfer and Update Ownerships
   await acceptVehicleTransfer(transfer1.id)
@@ -67,9 +81,10 @@ async function main() {
   console.log("Seeding completed!")
 }
 
-async function createUser(email: string, firstName: string, lastName: string) {
+async function createUser(id: string, email: string, firstName: string, lastName: string) {
   return prisma.user.create({
     data: {
+      id,
       email,
       firebaseUid: `${email}-uid`,
       firstName,
@@ -79,14 +94,44 @@ async function createUser(email: string, firstName: string, lastName: string) {
   })
 }
 
-async function createSession(userId: string, provider: "EMAIL_PASSWORD" | "GOOGLE" | "APPLE") {
+async function createSession(token: string, accountId: string, deviceFingerprint: string) {
+  const account = await prisma.account.findUnique({ where: { id: accountId } })
+  const userId = account?.userId
+
+  if (!userId) {
+    throw new Error(`Account not found for ID: ${accountId}`)
+  }
+
   return prisma.session.create({
     data: {
-      token: `${userId}-token`,
+      token,
       expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
-      provider,
-      deviceFingerprint: `${userId}-device`,
+      deviceFingerprint,
+      accountId,
       userId,
+    },
+  })
+}
+
+async function updateSession(token: string, accountId: string, deviceFingerprint: string) {
+  const session = await prisma.session.update({
+    where: { deviceFingerprint },
+    data: {
+      token,
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      accountId,
+    },
+  })
+  return session
+}
+
+async function createAccount(userId: string, provider: "EMAIL_PASSWORD" | "GOOGLE" | "APPLE", email: string) {
+  return prisma.account.create({
+    data: {
+      provider,
+      lastLogin: new Date(),
+      userId,
+      email,
     },
   })
 }
@@ -119,9 +164,10 @@ async function createPayment(
   })
 }
 
-async function createVehicle(registrationNumber: string, make: string, model: string, ownerId: string) {
+async function createVehicle(id: string, registrationNumber: string, make: string, model: string, ownerId: string) {
   return prisma.vehicle.create({
     data: {
+      id,
       registrationNumber,
       make,
       model,
@@ -165,49 +211,22 @@ async function createVehicleDetails(
   })
 }
 
-async function createVehicleDocument(
-  userId: string,
-  ownershipId: string,
-  fileName: string,
-  description: string,
-  type: MediaFileType,
-) {
-  return prisma.vehicleDocument.create({
+async function createVehicleGalleryPost(userId: string, ownershipId: string, title: string) {
+  return prisma.vehiclePost.create({
     data: {
-      ownership: {
-        connect: { id: ownershipId },
-      },
-      file: {
-        create: {
-          type,
-          mimeType: "application/pdf",
-          fileName,
-          url: `url-to-${fileName}`,
-          thumbnailUrl: `url-to-${fileName}-thumbnail`,
-        },
-      },
-      post: {
-        create: {
-          title: description,
-          category: PostCategory.HISTORY,
-          type: PostType.DOCUMENT,
-          ownership: {
-            connect: { id: ownershipId },
-          },
-          createdBy: {
-            connect: { id: userId }, // Corrected to connect by User ID
-          },
-        },
-      },
+      title,
+      category: PostCategory.GALLERY,
+      ownershipId,
+      createdById: userId,
     },
   })
 }
 
-async function createVehiclePost(userId: string, ownershipId: string, title: string, category: PostCategory, type: PostType) {
+async function createVehicleHistoryPost(userId: string, ownershipId: string, title: string, type: PostType) {
   return prisma.vehiclePost.create({
     data: {
       title,
-      category,
+      category: PostCategory.HISTORY,
       type,
       ownershipId,
       createdById: userId,
@@ -215,7 +234,14 @@ async function createVehiclePost(userId: string, ownershipId: string, title: str
   })
 }
 
-async function createMediaFile(fileName: string, type: MediaFileType, mimeType: string, url: string, ownershipId: string) {
+async function createMediaFile(
+  fileName: string,
+  type: MediaFileType,
+  mimeType: string,
+  url: string,
+  ownershipId: string,
+  postId?: string,
+) {
   return prisma.mediaFile.create({
     data: {
       type,
@@ -226,6 +252,7 @@ async function createMediaFile(fileName: string, type: MediaFileType, mimeType: 
       ownership: {
         connect: { id: ownershipId },
       },
+      post: postId ? { connect: { id: postId } } : undefined,
     },
   })
 }
@@ -235,9 +262,7 @@ async function createVehicleTransfer(
   senderId: string,
   recipientId: string,
   status: "REQUESTED" | "ACCEPTED" | "REJECTED",
-  excludedPhotos: string[],
-  excludedVideos: string[],
-  excludedDocs: string[],
+  excludedMediaFileTypes: MediaFileType[],
 ) {
   return prisma.vehicleTransfer.create({
     data: {
@@ -252,9 +277,7 @@ async function createVehicleTransfer(
       },
       status,
       transferDate: new Date(),
-      excludedPhotos: { set: excludedPhotos },
-      excludedVideos: { set: excludedVideos },
-      excludedDocs: { set: excludedDocs },
+      excludedMediaFileTypes,
     },
   })
 }
@@ -270,19 +293,58 @@ async function acceptVehicleTransfer(transferId: string) {
   const newOwnership = await createOwnership(transfer.recipientId, transfer.vehicleId)
 
   // Update old ownership to no longer be the current owner
-  await prisma.vehicleOwnership.updateMany({
-    where: { vehicleId: transfer.vehicleId, userId: transfer.senderId },
-    data: { isCurrentOwner: false, endDate: new Date() },
+  const oldOwnership = await prisma.vehicleOwnership.update({
+    where: { userId_vehicleId: { userId: transfer.senderId, vehicleId: transfer.vehicleId } },
+    data: {
+      isCurrentOwner: false,
+      endDate: new Date(),
+    },
+    include: {
+      posts: {
+        include: { files: true },
+      },
+    },
   })
 
-  // Transfer media files to new ownership, excluding specified files
-  await prisma.mediaFile.updateMany({
-    where: {
-      ownershipId: transfer.senderId,
-      id: { notIn: [...transfer.excludedPhotos, ...transfer.excludedVideos, ...transfer.excludedDocs] },
-    },
-    data: { ownershipId: newOwnership.id },
-  })
+  console.log("newOwnership.id:", newOwnership.id)
+  console.log("oldOwnership.posts:", oldOwnership.posts)
+  console.log("transfer.excludedMediaFileTypes:", transfer.excludedMediaFileTypes)
+
+  // Transfer old ownership files to new ownership, excluding specified files
+  const filesToTransfer = []
+  for (const post of oldOwnership.posts) {
+    const newPost = await prisma.vehiclePost.create({
+      data: {
+        title: post.title,
+        description: post.description,
+        category: post.category,
+        type: post.type,
+        ownershipId: newOwnership.id,
+        createdById: transfer.recipientId,
+      },
+    })
+
+    for (const file of post.files) {
+      if (!transfer.excludedMediaFileTypes.includes(file.type)) {
+        const newFile = await prisma.mediaFile.create({
+          data: {
+            type: file.type,
+            mimeType: file.mimeType,
+            fileName: file.fileName,
+            url: file.url,
+            thumbnailUrl: file.thumbnailUrl,
+            ownership: {
+              connect: { id: newOwnership.id },
+            },
+            post: {
+              connect: { id: newPost.id },
+            },
+          },
+        })
+        filesToTransfer.push(newFile)
+      }
+    }
+  }
 }
 
 main()

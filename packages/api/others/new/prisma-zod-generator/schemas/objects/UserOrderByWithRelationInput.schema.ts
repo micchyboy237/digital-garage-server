@@ -7,6 +7,7 @@ import { VehiclePostOrderByRelationAggregateInputObjectSchema } from "./VehicleP
 import { VehicleTransferOrderByRelationAggregateInputObjectSchema } from "./VehicleTransferOrderByRelationAggregateInput.schema"
 import { SubscriptionOrderByWithRelationInputObjectSchema } from "./SubscriptionOrderByWithRelationInput.schema"
 import { VehicleOwnershipOrderByRelationAggregateInputObjectSchema } from "./VehicleOwnershipOrderByRelationAggregateInput.schema"
+import { AccountOrderByRelationAggregateInputObjectSchema } from "./AccountOrderByRelationAggregateInput.schema"
 
 import type { Prisma } from "@prisma/client"
 
@@ -30,6 +31,7 @@ const Schema: z.ZodType<Prisma.UserOrderByWithRelationInput> = z
     transfersSent: z.lazy(() => VehicleTransferOrderByRelationAggregateInputObjectSchema).optional(),
     subscription: z.lazy(() => SubscriptionOrderByWithRelationInputObjectSchema).optional(),
     vehicleOwnerships: z.lazy(() => VehicleOwnershipOrderByRelationAggregateInputObjectSchema).optional(),
+    accounts: z.lazy(() => AccountOrderByRelationAggregateInputObjectSchema).optional(),
   })
   .strict()
 

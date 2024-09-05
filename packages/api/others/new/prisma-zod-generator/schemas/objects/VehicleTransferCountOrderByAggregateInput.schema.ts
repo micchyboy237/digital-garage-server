@@ -13,9 +13,7 @@ const Schema: z.ZodType<Prisma.VehicleTransferCountOrderByAggregateInput> = z
     transferDate: z.lazy(() => SortOrderSchema).optional(),
     responseDate: z.lazy(() => SortOrderSchema).optional(),
     reason: z.lazy(() => SortOrderSchema).optional(),
-    excludedPhotos: z.lazy(() => SortOrderSchema).optional(),
-    excludedVideos: z.lazy(() => SortOrderSchema).optional(),
-    excludedDocs: z.lazy(() => SortOrderSchema).optional(),
+    excludedMediaFileTypes: z.lazy(() => SortOrderSchema).optional(),
     createdAt: z.lazy(() => SortOrderSchema).optional(),
     updatedAt: z.lazy(() => SortOrderSchema).optional(),
   })

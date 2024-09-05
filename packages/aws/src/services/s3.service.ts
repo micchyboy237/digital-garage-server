@@ -1,9 +1,9 @@
 import { Upload } from "@aws-sdk/lib-storage"
 import { Readable } from "stream"
-
-import { awsConfig, s3Client } from "src/config"
-import { S3File, UploadResult } from "src/services/types"
-import { generateThumbnail, isValidFolderName, optimizeImage } from "src/utils/s3.utils"
+import { awsConfig, s3Client } from "../config"
+import { isValidFolderName, optimizeImage } from "../utils"
+import { generateImageThumbnail } from "../utils/image.utils"
+import { S3File, UploadResult } from "./types"
 
 /**
  * Upload a single file to S3.
@@ -59,7 +59,7 @@ export const uploadS3 = async (file: S3File, folder?: string): Promise<string> =
 
 export const uploadImageAndThumbnail = async (file: S3File, folder?: string): Promise<UploadResult> => {
   // Optimize image and generate thumbnail in parallel
-  const [optimizedBuffer, thumbnailBuffer] = await Promise.all([optimizeImage(file.buffer), generateThumbnail(file.buffer)])
+  const [optimizedBuffer, thumbnailBuffer] = await Promise.all([optimizeImage(file.buffer), generateImageThumbnail(file.buffer)])
 
   // Prepare files for upload
   const imageFileName = file.originalname

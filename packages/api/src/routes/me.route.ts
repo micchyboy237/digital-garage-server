@@ -1,8 +1,8 @@
+import { PostCategory } from "@boilerplate/database"
 import { TRPCError } from "@trpc/server"
 import {
   documentSchema,
   getVehicleOwnershipSchema,
-  getVehiclePostsSchema,
   postSchema,
   respondTransferSchema,
   transferSchema,
@@ -36,12 +36,13 @@ export const meRouter = t.router({
     const userId = ctx.user?.id!
     console.log("Get vehicle ownership:", input)
 
-    const vehicleOwnership = await ctx.prisma.ownership.findUnique({
+    const vehicleOwnership = await ctx.prisma.vehicleOwnership.findUnique({
       where: {
         userId_vehicleId: {
           userId: userId,
           vehicleId: input.vehicleId,
         },
+        isCurrentOwner: true,
       },
       include: {
         vehicleDisplayPhoto: true,
@@ -49,8 +50,7 @@ export const meRouter = t.router({
         vehicle: true,
         posts: {
           include: {
-            photos: true,
-            documents: true,
+            files: true,
           },
         },
       },
@@ -65,15 +65,14 @@ export const meRouter = t.router({
   getVehicleOwnerships: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.user?.id!
 
-    return await ctx.prisma.ownership.findMany({
+    return await ctx.prisma.vehicleOwnership.findMany({
       where: { userId },
       include: {
         user: true,
         vehicle: true,
         posts: {
           include: {
-            photos: true,
-            documents: true,
+            files: true,
           },
         },
         vehicleDisplayPhoto: true,
@@ -83,15 +82,14 @@ export const meRouter = t.router({
   getCurrentVehicleOwnerships: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.user?.id!
 
-    return await ctx.prisma.ownership.findMany({
+    return await ctx.prisma.vehicleOwnership.findMany({
       where: { userId, isCurrentOwner: true },
       include: {
         user: true,
         vehicle: true,
         posts: {
           include: {
-            photos: true,
-            documents: true,
+            files: true,
           },
         },
         vehicleDisplayPhoto: true,
@@ -101,15 +99,14 @@ export const meRouter = t.router({
   getPreviousVehicleOwnerships: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.user?.id!
 
-    return await ctx.prisma.ownership.findMany({
+    return await ctx.prisma.vehicleOwnership.findMany({
       where: { userId, isCurrentOwner: false },
       include: {
         user: true,
         vehicle: true,
         posts: {
           include: {
-            photos: true,
-            documents: true,
+            files: true,
           },
         },
         vehicleDisplayPhoto: true,
@@ -133,12 +130,22 @@ export const meRouter = t.router({
 
     return vehicle
   }),
-  getVehiclePosts: protectedProcedure.input(getVehiclePostsSchema).query(async ({ ctx, input }) => {
+  getVehicleGallery: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.user?.id!
 
     const vehiclePosts = await ctx.prisma.vehiclePost.findMany({
-      where: { createdById: userId },
-      include: { photos: true, documents: true },
+      where: { createdById: userId, category: PostCategory.GALLERY },
+      include: { files: true, ownership: true },
+    })
+
+    return vehiclePosts
+  }),
+  getVehicleHistory: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.user?.id!
+
+    const vehiclePosts = await ctx.prisma.vehiclePost.findMany({
+      where: { createdById: userId, category: PostCategory.HISTORY },
+      include: { files: true, ownership: true },
     })
 
     return vehiclePosts
@@ -285,12 +292,12 @@ export const meRouter = t.router({
       }
 
       if (status === "ACCEPTED") {
-        const oldOwnership = await prisma.ownership.update({
+        const oldOwnership = await prisma.vehicleOwnership.update({
           where: { userId_vehicleId: { userId: transfer.senderId, vehicleId: transfer.vehicleId } }, // Fixed here
           data: { isCurrentOwner: false, endDate: new Date() },
         })
 
-        const newOwnership = await prisma.ownership.create({
+        const newOwnership = await prisma.vehicleOwnership.create({
           data: {
             userId: transfer.recipientId,
             vehicleId: transfer.vehicleId,

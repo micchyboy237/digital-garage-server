@@ -5,7 +5,7 @@ import { TransferStatusSchema } from "../enums/TransferStatus.schema"
 import { DateTimeWithAggregatesFilterObjectSchema } from "./DateTimeWithAggregatesFilter.schema"
 import { DateTimeNullableWithAggregatesFilterObjectSchema } from "./DateTimeNullableWithAggregatesFilter.schema"
 import { StringNullableWithAggregatesFilterObjectSchema } from "./StringNullableWithAggregatesFilter.schema"
-import { StringNullableListFilterObjectSchema } from "./StringNullableListFilter.schema"
+import { EnumMediaFileTypeNullableListFilterObjectSchema } from "./EnumMediaFileTypeNullableListFilter.schema"
 
 import type { Prisma } from "@prisma/client"
 
@@ -43,9 +43,7 @@ const Schema: z.ZodType<Prisma.VehicleTransferScalarWhereWithAggregatesInput> = 
       .union([z.lazy(() => StringNullableWithAggregatesFilterObjectSchema), z.string()])
       .optional()
       .nullable(),
-    excludedPhotos: z.lazy(() => StringNullableListFilterObjectSchema).optional(),
-    excludedVideos: z.lazy(() => StringNullableListFilterObjectSchema).optional(),
-    excludedDocs: z.lazy(() => StringNullableListFilterObjectSchema).optional(),
+    excludedMediaFileTypes: z.lazy(() => EnumMediaFileTypeNullableListFilterObjectSchema).optional(),
     createdAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
     updatedAt: z.union([z.lazy(() => DateTimeWithAggregatesFilterObjectSchema), z.coerce.date()]).optional(),
   })

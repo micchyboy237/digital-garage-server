@@ -1,8 +1,7 @@
 import { z } from "zod"
 import { TransferStatusSchema } from "../enums/TransferStatus.schema"
-import { VehicleTransferCreateexcludedPhotosInputObjectSchema } from "./VehicleTransferCreateexcludedPhotosInput.schema"
-import { VehicleTransferCreateexcludedVideosInputObjectSchema } from "./VehicleTransferCreateexcludedVideosInput.schema"
-import { VehicleTransferCreateexcludedDocsInputObjectSchema } from "./VehicleTransferCreateexcludedDocsInput.schema"
+import { VehicleTransferCreateexcludedMediaFileTypesInputObjectSchema } from "./VehicleTransferCreateexcludedMediaFileTypesInput.schema"
+import { MediaFileTypeSchema } from "../enums/MediaFileType.schema"
 import { VehicleCreateNestedOneWithoutTransfersInputObjectSchema } from "./VehicleCreateNestedOneWithoutTransfersInput.schema"
 import { UserCreateNestedOneWithoutTransfersSentInputObjectSchema } from "./UserCreateNestedOneWithoutTransfersSentInput.schema"
 import { UserCreateNestedOneWithoutTransfersReceivedInputObjectSchema } from "./UserCreateNestedOneWithoutTransfersReceivedInput.schema"
@@ -16,9 +15,12 @@ const Schema: z.ZodType<Prisma.VehicleTransferCreateInput> = z
     transferDate: z.coerce.date().optional(),
     responseDate: z.coerce.date().optional().nullable(),
     reason: z.string().optional().nullable(),
-    excludedPhotos: z.union([z.lazy(() => VehicleTransferCreateexcludedPhotosInputObjectSchema), z.string().array()]).optional(),
-    excludedVideos: z.union([z.lazy(() => VehicleTransferCreateexcludedVideosInputObjectSchema), z.string().array()]).optional(),
-    excludedDocs: z.union([z.lazy(() => VehicleTransferCreateexcludedDocsInputObjectSchema), z.string().array()]).optional(),
+    excludedMediaFileTypes: z
+      .union([
+        z.lazy(() => VehicleTransferCreateexcludedMediaFileTypesInputObjectSchema),
+        z.lazy(() => MediaFileTypeSchema).array(),
+      ])
+      .optional(),
     createdAt: z.coerce.date().optional(),
     updatedAt: z.coerce.date().optional(),
     vehicle: z.lazy(() => VehicleCreateNestedOneWithoutTransfersInputObjectSchema).optional(),

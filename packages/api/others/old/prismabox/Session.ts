@@ -7,10 +7,7 @@ export const SessionPlain = t.Object(
     id: t.String({ additionalProperties: true }),
     token: t.String({ additionalProperties: true }),
     expiresAt: t.Date({ additionalProperties: true }),
-    provider: t.Union(
-      [t.Literal("EMAIL_PASSWORD"), t.Literal("GOOGLE"), t.Literal("APPLE")],
-      { additionalProperties: true },
-    ),
+    accountId: t.String({ additionalProperties: true }),
     deviceFingerprint: t.String({ additionalProperties: true }),
     userId: t.String({ additionalProperties: true }),
     createdAt: t.Date({ additionalProperties: true }),
@@ -21,6 +18,25 @@ export const SessionPlain = t.Object(
 
 export const SessionRelations = t.Object(
   {
+    account: t.Object(
+      {
+        id: t.String({ additionalProperties: true }),
+        provider: t.Union(
+          [
+            t.Literal("EMAIL_PASSWORD"),
+            t.Literal("GOOGLE"),
+            t.Literal("APPLE"),
+          ],
+          { additionalProperties: true },
+        ),
+        lastLogin: __nullable__(t.Date({ additionalProperties: true })),
+        userId: t.String({ additionalProperties: true }),
+        email: t.String({ additionalProperties: true }),
+        createdAt: t.Date({ additionalProperties: true }),
+        updatedAt: t.Date({ additionalProperties: true }),
+      },
+      { additionalProperties: true },
+    ),
     user: __nullable__(
       t.Object(
         {
@@ -56,10 +72,6 @@ export const SessionPlainInputCreate = t.Object(
   {
     token: t.String({ additionalProperties: true }),
     expiresAt: t.Date({ additionalProperties: true }),
-    provider: t.Union(
-      [t.Literal("EMAIL_PASSWORD"), t.Literal("GOOGLE"), t.Literal("APPLE")],
-      { additionalProperties: true },
-    ),
     deviceFingerprint: t.String({ additionalProperties: true }),
   },
   { additionalProperties: true },
@@ -69,10 +81,6 @@ export const SessionPlainInputUpdate = t.Object(
   {
     token: t.String({ additionalProperties: true }),
     expiresAt: t.Date({ additionalProperties: true }),
-    provider: t.Union(
-      [t.Literal("EMAIL_PASSWORD"), t.Literal("GOOGLE"), t.Literal("APPLE")],
-      { additionalProperties: true },
-    ),
     deviceFingerprint: t.String({ additionalProperties: true }),
   },
   { additionalProperties: true },
@@ -80,6 +88,17 @@ export const SessionPlainInputUpdate = t.Object(
 
 export const SessionRelationsInputCreate = t.Object(
   {
+    account: t.Object(
+      {
+        connect: t.Object(
+          {
+            id: t.String({ additionalProperties: true }),
+          },
+          { additionalProperties: true },
+        ),
+      },
+      { additionalProperties: true },
+    ),
     user: t.Optional(
       t.Object(
         {
@@ -100,6 +119,17 @@ export const SessionRelationsInputCreate = t.Object(
 export const SessionRelationsInputUpdate = t.Partial(
   t.Object(
     {
+      account: t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
       user: t.Partial(
         t.Object(
           {
@@ -131,14 +161,7 @@ export const SessionWhere = t.Partial(
         id: t.String(),
         token: t.String(),
         expiresAt: t.Date(),
-        provider: t.Union(
-          [
-            t.Literal("EMAIL_PASSWORD"),
-            t.Literal("GOOGLE"),
-            t.Literal("APPLE"),
-          ],
-          { additionalProperties: true },
-        ),
+        accountId: t.String(),
         deviceFingerprint: t.String(),
         userId: t.String(),
         createdAt: t.Date(),
@@ -187,14 +210,7 @@ export const SessionWhereUnique = t.Recursive(
             id: t.String(),
             token: t.String(),
             expiresAt: t.Date(),
-            provider: t.Union(
-              [
-                t.Literal("EMAIL_PASSWORD"),
-                t.Literal("GOOGLE"),
-                t.Literal("APPLE"),
-              ],
-              { additionalProperties: true },
-            ),
+            accountId: t.String(),
             deviceFingerprint: t.String(),
             userId: t.String(),
             createdAt: t.Date(),

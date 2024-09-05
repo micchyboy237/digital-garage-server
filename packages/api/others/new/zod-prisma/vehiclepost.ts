@@ -1,7 +1,7 @@
 import * as z from "zod"
 import * as imports from "../../../../database/null"
 import { PostCategory, PostType } from "@prisma/client"
-import { CompleteMediaFile, RelatedMediaFileModel, CompleteVehicleDocument, RelatedVehicleDocumentModel, CompleteUser, RelatedUserModel, CompleteVehicleOwnership, RelatedVehicleOwnershipModel } from "./index"
+import { CompleteMediaFile, RelatedMediaFileModel, CompleteUser, RelatedUserModel, CompleteVehicleOwnership, RelatedVehicleOwnershipModel } from "./index"
 
 export const VehiclePostModel = z.object({
   id: z.string(),
@@ -16,8 +16,7 @@ export const VehiclePostModel = z.object({
 })
 
 export interface CompleteVehiclePost extends z.infer<typeof VehiclePostModel> {
-  photos: CompleteMediaFile[]
-  documents: CompleteVehicleDocument[]
+  files: CompleteMediaFile[]
   createdBy?: CompleteUser | null
   ownership?: CompleteVehicleOwnership | null
 }
@@ -28,8 +27,7 @@ export interface CompleteVehiclePost extends z.infer<typeof VehiclePostModel> {
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
 export const RelatedVehiclePostModel: z.ZodSchema<CompleteVehiclePost> = z.lazy(() => VehiclePostModel.extend({
-  photos: RelatedMediaFileModel.array(),
-  documents: RelatedVehicleDocumentModel.array(),
+  files: RelatedMediaFileModel.array(),
   createdBy: RelatedUserModel.nullish(),
   ownership: RelatedVehicleOwnershipModel.nullish(),
 }))

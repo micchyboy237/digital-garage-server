@@ -8,8 +8,6 @@ import { VehiclePostRelationFilterObjectSchema } from "./VehiclePostRelationFilt
 import { VehiclePostWhereInputObjectSchema } from "./VehiclePostWhereInput.schema"
 import { VehicleOwnershipRelationFilterObjectSchema } from "./VehicleOwnershipRelationFilter.schema"
 import { VehicleOwnershipWhereInputObjectSchema } from "./VehicleOwnershipWhereInput.schema"
-import { VehicleDocumentRelationFilterObjectSchema } from "./VehicleDocumentRelationFilter.schema"
-import { VehicleDocumentWhereInputObjectSchema } from "./VehicleDocumentWhereInput.schema"
 
 import type { Prisma } from "@prisma/client"
 
@@ -51,10 +49,6 @@ const Schema: z.ZodType<Prisma.MediaFileWhereInput> = z
       .nullable(),
     ownership: z
       .union([z.lazy(() => VehicleOwnershipRelationFilterObjectSchema), z.lazy(() => VehicleOwnershipWhereInputObjectSchema)])
-      .optional()
-      .nullable(),
-    vehicleDocument: z
-      .union([z.lazy(() => VehicleDocumentRelationFilterObjectSchema), z.lazy(() => VehicleDocumentWhereInputObjectSchema)])
       .optional()
       .nullable(),
   })

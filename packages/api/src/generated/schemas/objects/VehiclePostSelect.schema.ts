@@ -1,6 +1,5 @@
 import { z } from "zod"
 import { MediaFileFindManySchema } from "../findManyMediaFile.schema"
-import { VehicleDocumentFindManySchema } from "../findManyVehicleDocument.schema"
 import { UserArgsObjectSchema } from "./UserArgs.schema"
 import { VehicleOwnershipArgsObjectSchema } from "./VehicleOwnershipArgs.schema"
 import { VehiclePostCountOutputTypeArgsObjectSchema } from "./VehiclePostCountOutputTypeArgs.schema"
@@ -14,8 +13,7 @@ const Schema: z.ZodType<Prisma.VehiclePostSelect> = z
     category: z.boolean().optional(),
     description: z.boolean().optional(),
     type: z.boolean().optional(),
-    photos: z.union([z.boolean(), z.lazy(() => MediaFileFindManySchema)]).optional(),
-    documents: z.union([z.boolean(), z.lazy(() => VehicleDocumentFindManySchema)]).optional(),
+    files: z.union([z.boolean(), z.lazy(() => MediaFileFindManySchema)]).optional(),
     createdById: z.boolean().optional(),
     createdBy: z.union([z.boolean(), z.lazy(() => UserArgsObjectSchema)]).optional(),
     ownershipId: z.boolean().optional(),

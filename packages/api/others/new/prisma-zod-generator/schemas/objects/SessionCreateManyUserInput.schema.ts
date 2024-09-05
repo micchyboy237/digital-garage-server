@@ -1,5 +1,4 @@
 import { z } from "zod"
-import { AuthProviderSchema } from "../enums/AuthProvider.schema"
 
 import type { Prisma } from "@prisma/client"
 
@@ -8,7 +7,7 @@ const Schema: z.ZodType<Prisma.SessionCreateManyUserInput> = z
     id: z.string().optional(),
     token: z.string(),
     expiresAt: z.coerce.date(),
-    provider: z.lazy(() => AuthProviderSchema),
+    accountId: z.string(),
     deviceFingerprint: z.string(),
     createdAt: z.coerce.date().optional(),
     updatedAt: z.coerce.date().optional(),

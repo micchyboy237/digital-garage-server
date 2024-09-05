@@ -3,26 +3,27 @@ import fnmatch
 import argparse
 import subprocess
 
+DEFAULT_SYSTEM_MESSAGE = """
+Dont use memory
+""".strip()
+
+DEFAULT_MESSAGE = f"""
+How to correctly run s3.test.ts without generating new files?
+""".strip()
+
 exclude_files = [
     "node_modules",
 ]
 
 include_files = [
-    "run.s3-upload.ts",
-    "src/config.ts",
-    "s3.service.ts",
-    "s3.utils.ts",
-    "types.ts"
+    "src/**/*.ts",
+    "__tests__/**/*.ts",
+    '.env.local',
+    'package.json',
+    'tsconfig.json',
+    'src/config.ts',
+    'src/index.ts'
 ]
-
-DEFAULT_SYSTEM_MESSAGE = """
-Dont use memory
-""".strip()
-
-DEFAULT_MESSAGE = """
-Browse AWS JavaScript v3 sdk on how to get the natural width and height of an image then update uploadImageAndThumbnail and sampleUploadS3
-""".strip()
-
 
 # base_dir should be actual file directory
 file_dir = os.path.dirname(os.path.realpath(__file__))
@@ -108,7 +109,6 @@ def main():
     print(f"Exclude patterns: {exclude}")
     print(f"Filenames only: {filenames_only}")
     print(f"\nFound files ({len(files)}): {files}")
-    print(f"\nMessage: {message}")
 
     if not files:
         print("No files found matching the given patterns.")

@@ -4,7 +4,7 @@ export const SessionScalarFieldEnumSchema = z.enum([
   "id",
   "token",
   "expiresAt",
-  "provider",
+  "accountId",
   "deviceFingerprint",
   "userId",
   "createdAt",

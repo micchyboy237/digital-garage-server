@@ -6,6 +6,7 @@ import { VehicleTransferCreateNestedManyWithoutRecipientInputObjectSchema } from
 import { VehicleTransferCreateNestedManyWithoutSenderInputObjectSchema } from "./VehicleTransferCreateNestedManyWithoutSenderInput.schema"
 import { SubscriptionCreateNestedOneWithoutUserInputObjectSchema } from "./SubscriptionCreateNestedOneWithoutUserInput.schema"
 import { VehicleOwnershipCreateNestedManyWithoutUserInputObjectSchema } from "./VehicleOwnershipCreateNestedManyWithoutUserInput.schema"
+import { AccountCreateNestedManyWithoutUserInputObjectSchema } from "./AccountCreateNestedManyWithoutUserInput.schema"
 
 import type { Prisma } from "@prisma/client"
 
@@ -28,6 +29,7 @@ const Schema: z.ZodType<Prisma.UserCreateWithoutPostsInput> = z
     transfersSent: z.lazy(() => VehicleTransferCreateNestedManyWithoutSenderInputObjectSchema).optional(),
     subscription: z.lazy(() => SubscriptionCreateNestedOneWithoutUserInputObjectSchema).optional(),
     vehicleOwnerships: z.lazy(() => VehicleOwnershipCreateNestedManyWithoutUserInputObjectSchema).optional(),
+    accounts: z.lazy(() => AccountCreateNestedManyWithoutUserInputObjectSchema).optional(),
   })
   .strict()
 

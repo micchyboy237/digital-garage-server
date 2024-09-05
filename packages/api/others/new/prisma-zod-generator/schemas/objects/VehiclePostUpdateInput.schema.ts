@@ -7,7 +7,6 @@ import { PostTypeSchema } from "../enums/PostType.schema"
 import { NullableEnumPostTypeFieldUpdateOperationsInputObjectSchema } from "./NullableEnumPostTypeFieldUpdateOperationsInput.schema"
 import { DateTimeFieldUpdateOperationsInputObjectSchema } from "./DateTimeFieldUpdateOperationsInput.schema"
 import { MediaFileUpdateManyWithoutPostNestedInputObjectSchema } from "./MediaFileUpdateManyWithoutPostNestedInput.schema"
-import { VehicleDocumentUpdateManyWithoutPostNestedInputObjectSchema } from "./VehicleDocumentUpdateManyWithoutPostNestedInput.schema"
 import { UserUpdateOneWithoutPostsNestedInputObjectSchema } from "./UserUpdateOneWithoutPostsNestedInput.schema"
 import { VehicleOwnershipUpdateOneWithoutPostsNestedInputObjectSchema } from "./VehicleOwnershipUpdateOneWithoutPostsNestedInput.schema"
 
@@ -30,8 +29,7 @@ const Schema: z.ZodType<Prisma.VehiclePostUpdateInput> = z
       .nullable(),
     createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
     updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-    photos: z.lazy(() => MediaFileUpdateManyWithoutPostNestedInputObjectSchema).optional(),
-    documents: z.lazy(() => VehicleDocumentUpdateManyWithoutPostNestedInputObjectSchema).optional(),
+    files: z.lazy(() => MediaFileUpdateManyWithoutPostNestedInputObjectSchema).optional(),
     createdBy: z.lazy(() => UserUpdateOneWithoutPostsNestedInputObjectSchema).optional(),
     ownership: z.lazy(() => VehicleOwnershipUpdateOneWithoutPostsNestedInputObjectSchema).optional(),
   })

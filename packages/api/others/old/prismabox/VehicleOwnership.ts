@@ -13,9 +13,6 @@ export const VehicleOwnershipPlain = t.Object(
     ),
     startDate: t.Date({ additionalProperties: true }),
     endDate: __nullable__(t.Date({ additionalProperties: true })),
-    excludedPhotos: t.Array(t.String({ additionalProperties: true })),
-    excludedVideos: t.Array(t.String({ additionalProperties: true })),
-    excludedDocs: t.Array(t.String({ additionalProperties: true })),
     createdAt: t.Date({ additionalProperties: true }),
     updatedAt: t.Date({ additionalProperties: true }),
   },
@@ -112,7 +109,7 @@ export const VehicleOwnershipRelations = t.Object(
         { additionalProperties: true },
       ),
     ),
-    vehiclePhotos: t.Array(
+    vehicleFiles: t.Array(
       t.Object(
         {
           id: t.String({ additionalProperties: true }),
@@ -126,19 +123,6 @@ export const VehicleOwnershipRelations = t.Object(
           thumbnailUrl: t.String({ additionalProperties: true }),
           postId: __nullable__(t.String({ additionalProperties: true })),
           ownershipId: __nullable__(t.String({ additionalProperties: true })),
-          createdAt: t.Date({ additionalProperties: true }),
-          updatedAt: t.Date({ additionalProperties: true }),
-        },
-        { additionalProperties: true },
-      ),
-    ),
-    vehicleDocuments: t.Array(
-      t.Object(
-        {
-          id: t.String({ additionalProperties: true }),
-          fileId: t.String({ additionalProperties: true }),
-          postId: __nullable__(t.String({ additionalProperties: true })),
-          ownershipId: t.String({ additionalProperties: true }),
           createdAt: t.Date({ additionalProperties: true }),
           updatedAt: t.Date({ additionalProperties: true }),
         },
@@ -199,9 +183,6 @@ export const VehicleOwnershipPlainInputCreate = t.Object(
     isCurrentOwner: t.Boolean({ additionalProperties: true }),
     startDate: t.Date({ additionalProperties: true }),
     endDate: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
-    excludedPhotos: t.Array(t.String({ additionalProperties: true })),
-    excludedVideos: t.Array(t.String({ additionalProperties: true })),
-    excludedDocs: t.Array(t.String({ additionalProperties: true })),
   },
   { additionalProperties: true },
 );
@@ -211,9 +192,6 @@ export const VehicleOwnershipPlainInputUpdate = t.Object(
     isCurrentOwner: t.Boolean({ additionalProperties: true }),
     startDate: t.Date({ additionalProperties: true }),
     endDate: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
-    excludedPhotos: t.Array(t.String({ additionalProperties: true })),
-    excludedVideos: t.Array(t.String({ additionalProperties: true })),
-    excludedDocs: t.Array(t.String({ additionalProperties: true })),
   },
   { additionalProperties: true },
 );
@@ -274,22 +252,7 @@ export const VehicleOwnershipRelationsInputCreate = t.Object(
         { additionalProperties: true },
       ),
     ),
-    vehiclePhotos: t.Optional(
-      t.Object(
-        {
-          connect: t.Array(
-            t.Object(
-              {
-                id: t.String({ additionalProperties: true }),
-              },
-              { additionalProperties: true },
-            ),
-          ),
-        },
-        { additionalProperties: true },
-      ),
-    ),
-    vehicleDocuments: t.Optional(
+    vehicleFiles: t.Optional(
       t.Object(
         {
           connect: t.Array(
@@ -393,31 +356,7 @@ export const VehicleOwnershipRelationsInputUpdate = t.Partial(
         ),
         { additionalProperties: true },
       ),
-      vehiclePhotos: t.Partial(
-        t.Object(
-          {
-            connect: t.Array(
-              t.Object(
-                {
-                  id: t.String({ additionalProperties: true }),
-                },
-                { additionalProperties: true },
-              ),
-            ),
-            disconnect: t.Array(
-              t.Object(
-                {
-                  id: t.String({ additionalProperties: true }),
-                },
-                { additionalProperties: true },
-              ),
-            ),
-          },
-          { additionalProperties: true },
-        ),
-        { additionalProperties: true },
-      ),
-      vehicleDocuments: t.Partial(
+      vehicleFiles: t.Partial(
         t.Object(
           {
             connect: t.Array(
@@ -476,9 +415,6 @@ export const VehicleOwnershipWhere = t.Partial(
         vehicleDisplayPhotoId: t.String(),
         startDate: t.Date(),
         endDate: t.Date(),
-        excludedPhotos: t.Array(t.String()),
-        excludedVideos: t.Array(t.String()),
-        excludedDocs: t.Array(t.String()),
         createdAt: t.Date(),
         updatedAt: t.Date(),
       }),
@@ -527,9 +463,6 @@ export const VehicleOwnershipWhereUnique = t.Recursive(
             vehicleDisplayPhotoId: t.String(),
             startDate: t.Date(),
             endDate: t.Date(),
-            excludedPhotos: t.Array(t.String()),
-            excludedVideos: t.Array(t.String()),
-            excludedDocs: t.Array(t.String()),
             createdAt: t.Date(),
             updatedAt: t.Date(),
           },

@@ -15,9 +15,11 @@ export const VehicleTransferPlain = t.Object(
     transferDate: t.Date({ additionalProperties: true }),
     responseDate: __nullable__(t.Date({ additionalProperties: true })),
     reason: __nullable__(t.String({ additionalProperties: true })),
-    excludedPhotos: t.Array(t.String({ additionalProperties: true })),
-    excludedVideos: t.Array(t.String({ additionalProperties: true })),
-    excludedDocs: t.Array(t.String({ additionalProperties: true })),
+    excludedMediaFileTypes: t.Array(
+      t.Union([t.Literal("IMAGE"), t.Literal("VIDEO"), t.Literal("DOCUMENT")], {
+        additionalProperties: true,
+      }),
+    ),
     createdAt: t.Date({ additionalProperties: true }),
     updatedAt: t.Date({ additionalProperties: true }),
   },
@@ -109,9 +111,11 @@ export const VehicleTransferPlainInputCreate = t.Object(
       __nullable__(t.Date({ additionalProperties: true })),
     ),
     reason: t.Optional(__nullable__(t.String({ additionalProperties: true }))),
-    excludedPhotos: t.Array(t.String({ additionalProperties: true })),
-    excludedVideos: t.Array(t.String({ additionalProperties: true })),
-    excludedDocs: t.Array(t.String({ additionalProperties: true })),
+    excludedMediaFileTypes: t.Array(
+      t.Union([t.Literal("IMAGE"), t.Literal("VIDEO"), t.Literal("DOCUMENT")], {
+        additionalProperties: true,
+      }),
+    ),
   },
   { additionalProperties: true },
 );
@@ -127,9 +131,11 @@ export const VehicleTransferPlainInputUpdate = t.Object(
       __nullable__(t.Date({ additionalProperties: true })),
     ),
     reason: t.Optional(__nullable__(t.String({ additionalProperties: true }))),
-    excludedPhotos: t.Array(t.String({ additionalProperties: true })),
-    excludedVideos: t.Array(t.String({ additionalProperties: true })),
-    excludedDocs: t.Array(t.String({ additionalProperties: true })),
+    excludedMediaFileTypes: t.Array(
+      t.Union([t.Literal("IMAGE"), t.Literal("VIDEO"), t.Literal("DOCUMENT")], {
+        additionalProperties: true,
+      }),
+    ),
   },
   { additionalProperties: true },
 );
@@ -255,9 +261,12 @@ export const VehicleTransferWhere = t.Partial(
         transferDate: t.Date(),
         responseDate: t.Date(),
         reason: t.String(),
-        excludedPhotos: t.Array(t.String()),
-        excludedVideos: t.Array(t.String()),
-        excludedDocs: t.Array(t.String()),
+        excludedMediaFileTypes: t.Array(
+          t.Union(
+            [t.Literal("IMAGE"), t.Literal("VIDEO"), t.Literal("DOCUMENT")],
+            { additionalProperties: true },
+          ),
+        ),
         createdAt: t.Date(),
         updatedAt: t.Date(),
       }),
@@ -296,9 +305,12 @@ export const VehicleTransferWhereUnique = t.Recursive(
             transferDate: t.Date(),
             responseDate: t.Date(),
             reason: t.String(),
-            excludedPhotos: t.Array(t.String()),
-            excludedVideos: t.Array(t.String()),
-            excludedDocs: t.Array(t.String()),
+            excludedMediaFileTypes: t.Array(
+              t.Union(
+                [t.Literal("IMAGE"), t.Literal("VIDEO"), t.Literal("DOCUMENT")],
+                { additionalProperties: true },
+              ),
+            ),
             createdAt: t.Date(),
             updatedAt: t.Date(),
           },

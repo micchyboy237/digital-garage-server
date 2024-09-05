@@ -9,9 +9,7 @@ export const VehicleTransferScalarFieldEnumSchema = z.enum([
   "transferDate",
   "responseDate",
   "reason",
-  "excludedPhotos",
-  "excludedVideos",
-  "excludedDocs",
+  "excludedMediaFileTypes",
   "createdAt",
   "updatedAt",
 ])

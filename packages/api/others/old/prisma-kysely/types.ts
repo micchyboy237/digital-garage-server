@@ -65,6 +65,15 @@ export const MediaFileType = {
   DOCUMENT: "DOCUMENT",
 } as const
 export type MediaFileType = (typeof MediaFileType)[keyof typeof MediaFileType]
+export type Account = {
+  id: string
+  provider: AuthProvider
+  lastLogin: Timestamp | null
+  userId: string
+  email: string
+  createdAt: Generated<Timestamp>
+  updatedAt: Timestamp
+}
 export type MediaFile = {
   id: string
   type: MediaFileType
@@ -92,7 +101,7 @@ export type Session = {
   id: string
   token: string
   expiresAt: Timestamp
-  provider: AuthProvider
+  accountId: string
   deviceFingerprint: string
   userId: string
   createdAt: Generated<Timestamp>
@@ -160,14 +169,6 @@ export type VehicleDetails = {
   createdAt: Generated<Timestamp>
   updatedAt: Timestamp
 }
-export type VehicleDocument = {
-  id: string
-  fileId: string
-  postId: string | null
-  ownershipId: string
-  createdAt: Generated<Timestamp>
-  updatedAt: Timestamp
-}
 export type VehicleOwnership = {
   id: string
   userId: string
@@ -176,9 +177,6 @@ export type VehicleOwnership = {
   vehicleDisplayPhotoId: string | null
   startDate: Generated<Timestamp>
   endDate: Timestamp | null
-  excludedPhotos: string[]
-  excludedVideos: string[]
-  excludedDocs: string[]
   createdAt: Generated<Timestamp>
   updatedAt: Timestamp
 }
@@ -202,13 +200,12 @@ export type VehicleTransfer = {
   transferDate: Generated<Timestamp>
   responseDate: Timestamp | null
   reason: string | null
-  excludedPhotos: string[]
-  excludedVideos: string[]
-  excludedDocs: string[]
+  excludedMediaFileTypes: MediaFileType[]
   createdAt: Generated<Timestamp>
   updatedAt: Timestamp
 }
 export type DB = {
+  Account: Account
   MediaFile: MediaFile
   Payment: Payment
   Session: Session
@@ -216,7 +213,6 @@ export type DB = {
   User: User
   Vehicle: Vehicle
   VehicleDetails: VehicleDetails
-  VehicleDocument: VehicleDocument
   VehicleOwnership: VehicleOwnership
   VehiclePost: VehiclePost
   VehicleTransfer: VehicleTransfer

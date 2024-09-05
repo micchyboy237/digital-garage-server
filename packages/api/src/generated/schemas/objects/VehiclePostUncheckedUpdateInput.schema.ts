@@ -7,7 +7,6 @@ import { PostTypeSchema } from "../enums/PostType.schema"
 import { NullableEnumPostTypeFieldUpdateOperationsInputObjectSchema } from "./NullableEnumPostTypeFieldUpdateOperationsInput.schema"
 import { DateTimeFieldUpdateOperationsInputObjectSchema } from "./DateTimeFieldUpdateOperationsInput.schema"
 import { MediaFileUncheckedUpdateManyWithoutPostNestedInputObjectSchema } from "./MediaFileUncheckedUpdateManyWithoutPostNestedInput.schema"
-import { VehicleDocumentUncheckedUpdateManyWithoutPostNestedInputObjectSchema } from "./VehicleDocumentUncheckedUpdateManyWithoutPostNestedInput.schema"
 
 import type { Prisma } from "@prisma/client"
 
@@ -30,8 +29,7 @@ const Schema: z.ZodType<Prisma.VehiclePostUncheckedUpdateInput> = z
     ownershipId: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputObjectSchema)]).optional(),
     createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
     updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputObjectSchema)]).optional(),
-    photos: z.lazy(() => MediaFileUncheckedUpdateManyWithoutPostNestedInputObjectSchema).optional(),
-    documents: z.lazy(() => VehicleDocumentUncheckedUpdateManyWithoutPostNestedInputObjectSchema).optional(),
+    files: z.lazy(() => MediaFileUncheckedUpdateManyWithoutPostNestedInputObjectSchema).optional(),
   })
   .strict()
 

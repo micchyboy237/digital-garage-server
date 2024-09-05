@@ -12,6 +12,7 @@ import { VehicleTransferListRelationFilterObjectSchema } from "./VehicleTransfer
 import { SubscriptionRelationFilterObjectSchema } from "./SubscriptionRelationFilter.schema"
 import { SubscriptionWhereInputObjectSchema } from "./SubscriptionWhereInput.schema"
 import { VehicleOwnershipListRelationFilterObjectSchema } from "./VehicleOwnershipListRelationFilter.schema"
+import { AccountListRelationFilterObjectSchema } from "./AccountListRelationFilter.schema"
 
 import type { Prisma } from "@prisma/client"
 
@@ -56,6 +57,7 @@ const Schema: z.ZodType<Prisma.UserWhereInput> = z
       .optional()
       .nullable(),
     vehicleOwnerships: z.lazy(() => VehicleOwnershipListRelationFilterObjectSchema).optional(),
+    accounts: z.lazy(() => AccountListRelationFilterObjectSchema).optional(),
   })
   .strict()
 

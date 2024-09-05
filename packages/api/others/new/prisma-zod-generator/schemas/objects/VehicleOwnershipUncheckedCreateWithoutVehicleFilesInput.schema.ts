@@ -1,0 +1,23 @@
+import { z } from "zod"
+import { VehiclePostUncheckedCreateNestedManyWithoutOwnershipInputObjectSchema } from "./VehiclePostUncheckedCreateNestedManyWithoutOwnershipInput.schema"
+import { VehicleDetailsUncheckedCreateNestedOneWithoutOwnershipInputObjectSchema } from "./VehicleDetailsUncheckedCreateNestedOneWithoutOwnershipInput.schema"
+
+import type { Prisma } from "@prisma/client"
+
+const Schema: z.ZodType<Prisma.VehicleOwnershipUncheckedCreateWithoutVehicleFilesInput> = z
+  .object({
+    id: z.string().optional(),
+    userId: z.string(),
+    vehicleId: z.string(),
+    isCurrentOwner: z.boolean().optional(),
+    vehicleDisplayPhotoId: z.string().optional().nullable(),
+    startDate: z.coerce.date().optional(),
+    endDate: z.coerce.date().optional().nullable(),
+    createdAt: z.coerce.date().optional(),
+    updatedAt: z.coerce.date().optional(),
+    posts: z.lazy(() => VehiclePostUncheckedCreateNestedManyWithoutOwnershipInputObjectSchema).optional(),
+    vehicleDetails: z.lazy(() => VehicleDetailsUncheckedCreateNestedOneWithoutOwnershipInputObjectSchema).optional(),
+  })
+  .strict()
+
+export const VehicleOwnershipUncheckedCreateWithoutVehicleFilesInputObjectSchema = Schema

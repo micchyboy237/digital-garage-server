@@ -34,14 +34,7 @@ export const UserRelations = t.Object(
           id: t.String({ additionalProperties: true }),
           token: t.String({ additionalProperties: true }),
           expiresAt: t.Date({ additionalProperties: true }),
-          provider: t.Union(
-            [
-              t.Literal("EMAIL_PASSWORD"),
-              t.Literal("GOOGLE"),
-              t.Literal("APPLE"),
-            ],
-            { additionalProperties: true },
-          ),
+          accountId: t.String({ additionalProperties: true }),
           deviceFingerprint: t.String({ additionalProperties: true }),
           userId: t.String({ additionalProperties: true }),
           createdAt: t.Date({ additionalProperties: true }),
@@ -109,9 +102,12 @@ export const UserRelations = t.Object(
           transferDate: t.Date({ additionalProperties: true }),
           responseDate: __nullable__(t.Date({ additionalProperties: true })),
           reason: __nullable__(t.String({ additionalProperties: true })),
-          excludedPhotos: t.Array(t.String({ additionalProperties: true })),
-          excludedVideos: t.Array(t.String({ additionalProperties: true })),
-          excludedDocs: t.Array(t.String({ additionalProperties: true })),
+          excludedMediaFileTypes: t.Array(
+            t.Union(
+              [t.Literal("IMAGE"), t.Literal("VIDEO"), t.Literal("DOCUMENT")],
+              { additionalProperties: true },
+            ),
+          ),
           createdAt: t.Date({ additionalProperties: true }),
           updatedAt: t.Date({ additionalProperties: true }),
         },
@@ -136,9 +132,12 @@ export const UserRelations = t.Object(
           transferDate: t.Date({ additionalProperties: true }),
           responseDate: __nullable__(t.Date({ additionalProperties: true })),
           reason: __nullable__(t.String({ additionalProperties: true })),
-          excludedPhotos: t.Array(t.String({ additionalProperties: true })),
-          excludedVideos: t.Array(t.String({ additionalProperties: true })),
-          excludedDocs: t.Array(t.String({ additionalProperties: true })),
+          excludedMediaFileTypes: t.Array(
+            t.Union(
+              [t.Literal("IMAGE"), t.Literal("VIDEO"), t.Literal("DOCUMENT")],
+              { additionalProperties: true },
+            ),
+          ),
           createdAt: t.Date({ additionalProperties: true }),
           updatedAt: t.Date({ additionalProperties: true }),
         },
@@ -187,9 +186,27 @@ export const UserRelations = t.Object(
           ),
           startDate: t.Date({ additionalProperties: true }),
           endDate: __nullable__(t.Date({ additionalProperties: true })),
-          excludedPhotos: t.Array(t.String({ additionalProperties: true })),
-          excludedVideos: t.Array(t.String({ additionalProperties: true })),
-          excludedDocs: t.Array(t.String({ additionalProperties: true })),
+          createdAt: t.Date({ additionalProperties: true }),
+          updatedAt: t.Date({ additionalProperties: true }),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+    accounts: t.Array(
+      t.Object(
+        {
+          id: t.String({ additionalProperties: true }),
+          provider: t.Union(
+            [
+              t.Literal("EMAIL_PASSWORD"),
+              t.Literal("GOOGLE"),
+              t.Literal("APPLE"),
+            ],
+            { additionalProperties: true },
+          ),
+          lastLogin: __nullable__(t.Date({ additionalProperties: true })),
+          userId: t.String({ additionalProperties: true }),
+          email: t.String({ additionalProperties: true }),
           createdAt: t.Date({ additionalProperties: true }),
           updatedAt: t.Date({ additionalProperties: true }),
         },
@@ -361,6 +378,21 @@ export const UserRelationsInputCreate = t.Object(
         { additionalProperties: true },
       ),
     ),
+    accounts: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
   },
   { additionalProperties: true },
 );
@@ -504,6 +536,30 @@ export const UserRelationsInputUpdate = t.Partial(
         { additionalProperties: true },
       ),
       vehicleOwnerships: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
+            ),
+          },
+          { additionalProperties: true },
+        ),
+        { additionalProperties: true },
+      ),
+      accounts: t.Partial(
         t.Object(
           {
             connect: t.Array(

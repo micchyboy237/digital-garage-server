@@ -52,6 +52,7 @@ export const uploadVehicleDetailsSchema = z.object({
   dateOfLastV5CIssued: z.date().nullish(),
   realDrivingEmissions: z.string().nullish(),
   revenueWeight: z.number().int().nullish(),
+  ownershipId: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
 })

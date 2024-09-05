@@ -1,7 +1,7 @@
 import * as z from "zod"
 import * as imports from "../../../../database/null"
 import { MediaFileType } from "@prisma/client"
-import { CompleteVehiclePost, RelatedVehiclePostModel, CompleteVehicleOwnership, RelatedVehicleOwnershipModel, CompleteVehicleDocument, RelatedVehicleDocumentModel } from "./index"
+import { CompleteVehiclePost, RelatedVehiclePostModel, CompleteVehicleOwnership, RelatedVehicleOwnershipModel } from "./index"
 
 export const MediaFileModel = z.object({
   id: z.string(),
@@ -20,7 +20,6 @@ export interface CompleteMediaFile extends z.infer<typeof MediaFileModel> {
   post?: CompleteVehiclePost | null
   displayPhotoOwnership?: CompleteVehicleOwnership | null
   ownership?: CompleteVehicleOwnership | null
-  vehicleDocument?: CompleteVehicleDocument | null
 }
 
 /**
@@ -32,5 +31,4 @@ export const RelatedMediaFileModel: z.ZodSchema<CompleteMediaFile> = z.lazy(() =
   post: RelatedVehiclePostModel.nullish(),
   displayPhotoOwnership: RelatedVehicleOwnershipModel.nullish(),
   ownership: RelatedVehicleOwnershipModel.nullish(),
-  vehicleDocument: RelatedVehicleDocumentModel.nullish(),
 }))

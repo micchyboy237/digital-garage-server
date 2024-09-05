@@ -1,6 +1,5 @@
 import express from "express"
-import { handleLocalFileUpload } from "src/services/s3/s3.local"
-import { getMemoryStorage, getS3Storage, processImage, uploadToS3 } from "src/utils/s3.utils"
+import { getMemoryStorage, getS3Storage, handleLocalFileUpload } from "./s3/s3.local"
 
 const app = express()
 

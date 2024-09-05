@@ -1,6 +1,6 @@
 import * as z from "zod"
 import * as imports from "../../../../database/null"
-import { TransferStatus } from "@prisma/client"
+import { TransferStatus, MediaFileType } from "@prisma/client"
 import { CompleteVehicle, RelatedVehicleModel, CompleteUser, RelatedUserModel } from "./index"
 
 export const VehicleTransferModel = z.object({
@@ -12,9 +12,7 @@ export const VehicleTransferModel = z.object({
   transferDate: z.date(),
   responseDate: z.date().nullish(),
   reason: z.string().nullish(),
-  excludedPhotos: z.string().array(),
-  excludedVideos: z.string().array(),
-  excludedDocs: z.string().array(),
+  excludedMediaFileTypes: z.nativeEnum(MediaFileType).array(),
   createdAt: z.date(),
   updatedAt: z.date(),
 })

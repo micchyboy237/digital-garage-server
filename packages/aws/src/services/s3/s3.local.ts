@@ -1,4 +1,7 @@
 import fs from "fs"
+import multer from "multer"
+import multerS3 from "multer-s3"
+import { awsConfig, s3Client } from "../../config"
 import { processImage, uploadToS3 } from "../../utils/s3.utils"
 
 // Existing functions remain unchanged...
@@ -38,3 +41,21 @@ export const handleLocalFileUpload = async (filePath) => {
     throw new Error("Error uploading local file.")
   }
 }
+
+// Utility function to configure multer for memory storage
+export const getMemoryStorage = () => multer({ storage: multer.memoryStorage() })
+
+// Utility function to configure multer for S3 storage
+export const getS3Storage = () =>
+  multer({
+    storage: multerS3({
+      s3: s3Client,
+      bucket: awsConfig.s3BucketName,
+      metadata: (req, file, cb) => {
+        cb(null, { fieldName: file.fieldname })
+      },
+      key: (req, file, cb) => {
+        cb(null, Date.now().toString())
+      },
+    }),
+  })

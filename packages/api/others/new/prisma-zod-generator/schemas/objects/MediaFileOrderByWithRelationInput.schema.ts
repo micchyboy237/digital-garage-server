@@ -3,7 +3,6 @@ import { SortOrderSchema } from "../enums/SortOrder.schema"
 import { SortOrderInputObjectSchema } from "./SortOrderInput.schema"
 import { VehiclePostOrderByWithRelationInputObjectSchema } from "./VehiclePostOrderByWithRelationInput.schema"
 import { VehicleOwnershipOrderByWithRelationInputObjectSchema } from "./VehicleOwnershipOrderByWithRelationInput.schema"
-import { VehicleDocumentOrderByWithRelationInputObjectSchema } from "./VehicleDocumentOrderByWithRelationInput.schema"
 
 import type { Prisma } from "@prisma/client"
 
@@ -22,7 +21,6 @@ const Schema: z.ZodType<Prisma.MediaFileOrderByWithRelationInput> = z
     post: z.lazy(() => VehiclePostOrderByWithRelationInputObjectSchema).optional(),
     displayPhotoOwnership: z.lazy(() => VehicleOwnershipOrderByWithRelationInputObjectSchema).optional(),
     ownership: z.lazy(() => VehicleOwnershipOrderByWithRelationInputObjectSchema).optional(),
-    vehicleDocument: z.lazy(() => VehicleDocumentOrderByWithRelationInputObjectSchema).optional(),
   })
   .strict()
 

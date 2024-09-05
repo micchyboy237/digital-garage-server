@@ -7,7 +7,6 @@ import { EnumPostTypeNullableFilterObjectSchema } from "./EnumPostTypeNullableFi
 import { PostTypeSchema } from "../enums/PostType.schema"
 import { DateTimeFilterObjectSchema } from "./DateTimeFilter.schema"
 import { MediaFileListRelationFilterObjectSchema } from "./MediaFileListRelationFilter.schema"
-import { VehicleDocumentListRelationFilterObjectSchema } from "./VehicleDocumentListRelationFilter.schema"
 import { UserRelationFilterObjectSchema } from "./UserRelationFilter.schema"
 import { UserWhereInputObjectSchema } from "./UserWhereInput.schema"
 import { VehicleOwnershipRelationFilterObjectSchema } from "./VehicleOwnershipRelationFilter.schema"
@@ -42,8 +41,7 @@ const Schema: z.ZodType<Prisma.VehiclePostWhereInput> = z
     ownershipId: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
     createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
     updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
-    photos: z.lazy(() => MediaFileListRelationFilterObjectSchema).optional(),
-    documents: z.lazy(() => VehicleDocumentListRelationFilterObjectSchema).optional(),
+    files: z.lazy(() => MediaFileListRelationFilterObjectSchema).optional(),
     createdBy: z
       .union([z.lazy(() => UserRelationFilterObjectSchema), z.lazy(() => UserWhereInputObjectSchema)])
       .optional()

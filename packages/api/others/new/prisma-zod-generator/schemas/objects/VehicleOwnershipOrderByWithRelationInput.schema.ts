@@ -6,7 +6,6 @@ import { UserOrderByWithRelationInputObjectSchema } from "./UserOrderByWithRelat
 import { VehicleOrderByWithRelationInputObjectSchema } from "./VehicleOrderByWithRelationInput.schema"
 import { VehiclePostOrderByRelationAggregateInputObjectSchema } from "./VehiclePostOrderByRelationAggregateInput.schema"
 import { MediaFileOrderByRelationAggregateInputObjectSchema } from "./MediaFileOrderByRelationAggregateInput.schema"
-import { VehicleDocumentOrderByRelationAggregateInputObjectSchema } from "./VehicleDocumentOrderByRelationAggregateInput.schema"
 import { VehicleDetailsOrderByWithRelationInputObjectSchema } from "./VehicleDetailsOrderByWithRelationInput.schema"
 
 import type { Prisma } from "@prisma/client"
@@ -20,17 +19,13 @@ const Schema: z.ZodType<Prisma.VehicleOwnershipOrderByWithRelationInput> = z
     vehicleDisplayPhotoId: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
     startDate: z.lazy(() => SortOrderSchema).optional(),
     endDate: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputObjectSchema)]).optional(),
-    excludedPhotos: z.lazy(() => SortOrderSchema).optional(),
-    excludedVideos: z.lazy(() => SortOrderSchema).optional(),
-    excludedDocs: z.lazy(() => SortOrderSchema).optional(),
     createdAt: z.lazy(() => SortOrderSchema).optional(),
     updatedAt: z.lazy(() => SortOrderSchema).optional(),
     vehicleDisplayPhoto: z.lazy(() => MediaFileOrderByWithRelationInputObjectSchema).optional(),
     user: z.lazy(() => UserOrderByWithRelationInputObjectSchema).optional(),
     vehicle: z.lazy(() => VehicleOrderByWithRelationInputObjectSchema).optional(),
     posts: z.lazy(() => VehiclePostOrderByRelationAggregateInputObjectSchema).optional(),
-    vehiclePhotos: z.lazy(() => MediaFileOrderByRelationAggregateInputObjectSchema).optional(),
-    vehicleDocuments: z.lazy(() => VehicleDocumentOrderByRelationAggregateInputObjectSchema).optional(),
+    vehicleFiles: z.lazy(() => MediaFileOrderByRelationAggregateInputObjectSchema).optional(),
     vehicleDetails: z.lazy(() => VehicleDetailsOrderByWithRelationInputObjectSchema).optional(),
   })
   .strict()

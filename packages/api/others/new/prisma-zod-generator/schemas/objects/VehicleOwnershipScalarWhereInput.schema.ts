@@ -4,7 +4,6 @@ import { BoolFilterObjectSchema } from "./BoolFilter.schema"
 import { StringNullableFilterObjectSchema } from "./StringNullableFilter.schema"
 import { DateTimeFilterObjectSchema } from "./DateTimeFilter.schema"
 import { DateTimeNullableFilterObjectSchema } from "./DateTimeNullableFilter.schema"
-import { StringNullableListFilterObjectSchema } from "./StringNullableListFilter.schema"
 
 import type { Prisma } from "@prisma/client"
 
@@ -39,9 +38,6 @@ const Schema: z.ZodType<Prisma.VehicleOwnershipScalarWhereInput> = z
       .union([z.lazy(() => DateTimeNullableFilterObjectSchema), z.coerce.date()])
       .optional()
       .nullable(),
-    excludedPhotos: z.lazy(() => StringNullableListFilterObjectSchema).optional(),
-    excludedVideos: z.lazy(() => StringNullableListFilterObjectSchema).optional(),
-    excludedDocs: z.lazy(() => StringNullableListFilterObjectSchema).optional(),
     createdAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
     updatedAt: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
   })

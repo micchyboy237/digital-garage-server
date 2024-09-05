@@ -1,6 +1,6 @@
 import * as z from "zod"
 import * as imports from "../../../../database/null"
-import { CompleteMediaFile, RelatedMediaFileModel, CompleteUser, RelatedUserModel, CompleteVehicle, RelatedVehicleModel, CompleteVehiclePost, RelatedVehiclePostModel, CompleteVehicleDocument, RelatedVehicleDocumentModel, CompleteVehicleDetails, RelatedVehicleDetailsModel } from "./index"
+import { CompleteMediaFile, RelatedMediaFileModel, CompleteUser, RelatedUserModel, CompleteVehicle, RelatedVehicleModel, CompleteVehiclePost, RelatedVehiclePostModel, CompleteVehicleDetails, RelatedVehicleDetailsModel } from "./index"
 
 export const VehicleOwnershipModel = z.object({
   id: z.string(),
@@ -10,9 +10,6 @@ export const VehicleOwnershipModel = z.object({
   vehicleDisplayPhotoId: z.string().nullish(),
   startDate: z.date(),
   endDate: z.date().nullish(),
-  excludedPhotos: z.string().array(),
-  excludedVideos: z.string().array(),
-  excludedDocs: z.string().array(),
   createdAt: z.date(),
   updatedAt: z.date(),
 })
@@ -22,8 +19,7 @@ export interface CompleteVehicleOwnership extends z.infer<typeof VehicleOwnershi
   user?: CompleteUser | null
   vehicle?: CompleteVehicle | null
   posts: CompleteVehiclePost[]
-  vehiclePhotos: CompleteMediaFile[]
-  vehicleDocuments: CompleteVehicleDocument[]
+  vehicleFiles: CompleteMediaFile[]
   vehicleDetails?: CompleteVehicleDetails | null
 }
 
@@ -37,7 +33,6 @@ export const RelatedVehicleOwnershipModel: z.ZodSchema<CompleteVehicleOwnership>
   user: RelatedUserModel.nullish(),
   vehicle: RelatedVehicleModel.nullish(),
   posts: RelatedVehiclePostModel.array(),
-  vehiclePhotos: RelatedMediaFileModel.array(),
-  vehicleDocuments: RelatedVehicleDocumentModel.array(),
+  vehicleFiles: RelatedMediaFileModel.array(),
   vehicleDetails: RelatedVehicleDetailsModel.nullish(),
 }))

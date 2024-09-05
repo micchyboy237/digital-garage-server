@@ -1,7 +1,7 @@
 import { Upload } from "@aws-sdk/lib-storage"
 import * as fs from "fs"
 import path from "path"
-import { awsConfig, s3Client } from "src/config"
+import { awsConfig, s3Client } from "../../src/config"
 
 const filePath = path.join(__dirname, "../assets/sample-vehicle-display.jpeg")
 const fileStream = fs.createReadStream(filePath)

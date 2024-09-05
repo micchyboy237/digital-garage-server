@@ -30,11 +30,29 @@ export function fakeUserComplete() {
     updatedAt: faker.date.anytime(),
   };
 }
+export function fakeAccount() {
+  return {
+    provider: faker.helpers.arrayElement([AuthProvider.EMAIL_PASSWORD, AuthProvider.GOOGLE, AuthProvider.APPLE] as const),
+    lastLogin: undefined,
+    email: faker.internet.email(),
+    updatedAt: faker.date.anytime(),
+  };
+}
+export function fakeAccountComplete() {
+  return {
+    id: faker.string.uuid(),
+    provider: faker.helpers.arrayElement([AuthProvider.EMAIL_PASSWORD, AuthProvider.GOOGLE, AuthProvider.APPLE] as const),
+    lastLogin: undefined,
+    userId: faker.string.uuid(),
+    email: faker.internet.email(),
+    createdAt: new Date(),
+    updatedAt: faker.date.anytime(),
+  };
+}
 export function fakeSession() {
   return {
     token: faker.lorem.words(5),
     expiresAt: faker.date.anytime(),
-    provider: faker.helpers.arrayElement([AuthProvider.EMAIL_PASSWORD, AuthProvider.GOOGLE, AuthProvider.APPLE] as const),
     deviceFingerprint: faker.lorem.words(5),
     updatedAt: faker.date.anytime(),
   };
@@ -44,7 +62,7 @@ export function fakeSessionComplete() {
     id: faker.string.uuid(),
     token: faker.lorem.words(5),
     expiresAt: faker.date.anytime(),
-    provider: faker.helpers.arrayElement([AuthProvider.EMAIL_PASSWORD, AuthProvider.GOOGLE, AuthProvider.APPLE] as const),
+    accountId: faker.string.uuid(),
     deviceFingerprint: faker.lorem.words(5),
     userId: faker.string.uuid(),
     createdAt: new Date(),
@@ -125,9 +143,6 @@ export function fakeMediaFileComplete() {
 export function fakeVehicleOwnership() {
   return {
     endDate: undefined,
-    excludedPhotos: faker.lorem.words(5).split(' '),
-    excludedVideos: faker.lorem.words(5).split(' '),
-    excludedDocs: faker.lorem.words(5).split(' '),
     updatedAt: faker.date.anytime(),
   };
 }
@@ -140,9 +155,6 @@ export function fakeVehicleOwnershipComplete() {
     vehicleDisplayPhotoId: undefined,
     startDate: new Date(),
     endDate: undefined,
-    excludedPhotos: faker.lorem.words(5).split(' '),
-    excludedVideos: faker.lorem.words(5).split(' '),
-    excludedDocs: faker.lorem.words(5).split(' '),
     createdAt: new Date(),
     updatedAt: faker.date.anytime(),
   };
@@ -226,9 +238,7 @@ export function fakeVehicleTransfer() {
   return {
     responseDate: undefined,
     reason: undefined,
-    excludedPhotos: faker.lorem.words(5).split(' '),
-    excludedVideos: faker.lorem.words(5).split(' '),
-    excludedDocs: faker.lorem.words(5).split(' '),
+    excludedMediaFileTypes: faker.helpers.arrayElement([MediaFileType.IMAGE, MediaFileType.VIDEO, MediaFileType.DOCUMENT] as const),
     updatedAt: faker.date.anytime(),
   };
 }
@@ -242,24 +252,7 @@ export function fakeVehicleTransferComplete() {
     transferDate: new Date(),
     responseDate: undefined,
     reason: undefined,
-    excludedPhotos: faker.lorem.words(5).split(' '),
-    excludedVideos: faker.lorem.words(5).split(' '),
-    excludedDocs: faker.lorem.words(5).split(' '),
-    createdAt: new Date(),
-    updatedAt: faker.date.anytime(),
-  };
-}
-export function fakeVehicleDocument() {
-  return {
-    updatedAt: faker.date.anytime(),
-  };
-}
-export function fakeVehicleDocumentComplete() {
-  return {
-    id: faker.string.uuid(),
-    fileId: faker.string.uuid(),
-    postId: undefined,
-    ownershipId: faker.string.uuid(),
+    excludedMediaFileTypes: faker.helpers.arrayElement([MediaFileType.IMAGE, MediaFileType.VIDEO, MediaFileType.DOCUMENT] as const),
     createdAt: new Date(),
     updatedAt: faker.date.anytime(),
   };
