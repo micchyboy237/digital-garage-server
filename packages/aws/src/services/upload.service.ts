@@ -13,7 +13,7 @@ if (!fs.existsSync(tempDir)) {
 }
 
 // Configure storage for Multer using the safer temporary directory
-export const storage = multer.diskStorage({
+export const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     console.log("Temporary directory:", tempDir)
     cb(null, tempDir) // Use the custom temp directory for file storage
@@ -25,7 +25,7 @@ export const storage = multer.diskStorage({
   },
 })
 
-export const multerUpload = multer({ storage })
+export const multerUpload = multer({ storage: multerStorage })
 
 export const multerUploadS3 = multer({
   storage: multerS3({

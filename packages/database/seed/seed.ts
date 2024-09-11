@@ -47,8 +47,8 @@ async function main() {
   const ownership2 = await createOwnership(user2.id, vehicle2.id)
 
   // Add Vehicle Details and Documents
-  await createVehicleDetails(vehicle1.id, "Toyota", "Corolla", 2020, ownership1.id)
-  await createVehicleDetails(vehicle2.id, "Honda", "Civic", 2021, ownership2.id)
+  await createVehicleDetails(vehicle1.registrationNumber, "Toyota", "Corolla", 2020, ownership1.id)
+  await createVehicleDetails(vehicle2.registrationNumber, "Honda", "Civic", 2021, ownership2.id)
 
   // Create Vehicle Posts and Media Files
   const galleryPost1 = await createVehicleGalleryPost(user1.id, ownership1.id, "Maintenance Log")

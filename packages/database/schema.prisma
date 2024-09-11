@@ -269,8 +269,8 @@ model VehicleOwnership {  // Updated model name
   vehicleDisplayPhoto    MediaFile?   @relation("VehicleDisplayPhoto", fields: [vehicleDisplayPhotoId], references: [id])
   startDate         DateTime          @default(now())
   endDate           DateTime?
-  user              User?             @relation(fields: [userId], references: [id])
-  vehicle           Vehicle?          @relation(fields: [vehicleId], references: [id])
+  user              User?             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicle           Vehicle?          @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
   posts             VehiclePost[]
   vehicleFiles      MediaFile[]       @relation("OwnershipGalleryOrHistoryFiles")
   vehicleDetails    VehicleDetails?
@@ -287,7 +287,7 @@ model Vehicle {
   model              String
   registrationNumber String              @unique
   ownerId            String              @unique
-  owner              User?               @relation(fields: [ownerId], references: [id])
+  owner              User?               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerships         VehicleOwnership[]  // Updated relation field
   transfers          VehicleTransfer[]
 
@@ -301,15 +301,15 @@ model VehicleDetails {
   registrationNumber       String              // Removed `@unique` constraint to allow multiple entries
   make                     String
   model                    String
-  colour                   String
   yearOfManufacture        Int
-  taxStatus                String
-  taxDueDate               DateTime
-  motStatus                String
+  engineCapacity           Int
+  fuelType                 String
+  colour                   String
+  taxStatus                String?
+  taxDueDate               DateTime?
+  motStatus                String?
   motExpiryDate            DateTime?
-  engineCapacity           Int?
   co2Emissions             Int?
-  fuelType                 String?
   markedForExport          Boolean?
   typeApproval             String?
   wheelplan                String?

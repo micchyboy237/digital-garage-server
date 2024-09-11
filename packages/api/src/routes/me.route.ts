@@ -1,5 +1,7 @@
-import { PostCategory, Subscription, User } from "@boilerplate/database"
+import { multerUpload, S3File, uploadImageAndThumbnail } from "@boilerplate/aws"
+import { MediaFile, MediaFileType, PostCategory, Subscription, User } from "@boilerplate/database"
 import { TRPCError } from "@trpc/server"
+import fs from "fs"
 import {
   documentSchema,
   getVehicleOwnershipSchema,
@@ -10,7 +12,6 @@ import {
   transferSchema,
   updateProfileSchema,
   updateVehicleSchema,
-  vehicleSchema,
 } from "../schemas/me.schema"
 import { meService } from "../services"
 import { createOrUpdateSubscription } from "../services/model.service"
@@ -179,14 +180,100 @@ export const meRouter = t.router({
     })
     return transfers
   }),
-  addVehicle: protectedProcedure.input(vehicleSchema).mutation(async ({ ctx, input }) => {
-    const userId = ctx.user?.id!
+  addVehicle: protectedProcedure.mutation(async ({ ctx, input }) => {
+    return new Promise((resolve, reject) => {
+      multerUpload.single("displayPhoto")(ctx.req, ctx.res, async (err) => {
+        if (err) {
+          reject(err)
+          return
+        }
 
-    return await ctx.prisma.vehicle.create({
-      data: {
-        ...input,
-        userId,
-      },
+        const folder = "vehicle"
+        const input = ctx.req.body
+        console.log("Received input:", input)
+
+        const file = ctx.req.file
+        console.log("Received file:", file)
+
+        let displayPhoto
+
+        if (file) {
+          const fileBuffer = fs.readFileSync(file.path)
+          const s3File: S3File = {
+            originalname: file.originalname,
+            buffer: fileBuffer,
+          }
+
+          console.log("Uploading to S3...", s3File)
+
+          const { imageUrl, thumbnailUrl } = await uploadImageAndThumbnail(s3File, folder)
+
+          // Delete the file after processing
+          fs.unlinkSync(file.path) // Remove the temporary file
+
+          displayPhoto = {
+            url: imageUrl,
+            thumbnailUrl,
+            fileName: file.originalname,
+            type: MediaFileType.IMAGE,
+            mimeType: file.mimetype,
+          } as MediaFile
+        }
+
+        // Create a new vehicle with the provided details
+        const newVehicle = await ctx.prisma.vehicle.create({
+          data: {
+            registrationNumber: input.registrationNumber,
+            make: input.make,
+            model: input.model,
+            ownerId: ctx.session?.userId,
+          },
+        })
+        // Create an ownership record for the new vehicle
+        const newOwnership = await ctx.prisma.vehicleOwnership.create({
+          data: {
+            vehicleId: newVehicle.id,
+            userId: ctx.session?.userId!,
+            // vehicleDisplayPhoto: {
+            //   create: displayPhoto,
+            // }
+          },
+        })
+        // Create the vehicle display photo
+        if (displayPhoto) {
+          await ctx.prisma.mediaFile.create({
+            data: {
+              ...displayPhoto,
+              vehicleDisplayPhotoOwnership: {
+                connect: { id: newOwnership.id },
+              },
+            },
+          })
+        }
+
+        // Create the vehicle details
+        const newVehicleDetails = await ctx.prisma.vehicleDetails.create({
+          data: {
+            registrationNumber: input.registrationNumber,
+            make: input.make,
+            model: input.model,
+            yearOfManufacture: parseInt(input.yearOfManufacture),
+            engineCapacity: parseInt(input.engineCapacity),
+            colour: input.colour,
+            taxDueDate: input.taxDueDate,
+            taxStatus: input.taxStatus,
+            motStatus: input.motStatus,
+            motExpiryDate: input.motExpiryDate,
+            fuelType: input.fuelType,
+            ownership: {
+              connect: { id: newOwnership.id },
+            },
+          },
+        })
+        console.log("Added vehicle:", newVehicleDetails)
+
+        resolve(newVehicleDetails)
+      })
     })
   }),
   updateVehicle: protectedProcedure.input(updateVehicleSchema).mutation(async ({ ctx, input }) => {

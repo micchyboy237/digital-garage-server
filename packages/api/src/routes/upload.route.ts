@@ -123,10 +123,46 @@ router.post("/uploadVehicleDetails", multerUpload.single("displayPhoto"), async 
     const session = await prisma.session.findUnique({ where: { token } })
     console.log("Input:", session?.userId, { ...input, displayPhoto })
 
-    const updatedVehicle = await meService.updateVehicle(session?.userId, { ...input, displayPhoto })
-    console.log("Updated vehicle:", updatedVehicle)
+    // const updatedVehicle = await meService.addVehicle(session?.userId, { ...input, displayPhoto })
 
-    res.status(200).json({ message: "Vehicle details updated successfully", data: updatedVehicle })
+    // Create a new vehicle with the provided details
+    const newVehicle = await prisma.vehicle.create({
+      data: {
+        registrationNumber: input.registrationNumber,
+        make: input.make,
+        model: input.model,
+        ownerId: session?.userId,
+      },
+    })
+    // Create an ownership record for the new vehicle
+    const newOwnership = await prisma.vehicleOwnership.create({
+      data: {
+        vehicleId: newVehicle.id,
+        userId: session?.userId!,
+        vehicleDisplayPhotoId: displayPhoto ? displayPhoto.id : undefined,
+      },
+    })
+    // Create the vehicle details
+    const newVehicleDetails = await prisma.vehicleDetails.create({
+      data: {
+        registrationNumber: input.registrationNumber,
+        make: input.make,
+        model: input.model,
+        yearOfManufacture: input.yearOfManufacture,
+        colour: input.colour,
+        taxDueDate: input.taxDueDate,
+        taxStatus: input.taxStatus,
+        motStatus: input.motStatus,
+        engineCapacity: input.engineCapacity,
+        fuelType: input.fuelType,
+        ownership: {
+          connect: { id: newOwnership.id },
+        },
+      },
+    })
+    console.log("Added vehicle:", newVehicleDetails)
+
+    res.status(200).json({ message: "Added vehicle successfully", data: newVehicleDetails })
   } catch (error) {
     console.error("Error uploading to S3 or saving to database:", error)
     res.status(500).json({ error: error.message })
