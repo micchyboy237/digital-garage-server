@@ -1,38 +1,39 @@
-import type { Prisma } from "../../../../../database/node_modules/@prisma/client"
-import type { PrismaClient } from "../../../../../database/node_modules/@prisma/client"
 
-import { Request, Response, NextFunction } from "express"
-import { RequestHandler, ParamsDictionary } from "express-serve-static-core"
-import { ZodTypeAny } from "zod"
+import type { Prisma } from '../../../../../database/node_modules/@prisma/client';
+import type { PrismaClient } from '../../../../../database/node_modules/@prisma/client';
+
+import { Request, Response, NextFunction } from 'express';
+import { RequestHandler, ParamsDictionary } from 'express-serve-static-core';
+import { ZodTypeAny } from 'zod';
 
 interface UpdateManyRequest extends Request {
-  prisma: PrismaClient
-  body: Prisma.VehicleDetailsUpdateManyArgs
-  outputValidation?: ZodTypeAny
+  prisma: PrismaClient;
+  body: Prisma.VehicleDetailsUpdateManyArgs;
+  outputValidation?: ZodTypeAny;
   locals?: {
-    outputValidator?: ZodTypeAny
-  }
+    outputValidator?: ZodTypeAny;
+  };
 }
 
 export type UpdateManyMiddleware = RequestHandler<ParamsDictionary, any, Prisma.VehicleDetailsUpdateManyArgs, Record<string, any>>
 
 export async function VehicleDetailsUpdateMany(req: UpdateManyRequest, res: Response, next: NextFunction) {
   try {
-    const outputValidator = req.locals?.outputValidator || req.outputValidation
+    const outputValidator = req.locals?.outputValidator || req.outputValidation;
 
-    const data = await req.prisma.vehicleDetails.updateMany(req.body)
+    const data = await req.prisma.vehicleDetails.updateMany(req.body);
 
     if (outputValidator) {
-      const validationResult = outputValidator.safeParse(data)
+      const validationResult = outputValidator.safeParse(data);
       if (validationResult.success) {
-        return res.status(200).json({ count: validationResult.data.count })
+        return res.status(200).json({ count: validationResult.data.count });
       } else {
-        return res.status(400).json({ error: "Invalid data format", details: validationResult.error })
+        return res.status(400).json({ error: 'Invalid data format', details: validationResult.error });
       }
     } else {
-      return res.status(200).json({ count: data.count })
+      return res.status(200).json({ count: data.count });
     }
-  } catch (error: unknown) {
+  } catch(error: unknown) {
     next(error)
   }
 }

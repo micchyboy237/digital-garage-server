@@ -27,8 +27,7 @@
     "db:migrate:clean": "rm -rf ./migrations && pnpm db:migrate --skip-generate",
     "db:seed": "pnpm with-env prisma db seed",
     "db:reset": "pnpm with-env prisma migrate reset",
-    "serve:docs": "pnpm with-env prisma-docs-generator serve --port 5556",
-    "postinstall": "pnpm db:generate"
+    "serve:docs": "pnpm with-env prisma-docs-generator serve --port 5556"
   },
   "devDependencies": {
     "@mermaid-js/mermaid-cli": "^10.9.1",

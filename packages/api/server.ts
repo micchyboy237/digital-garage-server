@@ -3,6 +3,7 @@ import cors from "cors"
 import express from "express"
 // Uncomment the following line to enable scheduled cleanup
 // import "./scripts/scheduleCleanup"
+import { inferRouterInputs, inferRouterOutputs } from "@trpc/server"
 import { createContext } from "./src/context"
 import { appRouter } from "./src/routes"
 import { uploadRouter } from "./src/routes/upload.route"
@@ -58,3 +59,5 @@ app.listen(PORT, () => {
 })
 
 export type AppRouter = typeof appRouter
+export type AppRouterInputs = inferRouterInputs<AppRouter>
+export type AppRouterOutputs = inferRouterOutputs<AppRouter>

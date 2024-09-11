@@ -1,43 +1,39 @@
-import type { Prisma } from "../../../../../database/node_modules/@prisma/client"
-import type { PrismaClient } from "../../../../../database/node_modules/@prisma/client"
 
-import { Request, Response, NextFunction } from "express"
-import { RequestHandler, ParamsDictionary } from "express-serve-static-core"
-import { ZodTypeAny } from "zod"
+import type { Prisma } from '../../../../../database/node_modules/@prisma/client';
+import type { PrismaClient } from '../../../../../database/node_modules/@prisma/client';
+
+import { Request, Response, NextFunction } from 'express';
+import { RequestHandler, ParamsDictionary } from 'express-serve-static-core';
+import { ZodTypeAny } from 'zod';
 
 interface DeleteManyRequest extends Request {
-  prisma: PrismaClient
-  body: Prisma.VehicleTransferDeleteManyArgs
-  outputValidation?: ZodTypeAny
+  prisma: PrismaClient;
+  body: Prisma.VehicleTransferDeleteManyArgs;
+  outputValidation?: ZodTypeAny;
   locals?: {
-    outputValidator?: ZodTypeAny
-  }
+    outputValidator?: ZodTypeAny;
+  };
 }
 
-export type DeleteManyMiddleware = RequestHandler<
-  ParamsDictionary,
-  any,
-  Prisma.VehicleTransferDeleteManyArgs,
-  Record<string, any>
->
+export type DeleteManyMiddleware = RequestHandler<ParamsDictionary, any, Prisma.VehicleTransferDeleteManyArgs, Record<string, any>>;
 
 export async function VehicleTransferDeleteMany(req: DeleteManyRequest, res: Response, next: NextFunction) {
   try {
-    const outputValidator = req.locals?.outputValidator || req.outputValidation
+    const outputValidator = req.locals?.outputValidator || req.outputValidation;
 
-    const result = await req.prisma.vehicleTransfer.deleteMany(req.body)
+    const result = await req.prisma.vehicleTransfer.deleteMany(req.body);
 
     if (outputValidator) {
-      const validationResult = outputValidator.safeParse(result)
+      const validationResult = outputValidator.safeParse(result);
       if (validationResult.success) {
-        return res.status(200).json(validationResult.data)
+        return res.status(200).json(validationResult.data);
       } else {
-        return res.status(400).json({ error: "Invalid data format", details: validationResult.error })
+        return res.status(400).json({ error: 'Invalid data format', details: validationResult.error });
       }
     } else {
-      return res.status(200).json(result)
+      return res.status(200).json(result);
     }
-  } catch (error: unknown) {
+  } catch(error: unknown) {
     next(error)
   }
 }

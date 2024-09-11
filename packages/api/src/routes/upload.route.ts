@@ -7,7 +7,7 @@ import { meService } from "../services"
 
 const router = express.Router() // Create a new router for the parent path
 
-// SuperJSON middleware for deserializing request body
+// superjson middleware for deserializing request body
 const superjsonRequestMiddleware = (req, res, next) => {
   if (req.body && typeof req.body === "string") {
     try {
@@ -20,7 +20,7 @@ const superjsonRequestMiddleware = (req, res, next) => {
   next()
 }
 
-// SuperJSON middleware for serializing response body
+// superjson middleware for serializing response body
 const superjsonResponseMiddleware = (req, res, next) => {
   const originalJson = res.json
   res.json = (data) => {

@@ -3,7 +3,6 @@ import { appRouter as generatedRouters } from "../generated/routers"
 import { protectedProcedure, t } from "../trpc"
 import { authRouter } from "./auth.route"
 import { meRouter } from "./me.route"
-import { userRouter } from "./user.route"
 import { vehicleRouter } from "./vehicle.route"
 
 const nestAttributes = (flatAttributes: Record<string, string>): Record<string, any> => {
@@ -177,14 +176,13 @@ const webhookRouter = t.router({
     }),
 })
 
-const otherRouters = t.router({
+export const appRouter = t.router({
   me: meRouter,
   auth: authRouter,
-  user: userRouter,
+  // user: userRouter,
   vehicle: vehicleRouter,
   meta: metaRouter,
+  test: t.procedure.query(() => {
+    return { success: true }
+  }),
 })
-
-export const appRouter = t.mergeRouters(otherRouters, adminRouters, webhookRouter)
-
-export type AppRouter = typeof appRouter

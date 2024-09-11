@@ -53,3 +53,10 @@ export function createValidatorMiddleware({
     next()
   }
 }
+
+export function removeTrailingSlash(path: string): string {
+  if (path === '/') {
+    return path
+  }
+  return path.replace(/\/+$/, '')
+}

@@ -19,7 +19,8 @@
   "dependencies": {
     "@boilerplate/aws": "workspace:*",
     "@boilerplate/database": "workspace:*",
-    "@trpc/server": "^10.16.0",
+    "@boilerplate/shared": "workspace:*",
+    "@trpc/server": "^11.0.0-rc.477",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dayjs": "1.11.10",
@@ -35,7 +36,7 @@
   },
   "devDependencies": {
     "@boilerplate/eslint-config": "workspace:*",
-    "@trpc/client": "^10.9.0",
+    "@trpc/client": "^11.0.0-rc.477",
     "@types/bcryptjs": "^2.4.2",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",

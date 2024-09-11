@@ -8,11 +8,15 @@ exclude_files = [
 ]
 
 include_files = [
+    # server
     "package.json",
-    "tsconfig.json",
     "server.ts",
-    "s3.service.ts",
-    "config.ts",
+    "src/routes/index.ts",
+    "src/routes/me.route.ts",
+    "src/trpc.ts",
+    "src/context.ts",
+    # client
+    "../../apps/mobile/app/services/api/api.tsx"
 ]
 
 DEFAULT_SYSTEM_MESSAGE = """
@@ -20,63 +24,28 @@ Dont use memory
 """.strip()
 
 DEFAULT_MESSAGE = """
-Please fix the following error:
-
-jethroestrada@Jethros-Mac-mini api % pnpm dev
-
-> @boilerplate/api@1.0.0 dev /Users/jethroestrada/Desktop/External_Projects/DigitalGarage/digital-garage/packages/api
-> pnpm with-env npx tsx watch server.ts
-
-
-> @boilerplate/api@1.0.0 with-env /Users/jethroestrada/Desktop/External_Projects/DigitalGarage/digital-garage/packages/api
-> dotenv -e ../../.env -- "npx" "tsx" "watch" "server.ts"
-
-Environment file .env.development not found, skipping...
-AWS environment variables:
- {
-  "AWS_SECRET_KEY_USER": "03j430wepdgsdig-3koprsdmg",
-  "AWS_ACCESS_KEY_USER": "3p24imwpaejipmsaggas"
+Please browse fix for TS error on client
+ype 'Router<{ _config: RootConfig<{ ctx: ContextType; meta: object; errorShape: DefaultErrorShape; transformer: typeof SuperJSON; }>; router: true; ... 4 more ...; subscriptions: {}; }> & { ...; } & { ...; } & { ...; }' does not satisfy the constraint 'AnyRouter'.
+  The types of '_def._config.transformer' are incompatible between these types.
+    Type 'typeof SuperJSON' is missing the following properties from type 'CombinedDataTransformer': input, outputts(2344)
+(alias) type AppRouter = Router<{
+    _config: RootConfig<{
+        ctx: ContextType;
+        meta: object;
+        errorShape: DefaultErrorShape;
+        transformer: typeof SuperJSON;
+    }>;
+    router: true;
+    ... 4 more ...;
+    subscriptions: {};
+}> & {
+    ...;
+} & {
+    ...;
+} & {
+    ...;
 }
-AWS S3 bucket:
- {
-  "region": "eu-west-2",
-  "s3BucketName": "local-classic-garage-bucket"
-}
-AWS S3 client configured successfully
-
-
-node:internal/modules/cjs/loader:1212
-  const err = new Error(message);
-              ^
-
-Error: Cannot find module 'src/config'
-Require stack:
-- /Users/jethroestrada/Desktop/External_Projects/DigitalGarage/digital-garage/packages/aws/src/services/s3.service.ts
-- /Users/jethroestrada/Desktop/External_Projects/DigitalGarage/digital-garage/packages/aws/src/services/index.ts
-- /Users/jethroestrada/Desktop/External_Projects/DigitalGarage/digital-garage/packages/aws/index.ts
-- /Users/jethroestrada/Desktop/External_Projects/DigitalGarage/digital-garage/packages/api/server.ts
-    at Module._resolveFilename (node:internal/modules/cjs/loader:1212:15)
-    at nextResolveSimple (/Users/jethroestrada/Desktop/External_Projects/DigitalGarage/digital-garage/node_modules/tsx/dist/register-C1urN2EO.cjs:3:942)
-    at /Users/jethroestrada/Desktop/External_Projects/DigitalGarage/digital-garage/node_modules/tsx/dist/register-C1urN2EO.cjs:2:2486
-    at /Users/jethroestrada/Desktop/External_Projects/DigitalGarage/digital-garage/node_modules/tsx/dist/register-C1urN2EO.cjs:2:1560
-    at resolveTsPaths (/Users/jethroestrada/Desktop/External_Projects/DigitalGarage/digital-garage/node_modules/tsx/dist/register-C1urN2EO.cjs:3:760)
-    at /Users/jethroestrada/Desktop/External_Projects/DigitalGarage/digital-garage/node_modules/tsx/dist/register-C1urN2EO.cjs:3:1035
-    at m._resolveFilename (file:///Users/jethroestrada/Desktop/External_Projects/DigitalGarage/digital-garage/node_modules/tsx/dist/register-BArwRho-.mjs:1:789)
-    at Module._load (node:internal/modules/cjs/loader:1038:27)
-    at wrapModuleLoad (node:internal/modules/cjs/loader:212:19)
-    at Module.require (node:internal/modules/cjs/loader:1297:12) {
-  code: 'MODULE_NOT_FOUND',
-  requireStack: [
-    '/Users/jethroestrada/Desktop/External_Projects/DigitalGarage/digital-garage/packages/aws/src/services/s3.service.ts',
-    '/Users/jethroestrada/Desktop/External_Projects/DigitalGarage/digital-garage/packages/aws/src/services/index.ts',
-    '/Users/jethroestrada/Desktop/External_Projects/DigitalGarage/digital-garage/packages/aws/index.ts',
-    '/Users/jethroestrada/Desktop/External_Projects/DigitalGarage/digital-garage/packages/api/server.ts'
-  ]
-}
-
-Node.js v22.3.0
-
-
+import AppRouter
 """.strip()
 
 

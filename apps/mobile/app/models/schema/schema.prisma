@@ -1,0 +1,268 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AuthProvider {
+  EMAIL_PASSWORD
+  GOOGLE
+  APPLE
+}
+
+enum AccountStatus {
+  ONBOARDING
+  SELECT_SUBSCRIPTION
+  ACTIVE
+}
+
+enum SubscriptionPlan {
+  DAY
+  WEEK
+  MONTH
+  YEAR
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  EXPIRED
+}
+
+enum PaymentStatus {
+  PAID
+  REFUNDED
+  FAILED
+}
+
+enum TransferStatus {
+  REQUESTED
+  ACCEPTED
+  REJECTED
+}
+
+enum FieldType {
+  STRING
+  NUMBER
+  DATE
+  BOOLEAN
+}
+
+enum PostCategory {
+  GALLERY
+  HISTORY
+}
+
+enum PostType {
+  REMINDER
+  INVOICE
+  DOCUMENT
+}
+
+enum MediaFileType {
+  IMAGE
+  VIDEO
+  DOCUMENT
+}
+
+model User {
+  id                String                @id @default(uuid())
+  email             String                @unique
+  firstName         String?
+  lastName          String?
+  displayPictureId  String?               @unique
+  displayPicture    MediaFile?            @relation(name: "UserDisplayPicture", fields: [displayPictureId], references: [id])
+  location          String?
+  accountStatus     AccountStatus         @default(ONBOARDING)
+  sessions          Session[]
+  vehicles          Vehicle[]
+  posts             VehiclePost[]
+  transfersReceived VehicleTransfer[]     @relation("receivedTransfers")
+  transfersSent     VehicleTransfer[]     @relation("sentTransfers")
+  subscription      Subscription?
+  vehicleOwnerships VehicleOwnership[]    // Updated relation field
+  accounts          Account[]             // New relation to the Account model
+
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+}
+
+model Account {
+  id              String        @id @default(uuid())
+  provider        AuthProvider
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  firebaseUid     String
+  isEmailVerified Boolean       @default(false)
+  lastLogin       DateTime?
+  sessions        Session[]
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@unique([provider, userId])
+}
+
+model Session {
+  id                String        @id @default(uuid())
+  token             String        @unique
+  expiresAt         DateTime
+  accountId         String
+  account           Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  deviceFingerprint String        @unique
+  userId            String
+  user              User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([deviceFingerprint, userId])
+
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+}
+
+model Subscription {
+  id            String              @id @default(uuid())
+  productId     String
+  plan          SubscriptionPlan?
+  status        SubscriptionStatus  @default(ACTIVE)
+  startDate     DateTime?
+  endDate       DateTime?
+  expiresAt     DateTime?
+  userId        String              @unique
+  user          User?               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments      Payment[]
+
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+}
+
+model Payment {
+  id              String        @id @default(uuid())
+  price           Float
+  currencyCode    String
+  status          PaymentStatus
+  transactionId   String
+  transactionDate DateTime
+  subscriptionId  String
+  subscription    Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model MediaFile {
+  id                    String              @id @default(uuid())
+  type                  MediaFileType
+  mimeType              String
+  fileName              String
+  url                   String
+  thumbnailUrl          String
+  postId                String?
+  post                  VehiclePost?        @relation(name: "GalleryOrHistoryFiles", fields: [postId], references: [id], onDelete: Cascade)
+  userDisplayPicture    User?               @relation(name: "UserDisplayPicture")
+  vehicleDisplayPhotoOwnership VehicleOwnership?   @relation(name: "VehicleDisplayPhoto") // Updated relation
+  ownershipId           String?
+  ownership             VehicleOwnership?   @relation(name: "OwnershipGalleryOrHistoryFiles", fields: [ownershipId], references: [id]) // Updated relation
+
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+}
+
+model VehicleOwnership {  // Updated model name
+  id                String            @id @default(uuid())
+  userId            String
+  vehicleId         String
+  isCurrentOwner    Boolean           @default(true)
+  vehicleDisplayPhotoId String?       @unique
+  vehicleDisplayPhoto    MediaFile?   @relation("VehicleDisplayPhoto", fields: [vehicleDisplayPhotoId], references: [id])
+  startDate         DateTime          @default(now())
+  endDate           DateTime?
+  user              User?             @relation(fields: [userId], references: [id])
+  vehicle           Vehicle?          @relation(fields: [vehicleId], references: [id])
+  posts             VehiclePost[]
+  vehicleFiles      MediaFile[]       @relation("OwnershipGalleryOrHistoryFiles")
+  vehicleDetails    VehicleDetails?
+
+  @@unique([userId, vehicleId])
+
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+}
+
+model Vehicle {
+  id                 String              @id @default(uuid())
+  make               String
+  model              String
+  registrationNumber String              @unique
+  ownerId            String              @unique
+  owner              User?               @relation(fields: [ownerId], references: [id])
+  ownerships         VehicleOwnership[]  // Updated relation field
+  transfers          VehicleTransfer[]
+
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+}
+
+model VehicleDetails {
+  id                       String              @id @default(uuid())
+  fromApi                  Boolean             @default(true)
+  registrationNumber       String              // Removed `@unique` constraint to allow multiple entries
+  make                     String
+  model                    String
+  colour                   String
+  yearOfManufacture        Int
+  taxStatus                String
+  taxDueDate               DateTime
+  motStatus                String
+  motExpiryDate            DateTime?
+  engineCapacity           Int?
+  co2Emissions             Int?
+  fuelType                 String?
+  markedForExport          Boolean?
+  typeApproval             String?
+  wheelplan                String?
+  artEndDate               DateTime?
+  monthOfFirstRegistration DateTime?
+  euroStatus               String?
+  dateOfLastV5CIssued      DateTime?
+  realDrivingEmissions     String?
+  revenueWeight            Int?
+
+  ownershipId              String             @unique
+  ownership                VehicleOwnership?  @relation(fields: [ownershipId], references: [id]) // Updated relation
+
+  createdAt                DateTime           @default(now())
+  updatedAt                DateTime           @updatedAt
+}
+
+model VehicleTransfer {
+  id            String          @id @default(uuid())
+  vehicleId     String
+  vehicle       Vehicle?        @relation(fields: [vehicleId], references: [id])
+  senderId      String
+  sender        User?           @relation("sentTransfers", fields: [senderId], references: [id])
+  recipientId   String
+  recipient     User?           @relation("receivedTransfers", fields: [recipientId], references: [id])
+  status        TransferStatus  @default(REQUESTED)
+  transferDate  DateTime        @default(now())
+  responseDate  DateTime?
+  reason        String?         // Reason for transfer
+  excludedMediaFileTypes MediaFileType[]
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model VehiclePost {
+  id           String              @id @default(uuid())
+  title        String
+  category     PostCategory        @default(GALLERY)
+  description  String?
+  type         PostType?
+  files        MediaFile[]         @relation("GalleryOrHistoryFiles")
+  createdById  String
+  createdBy    User?               @relation(fields: [createdById], references: [id])
+  ownershipId  String
+  ownership    VehicleOwnership?   @relation(fields: [ownershipId], references: [id], onDelete: Cascade) // Updated relation
+
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+}

@@ -1,0 +1,130 @@
+{
+  "name": "Classic Garage",
+  "displayName": "Classic Garage",
+  "expo": {
+    "owner": "agileminds",
+    "name": "Classic Garage",
+    "slug": "classic-garage",
+    "scheme": "classicgarage",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/app-icon-all.png",
+    "splash": {
+      "image": "./assets/images/splash-logo-all.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#191015"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "jsEngine": "hermes",
+    "assetBundlePatterns": ["**/*"],
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "buildNumber": "1",
+      "bundleIdentifier": "com.agileminds.classicgarage",
+      "associatedDomains": [
+        "applinks:classicgarage.app",
+        "applinks:www.classicgarage.app",
+        "applinks:dev.classicgarage.app",
+        "applinks:staging.classicgarage.app",
+        "applinks:classicgarage.uk",
+        "applinks:www.classicgarage.uk",
+        "applinks:dev.classicgarage.uk",
+        "applinks:staging.classicgarage.uk",
+        "applinks:classic-garage-164c2.firebaseapp.com"
+      ],
+      "entitlements": {
+        "aps-environment": "production",
+        "com.apple.developer.applesignin": ["Default"]
+      },
+      "usesAppleSignIn": true,
+      "usesIcloudStorage": true,
+      "supportsTablet": true,
+      "icon": "./assets/app-icons/ios/app-icon.png",
+      "splash": {
+        "image": "./assets/app-icons/ios/splash-mobile.png",
+        "backgroundColor": "#FFFFFF",
+        "dark": {
+          "image": "./assets/app-icons/ios/splash-mobile-dark.png",
+          "backgroundColor": "#000000"
+        },
+        "resizeMode": "contain"
+      }
+    },
+    "android": {
+      "icon": "./assets/images/app-icon-android-legacy.png",
+      "package": "com.agileminds.classicgarage",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/app-icon-android-adaptive-foreground.png",
+        "backgroundImage": "./assets/images/app-icon-android-adaptive-background.png"
+      },
+      "splash": {
+        "image": "./assets/images/splash-logo-android-universal.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#191015"
+      }
+    },
+    "web": {
+      "favicon": "./assets/images/app-icon-web-favicon.png",
+      "splash": {
+        "image": "./assets/images/splash-logo-web.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#191015"
+      },
+      "bundler": "metro"
+    },
+    "plugins": [
+      [
+        "expo-dev-launcher",
+        {
+          "launchMode": "most-recent"
+        }
+      ],
+      "expo-localization",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "newArchEnabled": false
+          },
+          "android": {
+            "newArchEnabled": false
+          }
+        }
+      ],
+      "expo-font",
+      "expo-apple-authentication",
+      "@react-native-google-signin/google-signin",
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      "@react-native-firebase/crashlytics",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ],
+      [
+        "expo-document-picker",
+        {
+          "iCloudContainerEnvironment": "Production"
+        }
+      ]
+    ],
+    "experiments": {
+      "tsconfigPaths": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "409d76dd-0baa-4e35-a57b-a669eb9cff37"
+      }
+    }
+  },
+  "ignite": {
+    "version": "UNKNOWN"
+  }
+}

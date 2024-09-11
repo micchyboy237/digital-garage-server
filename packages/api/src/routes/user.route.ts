@@ -9,7 +9,7 @@ const userIdSchema = z.object({
 })
 
 export const userRouter = t.router({
-  getUser: protectedProcedure.input(UserWhereUniqueInputObjectSchema).query(async ({ input, ctx }) => {
+  getUserData: protectedProcedure.input(UserWhereUniqueInputObjectSchema).query(async ({ input, ctx }) => {
     const user = await ctx.prisma.user.findUnique({
       where: { id: input.id },
     })

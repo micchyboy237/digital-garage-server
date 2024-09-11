@@ -2,11 +2,11 @@ import { z } from "zod"
 import { StringFilterObjectSchema } from "./StringFilter.schema"
 import { BoolFilterObjectSchema } from "./BoolFilter.schema"
 import { IntFilterObjectSchema } from "./IntFilter.schema"
-import { DateTimeFilterObjectSchema } from "./DateTimeFilter.schema"
+import { StringNullableFilterObjectSchema } from "./StringNullableFilter.schema"
 import { DateTimeNullableFilterObjectSchema } from "./DateTimeNullableFilter.schema"
 import { IntNullableFilterObjectSchema } from "./IntNullableFilter.schema"
-import { StringNullableFilterObjectSchema } from "./StringNullableFilter.schema"
 import { BoolNullableFilterObjectSchema } from "./BoolNullableFilter.schema"
+import { DateTimeFilterObjectSchema } from "./DateTimeFilter.schema"
 import { VehicleOwnershipRelationFilterObjectSchema } from "./VehicleOwnershipRelationFilter.schema"
 import { VehicleOwnershipWhereInputObjectSchema } from "./VehicleOwnershipWhereInput.schema"
 
@@ -29,25 +29,28 @@ const Schema: z.ZodType<Prisma.VehicleDetailsWhereInput> = z
     registrationNumber: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
     make: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
     model: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-    colour: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
     yearOfManufacture: z.union([z.lazy(() => IntFilterObjectSchema), z.number()]).optional(),
-    taxStatus: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
-    taxDueDate: z.union([z.lazy(() => DateTimeFilterObjectSchema), z.coerce.date()]).optional(),
-    motStatus: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+    engineCapacity: z.union([z.lazy(() => IntFilterObjectSchema), z.number()]).optional(),
+    fuelType: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+    colour: z.union([z.lazy(() => StringFilterObjectSchema), z.string()]).optional(),
+    taxStatus: z
+      .union([z.lazy(() => StringNullableFilterObjectSchema), z.string()])
+      .optional()
+      .nullable(),
+    taxDueDate: z
+      .union([z.lazy(() => DateTimeNullableFilterObjectSchema), z.coerce.date()])
+      .optional()
+      .nullable(),
+    motStatus: z
+      .union([z.lazy(() => StringNullableFilterObjectSchema), z.string()])
+      .optional()
+      .nullable(),
     motExpiryDate: z
       .union([z.lazy(() => DateTimeNullableFilterObjectSchema), z.coerce.date()])
       .optional()
       .nullable(),
-    engineCapacity: z
-      .union([z.lazy(() => IntNullableFilterObjectSchema), z.number()])
-      .optional()
-      .nullable(),
     co2Emissions: z
       .union([z.lazy(() => IntNullableFilterObjectSchema), z.number()])
-      .optional()
-      .nullable(),
-    fuelType: z
-      .union([z.lazy(() => StringNullableFilterObjectSchema), z.string()])
       .optional()
       .nullable(),
     markedForExport: z
