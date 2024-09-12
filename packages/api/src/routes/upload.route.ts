@@ -1,7 +1,7 @@
 import { multerUpload, S3File, uploadImageAndThumbnail } from "@boilerplate/aws"
 import { MediaFile, MediaFileType, prisma } from "@boilerplate/database"
 import express from "express"
-import fs from "fs" // Node.js File System
+import fs from "fs"
 import superjson from "superjson"
 import { meService } from "../services"
 
@@ -140,6 +140,7 @@ router.post("/uploadVehicleDetails", multerUpload.single("displayPhoto"), async 
         vehicleId: newVehicle.id,
         userId: session?.userId!,
         vehicleDisplayPhotoId: displayPhoto ? displayPhoto.id : undefined,
+        overview: input.overview,
       },
     })
     // Create the vehicle details

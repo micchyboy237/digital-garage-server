@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native"
 import { useLogout } from "app/screens/auth/useLogout"
 import * as Application from "expo-application"
 import React, { FC } from "react"
-import { Linking, Platform, TextStyle, View, ViewStyle } from "react-native"
+import { Linking, TextStyle, View, ViewStyle } from "react-native"
 import { Button, Screen, Text } from "../../components"
 import { isRTL } from "../../i18n"
 import { UserTabScreenProps } from "../../navigators/UserNavigator"
@@ -149,12 +149,12 @@ export const UserSettingsScreen: FC<UserTabScreenProps<"UserSettings">> =
             Log Out
           </Button>
         </View>
-        <View style={$buttonContainer}>
+        {/* <View style={$buttonContainer}>
           <Button style={$button} onPress={userReactotron}>
             {translations.reactotron}
           </Button>
           <Text style={$hint}>{translations[`${Platform.OS}ReactotronHint` as const]}</Text>
-        </View>
+        </View> */}
       </Screen>
     )
   }

@@ -9,7 +9,7 @@ export interface FieldInputProps extends TextFieldProps {
   LabelTextProps?: TextProps
   helper?: TextProps["text"]
   HelperTextProps?: TextProps
-  containerStyle?: StyleProp<ViewStyle>
+  style?: StyleProp<ViewStyle>
   onChange?: (text: string) => void
 }
 
@@ -19,11 +19,11 @@ export const FieldInput: React.FC<FieldInputProps> = ({
   LabelTextProps,
   helper,
   HelperTextProps,
-  containerStyle,
+  style,
   onChange,
   ...textFieldProps
 }) => {
-  const $containerStyles = [containerStyle]
+  const $containerStyles = [style]
   const $labelStyles = [$labelStyle, LabelTextProps?.style]
   const $helperStyles = [
     $helperStyle,

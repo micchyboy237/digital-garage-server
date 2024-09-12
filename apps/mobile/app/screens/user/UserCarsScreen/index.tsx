@@ -8,9 +8,8 @@ import { useProfile } from "app/models/hooks/useProfile"
 import { useUser } from "app/models/hooks/useUser"
 import { generateUUID } from "app/screens/auth/utils"
 import { mockUser } from "app/screens/digital-garage/data/mock"
-import { AddVehicleModal } from "app/screens/digital-garage/screens/dashboard/AddVehicleModal"
 import { useVehicleOwnerships } from "app/screens/user/UserCarsScreen/useVehicleOwnerships"
-import { spacing } from "app/theme"
+import { colors, spacing } from "app/theme"
 import { MediaFile, Vehicle, VehicleDetails, VehicleOwnership } from "app/types"
 import React, { useEffect, useMemo, useState } from "react"
 import { SectionList, StyleSheet, TouchableOpacity, View } from "react-native"
@@ -47,8 +46,8 @@ export function UserCarsScreen() {
   const profile = useProfile()
   const vehicleCount = cars.length
 
-  const handleVehiclePress = (vehicleOwnership: VehicleOwnership) => {
-    navigation.navigate("VehicleDetails", { vehicleOwnership })
+  const handleVehiclePress = (ownershipId: string) => {
+    navigation.navigate("VehicleDetails", { ownershipId })
   }
 
   const handleAddVehicle = async (
@@ -119,15 +118,15 @@ export function UserCarsScreen() {
           <View style={styles.headerContent}>
             <AspectRatioImage source={logoWithText} width={100} />
             <View style={styles.headerContentRight}>
-              <TouchableOpacity onPress={() => setIsAddingVehicle(true)}>
-                <Ionicons name="add-circle-outline" size={24} color="black" />
+              <TouchableOpacity onPress={() => navigation.navigate("VehicleForm")}>
+                <Ionicons name="add-circle-outline" size={34} color={colors.palette.primary400} />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
+              {/* <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
                 <Ionicons name="notifications-outline" size={24} color="black" />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
+              </TouchableOpacity> */}
+              {/* <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
                 <Ionicons name="settings-outline" size={24} color="black" />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           </View>
         </View>
@@ -166,7 +165,9 @@ export function UserCarsScreen() {
           <SectionList
             sections={data}
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <Car data={item} onPress={() => handleVehiclePress(item)} />}
+            renderItem={({ item }) => (
+              <Car data={item} onPress={() => handleVehiclePress(item.id)} />
+            )}
             renderSectionHeader={({ section: { title } }) => (
               <Text style={styles.sectionHeaderTitle}>{title}</Text>
             )}
@@ -175,12 +176,6 @@ export function UserCarsScreen() {
           />
         )}
       </Screen>
-      <AddVehicleModal
-        visible={isAddingVehicle}
-        user={user}
-        onAddVehicle={handleAddVehicle}
-        onClose={() => setIsAddingVehicle(false)}
-      />
     </>
   )
 }

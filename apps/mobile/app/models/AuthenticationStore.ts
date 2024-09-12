@@ -1,6 +1,5 @@
 import { Account, AccountModel } from "app/models/account/Account"
 import { Payment, PaymentModel } from "app/models/payment/Payment"
-import { Profile, ProfileModel } from "app/models/profile/Profile"
 import { Session, SessionModel } from "app/models/session/Session"
 import { Subscription, SubscriptionModel } from "app/models/subscription/Subscription"
 import { User, UserModel } from "app/models/user/User"
@@ -16,11 +15,10 @@ export const AuthenticationStoreModel = types
       }),
       {},
     ),
-    authAccount: types.maybe(types.maybeNull(AccountModel)),
-    authUser: types.maybe(types.maybeNull(UserModel)),
-    authSession: types.maybe(types.maybeNull(SessionModel)),
-    authProfile: types.maybe(types.maybeNull(ProfileModel)),
-    authSubscription: types.maybe(types.maybeNull(SubscriptionModel)),
+    authAccount: types.maybe(AccountModel),
+    authUser: types.maybe(UserModel),
+    authSession: types.maybe(SessionModel),
+    authSubscription: types.maybe(SubscriptionModel),
     authPayments: types.optional(types.array(PaymentModel), []),
     // userStore: types.optional(UserStoreModel, {}),
     // sessionStore: types.optional(SessionStoreModel, {}),
@@ -54,9 +52,6 @@ export const AuthenticationStoreModel = types
       store.authSession = session
       // store.sessionStore.addSession(session) // Add the session to SessionStoreModel
     },
-    setAuthProfile(profile: Profile) {
-      store.authProfile = profile
-    },
     setAuthSubscription(subscription: Subscription) {
       store.authSubscription = subscription
     },
@@ -71,11 +66,10 @@ export const AuthenticationStoreModel = types
       store.authPayments.clear()
     },
     logout() {
-      store.authUser = null
-      store.authSession = null
-      store.authAccount = null
-      store.authProfile = null
-      store.authSubscription = null
+      store.authUser = undefined
+      store.authSession = undefined
+      store.authAccount = undefined
+      store.authSubscription = undefined
       store.authPayments.clear()
     },
   }))

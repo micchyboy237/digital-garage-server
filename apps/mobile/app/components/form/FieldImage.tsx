@@ -11,8 +11,8 @@ export interface FieldImageProps extends ImagePickerProps {
   LabelTextProps?: TextProps
   helper?: TextProps["text"]
   HelperTextProps?: TextProps
-  containerStyle?: StyleProp<ViewStyle>
   onChange: (image: ImagePickerAsset) => void
+  style?: StyleProp<ViewStyle>
 }
 
 export const FieldImage: React.FC<FieldImageProps> = ({
@@ -21,11 +21,11 @@ export const FieldImage: React.FC<FieldImageProps> = ({
   LabelTextProps,
   helper,
   HelperTextProps,
-  containerStyle,
   onChange,
+  style,
   ...imagePickerProps
 }) => {
-  const $containerStyles = [containerStyle]
+  const $containerStyles = [style]
   const $labelStyles = [$labelStyle, LabelTextProps?.style]
   const $helperStyles = [
     $helperStyle,

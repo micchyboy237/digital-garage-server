@@ -8,13 +8,14 @@ exclude_files = [
 ]
 
 include_files = [
-    "package.json",
-    ".npmrc",
-    "pnpm-workspace.yaml",
-    "turbo.json",
+    # Client
     "apps/mobile/package.json",
-    "apps/mobile/.npmrc",
-    "apps/mobile/metro.config.js",
+    "**/api.tsx",
+    # Server
+    "*/api/package.json",
+    "**/context.ts",
+    "**/trpc.ts",
+    "**/server.ts",
 ]
 
 DEFAULT_SYSTEM_MESSAGE = """
@@ -22,9 +23,7 @@ Dont use memory
 """.strip()
 
 DEFAULT_MESSAGE = """
-Please browse turbo monorepo syntax on how to fix error after pnpm import && pnpm install --shamefully-hoist=false && pnpm start under apps/mobile
-iOS Bundling failed 14ms ../../node_modules/expo/AppEntry.js (1 module)
-Unable to resolve "../../App" from "../../node_modules/expo/AppEntry.js"
+Browse https://trpc.io/docs/server/caching#api-response-caching then update context.ts to use @trpc/server/adapters/next. Also show necessary changes in other client and server files.
 """.strip()
 
 

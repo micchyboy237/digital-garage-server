@@ -3,18 +3,13 @@
   "version": "1.0.0",
   "main": "./index.ts",
   "files": [
-    "./index.ts",
-    "./types.ts"
+    "./index.ts"
   ],
   "sideEffects": false,
   "dependencies": {
     "@prisma/client": "^5.16.2",
     "@prisma/engines": "^5.16.2",
-    "prisma": "^5.16.2",
-    "prisma-class-generator": "^0.2.9",
-    "prisma-generator-express": "^1.16.1",
-    "prisma-kysely": "^1.8.0",
-    "prisma-trpc-generator": "^1.4.1"
+    "prisma": "^5.16.2"
   },
   "scripts": {
     "dev": "pnpm with-env prisma studio",
@@ -33,10 +28,14 @@
     "@mermaid-js/mermaid-cli": "^10.9.1",
     "@types/node": "^18.15.3",
     "dotenv-cli": "^7.1.0",
+    "prisma-class-generator": "^0.2.9",
     "prisma-dbml-generator": "^0.12.0",
     "prisma-docs-generator": "^0.8.0",
     "prisma-erd-generator": "^1.11.2",
+    "prisma-generator-express": "^1.16.1",
     "prisma-generator-fake-data": "^0.14.2",
+    "prisma-kysely": "^1.8.0",
+    "prisma-trpc-generator": "^1.4.1",
     "prisma-zod-generator": "^0.8.13",
     "prismabox": "^1.1.2",
     "ts-node": "^10.9.2",

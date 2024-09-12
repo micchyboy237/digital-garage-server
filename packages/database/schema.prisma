@@ -28,7 +28,7 @@ generator zod2 {
   // useDecimalJs          = false // (default) represent the prisma Decimal type using as a JS number
   useDecimalJs             = true // represent the prisma Decimal type using Decimal.js (as Prisma does)
 
-  imports                  = null // (default) will import the referenced file in generated schemas to be used via imports.someExportedVariable
+  imports                  = "" // (default) will import the referenced file in generated schemas to be used via imports.someExportedVariable
 
   // https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-by-null-values
   prismaJsonNullability    = true // (default) uses prisma's scheme for JSON field nullability
@@ -164,7 +164,7 @@ model User {
   firstName         String?
   lastName          String?
   displayPictureId  String?               @unique
-  displayPicture    MediaFile?            @relation(name: "UserDisplayPicture", fields: [displayPictureId], references: [id])
+  displayPicture    MediaFile?            @relation(name: "UserDisplayPicture", fields: [displayPictureId], references: [id], onDelete: Cascade)
   location          String?
   accountStatus     AccountStatus         @default(ONBOARDING)
   sessions          Session[]
@@ -251,8 +251,8 @@ model MediaFile {
   thumbnailUrl          String
   postId                String?
   post                  VehiclePost?        @relation(name: "GalleryOrHistoryFiles", fields: [postId], references: [id], onDelete: Cascade)
-  userDisplayPicture    User?               @relation(name: "UserDisplayPicture")
-  vehicleDisplayPhotoOwnership VehicleOwnership?   @relation(name: "VehicleDisplayPhoto") // Updated relation
+  userDisplayPicture    User?               @relation(name: "UserDisplayPicture")  // Removed onDelete here
+  vehicleDisplayPhotoOwnership VehicleOwnership? @relation(name: "VehicleDisplayPhoto") // Removed onDelete here
   ownershipId           String?
   ownership             VehicleOwnership?   @relation(name: "OwnershipGalleryOrHistoryFiles", fields: [ownershipId], references: [id]) // Updated relation
 
@@ -260,25 +260,26 @@ model MediaFile {
   updatedAt             DateTime            @updatedAt
 }
 
-model VehicleOwnership {  // Updated model name
-  id                String            @id @default(uuid())
-  userId            String
-  vehicleId         String
-  isCurrentOwner    Boolean           @default(true)
-  vehicleDisplayPhotoId String?       @unique
-  vehicleDisplayPhoto    MediaFile?   @relation("VehicleDisplayPhoto", fields: [vehicleDisplayPhotoId], references: [id])
-  startDate         DateTime          @default(now())
-  endDate           DateTime?
-  user              User?             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  vehicle           Vehicle?          @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-  posts             VehiclePost[]
-  vehicleFiles      MediaFile[]       @relation("OwnershipGalleryOrHistoryFiles")
-  vehicleDetails    VehicleDetails?
+model VehicleOwnership {
+  id                     String            @id @default(uuid())
+  userId                 String
+  vehicleId              String
+  overview               String?
+  isCurrentOwner         Boolean           @default(true)
+  vehicleDisplayPhotoId  String?           @unique
+  vehicleDisplayPhoto    MediaFile?        @relation("VehicleDisplayPhoto", fields: [vehicleDisplayPhotoId], references: [id], onDelete: Cascade)
+  startDate              DateTime          @default(now())
+  endDate                DateTime?
+  user                   User?             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicle                Vehicle?          @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  posts                  VehiclePost[]
+  vehicleFiles           MediaFile[]       @relation("OwnershipGalleryOrHistoryFiles")
+  vehicleDetails         VehicleDetails?
 
   @@unique([userId, vehicleId])
 
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
+  createdAt              DateTime          @default(now())
+  updatedAt              DateTime          @updatedAt
 }
 
 model Vehicle {
@@ -286,7 +287,7 @@ model Vehicle {
   make               String
   model              String
   registrationNumber String              @unique
-  ownerId            String              @unique
+  ownerId            String
   owner              User?               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerships         VehicleOwnership[]  // Updated relation field
   transfers          VehicleTransfer[]

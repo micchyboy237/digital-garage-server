@@ -1,19 +1,21 @@
 import { MaterialIcons } from "@expo/vector-icons"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Field } from "app/components"
+import { useNavigation, useRoute } from "@react-navigation/native"
+import { Button, Field, Header, Screen } from "app/components"
 import {
   fetchVehicleData,
   uploadVehicleDetails,
 } from "app/screens/digital-garage/screens/dashboard/vehicle-form/api"
+import { DownButton } from "app/screens/user/components/DownButton"
 import { colors, spacing } from "app/theme"
 import React, { useState } from "react"
 import { FormProvider, useForm } from "react-hook-form"
 import { ActivityIndicator, StyleSheet, View } from "react-native"
-import { ScrollView } from "react-native-gesture-handler"
 import { z } from "zod"
 
 // Zod schema for validation
 const vehicleSchema = z.object({
+  overview: z.string().nullish(),
   registrationNumber: z.string().min(1, "Registration number is required"),
   // displayPhoto is ImagePickerAsset type
   displayPhoto: z
@@ -43,12 +45,20 @@ type VehicleData = z.infer<typeof vehicleSchema>
 export const AddVehicleForm: React.FC = () => {
   const [loading, setLoading] = useState(false)
 
+  const navigation = useNavigation()
+  const route = useRoute()
+
+  // Get vehicleId from route params
+  const vehicleId = route.params?.vehicleId
+  const isEdit = !!vehicleId
+
   // Initialize form methods with zod resolver
   const methods = useForm<VehicleData>({
     resolver: zodResolver(vehicleSchema),
     defaultValues: {
+      overview: "",
       displayPhoto: null,
-      registrationNumber: "OGV 73P",
+      registrationNumber: "",
       make: "",
       model: "",
       yearOfManufacture: 0,
@@ -113,15 +123,7 @@ export const AddVehicleForm: React.FC = () => {
     // Prepare data to be sent to the backend
     const formData = new FormData()
     if (formValues.displayPhoto) {
-      // Extract file name and type from the display photo
-      // const name = formValues.displayPhoto.split("/").pop()
-      // const fileExt = name?.split(".").pop()
-      // const type = `image/${fileExt}`
-      console.log("Display photo:", {
-        uri: formValues.displayPhoto.uri,
-        type: formValues.displayPhoto.mimeType,
-        name: formValues.displayPhoto.fileName,
-      })
+      formData.append("overview", formValues.overview ?? "")
       formData.append("displayPhoto", {
         uri: formValues.displayPhoto.uri,
         type: formValues.displayPhoto.mimeType,
@@ -157,71 +159,89 @@ export const AddVehicleForm: React.FC = () => {
 
   return (
     <FormProvider {...methods}>
-      <View style={styles.container}>
-        <ScrollView contentContainerStyle={styles.contentContainer}>
-          {/* Registration Number Input with Search */}
+      <Screen
+        safeAreaEdges={["top", "bottom"]}
+        preset="scroll"
+        contentContainerStyle={styles.contentContainer}
+      >
+        {navigation.canGoBack() && (
+          <Header
+            title={!isEdit ? "Add Vehicle" : "Edit Vehicle"}
+            LeftActionComponent={<DownButton onPress={navigation.goBack} />}
+            safeAreaEdges={[]}
+            containerStyle={[
+              {
+                backgroundColor: "transparent",
+                // position: "absolute",
+                paddingHorizontal: spacing.md,
+                justifyContent: "flex-start",
+              },
+            ]}
+          />
+        )}
+        {/* Registration Number Input with Search */}
 
-          {loading && <ActivityIndicator animating color={colors.palette.primary400} />}
+        {loading && <ActivityIndicator animating color={colors.palette.primary400} />}
 
-          <View style={styles.formContainer}>
-            <Field label="Make" name="make" style={styles.input} />
-            <Field label="Model" name="model" style={styles.input} />
-            <Field
-              label="Registration Number"
-              name="registrationNumber"
-              style={styles.input}
-              RightAccessory={() => (
-                <MaterialIcons
-                  name="search"
-                  size={24}
-                  color="black"
-                  onPress={() => onSearch(getValues("registrationNumber"))}
-                />
-              )}
-            />
+        <View style={styles.formContainer}>
+          <Field label="Make" name="make" style={styles.input} />
+          <Field label="Model" name="model" style={styles.input} />
+          <Field
+            label="Registration Number"
+            name="registrationNumber"
+            style={styles.input}
+            RightAccessory={() => (
+              <MaterialIcons
+                name="search"
+                size={24}
+                color="black"
+                onPress={() => onSearch(getValues("registrationNumber"))}
+              />
+            )}
+          />
 
-            <Field
-              label="Display Photo"
-              name="displayPhoto"
-              type="image"
-              size={180}
-              fullWidth
-              icon="car"
-            />
-            <Field
-              label="Year of Manufacture"
-              name="yearOfManufacture"
-              style={styles.input}
-              keyboardType="numeric"
-            />
+          <Field
+            label="Display Photo"
+            name="displayPhoto"
+            type="image"
+            size={180}
+            fullWidth
+            icon="car"
+            allowsEditing
+            style={styles.input}
+          />
+          <Field label="Overview" name="overview" style={styles.input} />
+          <Field
+            label="Year of Manufacture"
+            name="yearOfManufacture"
+            type="number"
+            style={styles.input}
+            keyboardType="numeric"
+          />
 
-            <Field
-              label="Engine Capacity (cc)"
-              name="engineCapacity"
-              style={styles.input}
-              keyboardType="numeric"
-            />
+          <Field
+            label="Engine Capacity (cc)"
+            name="engineCapacity"
+            type="number"
+            style={styles.input}
+            keyboardType="numeric"
+          />
 
-            <Field label="Fuel Type" name="fuelType" style={styles.input} />
+          <Field label="Fuel Type" name="fuelType" style={styles.input} />
 
-            <Field label="Color" name="colour" style={styles.input} />
+          <Field label="Color" name="colour" style={styles.input} />
 
-            {/* More Fields as needed */}
-            <Button onPress={handleSubmit(onSubmit)} style={styles.button}>
-              Submit
-            </Button>
-          </View>
-        </ScrollView>
-      </View>
+          {/* More Fields as needed */}
+          <Button onPress={handleSubmit(onSubmit)} style={styles.button} preset="reversed">
+            Submit
+          </Button>
+        </View>
+      </Screen>
     </FormProvider>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    maxHeight: "100%",
-    overflow: "hidden",
-  },
   contentContainer: {
     padding: spacing.md,
   },
@@ -233,6 +253,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 20,
+    backgroundColor: colors.palette.primary400,
   },
   errorText: {
     color: "red",

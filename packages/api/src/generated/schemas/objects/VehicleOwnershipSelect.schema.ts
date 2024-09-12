@@ -14,6 +14,7 @@ const Schema: z.ZodType<Prisma.VehicleOwnershipSelect> = z
     id: z.boolean().optional(),
     userId: z.boolean().optional(),
     vehicleId: z.boolean().optional(),
+    overview: z.boolean().optional(),
     isCurrentOwner: z.boolean().optional(),
     vehicleDisplayPhotoId: z.boolean().optional(),
     vehicleDisplayPhoto: z.union([z.boolean(), z.lazy(() => MediaFileArgsObjectSchema)]).optional(),

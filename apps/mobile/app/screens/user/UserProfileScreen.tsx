@@ -79,7 +79,6 @@ export const UserProfileScreen = () => {
         {navigation.canGoBack() && (
           <Header
             title="Profile"
-            titleStyle={styles.headerTitle}
             safeAreaEdges={["top"]}
             LeftActionComponent={<BackButton onPress={navigation.goBack} />}
             containerStyle={[
@@ -182,9 +181,6 @@ export const UserProfileScreen = () => {
 const styles = StyleSheet.create({
   contentContainer: {
     minHeight: "100%",
-  },
-  headerTitle: {
-    fontSize: 25,
   },
   photoContainer: {
     marginTop: spacing.xl,

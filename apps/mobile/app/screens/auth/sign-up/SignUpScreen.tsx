@@ -2,7 +2,6 @@ import { AspectRatioImage } from "app/components/image/AspectRatioImage"
 import { useStores } from "app/models"
 import { Session } from "app/models/session/Session"
 import { LoginErrorCodes } from "app/screens/auth/errors/errors"
-import { fetchExistingUser } from "app/screens/auth/sign-up/api"
 import { SignInButton } from "app/screens/auth/SignInButton"
 import { useAppleAuth } from "app/screens/auth/useAppleAuth"
 import { useAuthActions } from "app/screens/auth/useAuthActions"
@@ -10,9 +9,18 @@ import { useEmailPasswordAuth } from "app/screens/auth/useEmailPasswordAuth"
 import { useGoogleAuth } from "app/screens/auth/useGoogleAuth"
 import { BackButton } from "app/screens/user/components/BackButton"
 import { trpc } from "app/services/api"
-import React, { FC, useState } from "react"
+import React, { ComponentType, FC, useMemo, useState } from "react"
 import { TextStyle, View, ViewStyle } from "react-native"
-import { Button, Header, Screen, Text, TextField, Toggle } from "../../../components"
+import {
+  Button,
+  Header,
+  Icon,
+  Screen,
+  Text,
+  TextField,
+  TextFieldAccessoryProps,
+  Toggle,
+} from "../../../components"
 import { AppStackScreenProps } from "../../../navigators"
 import { colors, spacing } from "../../../theme"
 
@@ -24,6 +32,7 @@ export const SignUpScreen: FC<SignUpScreenProps> = function SignUpScreen(_props)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isTermsAccepted, setIsTermsAccepted] = useState(false)
+  const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
 
   const { authenticationStore } = useStores()
 
@@ -35,6 +44,8 @@ export const SignUpScreen: FC<SignUpScreenProps> = function SignUpScreen(_props)
   const sessionCreateMutation = trpc.admin.session.createOneSession.useMutation()
   const sessionUpdateMutation = trpc.admin.session.updateOneSession.useMutation()
   const profileCreateMutation = trpc.admin.profile.createOneProfile.useMutation()
+
+  const loginOrRegister = trpc.auth.loginOrRegister.useMutation()
 
   // const { data: existingUser, error: userError } = trpc.admin.user.findUniqueUser.useQuery({
   //   where: { email },
@@ -100,60 +111,67 @@ export const SignUpScreen: FC<SignUpScreenProps> = function SignUpScreen(_props)
   const handleLoginSocial = (provider: "apple" | "google") => async () => {
     const result =
       provider === "apple" ? await appleAuth.signInAsync() : await googleAuth.signInAsync()
-    const existingUser = await fetchExistingUser(result.user.email)
-    // Check if user exists by firebaseUid
-    let userMutationResult
-
-    console.log("existingUser:\n", existingUser)
-
-    if (existingUser) {
-      // Update existing user
-      userMutationResult = await userUpdateMutation.mutateAsync({
-        where: { firebaseUid: result.user?.firebaseUid },
-        data: { ...result.user }, // Update user data as necessary
-        include: { profile: true, sessions: true, subscription: true },
-      })
-    } else {
-      // Create new user
-      userMutationResult = await userCreateMutation.mutateAsync({
-        data: result.user,
-        include: { profile: true, sessions: true, subscription: true },
-      })
-
-      const profileMutation = profileCreateMutation
-      const profileMutationResult = await profileMutation.mutateAsync({
-        data: {
-          ...result.profile,
+    console.log(
+      `handleLoginSocial (${provider}):\n`,
+      JSON.stringify(
+        {
+          email: result.user.email,
+          deviceFingerprint: result.session.deviceFingerprint,
+          token: result.session.token,
+          expiresAt: result.session.expiresAt,
+          firstName: result.user.firstName,
+          lastName: result.user.lastName,
         },
-      })
-      authenticationStore.setAuthProfile(profileMutationResult)
-    }
-
-    const sessionMutation = existingUser ? sessionUpdateMutation : sessionCreateMutation
-    const sessionMutationResult = await sessionMutation.mutateAsync({
-      data: {
-        ...result.session,
-      },
-      include: { user: true },
-      where: { deviceFingerprint: result.session?.deviceFingerprint },
+        null,
+        2,
+      ),
+    )
+    const { account, user, session } = await loginOrRegister.mutateAsync({
+      email: result.user.email,
+      provider: result.account.provider,
+      deviceFingerprint: result.session.deviceFingerprint,
+      token: result.session.token,
+      expiresAt: result.session.expiresAt,
+      firebaseUid: result.account.firebaseUid,
+      isEmailVerified: result.account.isEmailVerified,
+      firstName: result.user.firstName,
+      lastName: result.user.lastName,
     })
-
-    if (userMutationResult) {
-      const { profile, subscription, sessions, ...authUser } = userMutationResult
-      authenticationStore.setAuthUser({
-        ...authUser,
-        profile: profile?.id,
-        subscription: subscription?.id,
-        sessions: sessions.map((session: Session) => session?.id),
-      })
-      authenticationStore.setAuthSubscription(subscription)
-    }
-    if (sessionMutationResult) {
-      authenticationStore.setAuthSession(sessionMutationResult)
-    }
-
-    _props.navigation.navigate("LoggedIn")
+    console.log("handleLoginSocial result:\n", JSON.stringify({ account, user, session }, null, 2))
+    authenticationStore.setAuthAccount(account)
+    authenticationStore.setAuthUser({
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      displayPictureId: user.displayPictureId,
+      location: user.location,
+      accountStatus: user.accountStatus,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    })
+    authenticationStore.setAuthSession(session)
+    _props.navigation.reset({
+      index: 0,
+      routes: [{ name: "LoggedIn" }],
+    })
   }
+
+  const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
+    () =>
+      function PasswordRightAccessory(props: TextFieldAccessoryProps) {
+        return (
+          <Icon
+            icon={isAuthPasswordHidden ? "view" : "hidden"}
+            color={colors.palette.neutral800}
+            containerStyle={props.style}
+            size={20}
+            onPress={() => setIsAuthPasswordHidden(!isAuthPasswordHidden)}
+          />
+        )
+      },
+    [isAuthPasswordHidden],
+  )
 
   return (
     <Screen
@@ -199,6 +217,8 @@ export const SignUpScreen: FC<SignUpScreenProps> = function SignUpScreen(_props)
             secureTextEntry={true}
             label="Password"
             placeholder="Enter your password"
+            secureTextEntry={isAuthPasswordHidden}
+            RightAccessory={PasswordRightAccessory}
           />
         </View>
         <View>
@@ -279,12 +299,14 @@ export const SignUpScreen: FC<SignUpScreenProps> = function SignUpScreen(_props)
             textStyle={$socialButtonText}
             type="apple"
             onPress={handleLoginSocial("apple")}
+            isCreateAccount
           />
           <SignInButton
             style={$socialButton}
             textStyle={$socialButtonText}
             type="google"
             onPress={handleLoginSocial("google")}
+            isCreateAccount
           />
         </View>
       </View>

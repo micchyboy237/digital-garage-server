@@ -1,7 +1,6 @@
+import { Operation, OperationResultEnvelope, TRPCClientError, TRPCLink } from "@trpc/client"
 import { observable, tap } from "@trpc/server/observable"
 import type { AnyRouter } from "@trpc/server/unstable-core-do-not-import"
-import type { TRPCClientError } from "../TRPCClientError"
-import type { Operation, OperationResultEnvelope, TRPCLink } from "./types"
 
 type TrpcLinkFnOptions<TRouter extends AnyRouter> = Operation &
   (
@@ -50,11 +49,19 @@ export function trpcLink<TRouter extends AnyRouter = AnyRouter>(
           const direction: "down" = "down"
 
           if (result instanceof Error || "error" in result) {
+            console.error("ERROR RESULT:\n", JSON.stringify(result, null, 2))
             onError?.({ op, direction, result: result.data, elapsedMs })
-          } else if (op.type === "query") {
-            onQuerySuccess?.({ op, direction, result: result.result.data, elapsedMs })
-          } else if (op.type === "mutation") {
-            onMutationSuccess?.({ op, direction, result: result.result.data, elapsedMs })
+          } else {
+            // Log the response headers
+            if ("headers" in result) {
+              console.log("Response Headers:", result.headers)
+            }
+
+            if (op.type === "query") {
+              onQuerySuccess?.({ op, direction, result: result.result.data, elapsedMs })
+            } else if (op.type === "mutation") {
+              onMutationSuccess?.({ op, direction, result: result.result.data, elapsedMs })
+            }
           }
         }
 

@@ -1,5 +1,3 @@
-import "expo-dev-client"
-
 /* eslint-disable import/first */
 /**
  * Welcome to the main entry point of the app. In this file, we'll
@@ -12,12 +10,6 @@ import "expo-dev-client"
  * The app navigation resides in ./app/navigators, so head over there
  * if you're interested in adding screens and navigators.
  */
-if (__DEV__) {
-  // Load Reactotron in development only.
-  // Note that you must be using metro's `inlineRequires` for this to work.
-  // If you turn it off in metro.config.js, you'll have to manually import it.
-  require("./devtools/ReactotronConfig.ts")
-}
 
 import "@expo/metro-runtime"
 import * as Linking from "expo-linking"

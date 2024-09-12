@@ -1,6 +1,5 @@
 import { useStores } from "app/models"
 import { useUserId } from "app/models/hooks/useUserId"
-import { Payment } from "app/models/payment/Payment"
 import { SubscriptionOptionPlan } from "app/screens/subscription/types"
 import { useRevenueCat } from "app/screens/subscription/useRevenueCat"
 import { useSubscriptionOptions } from "app/screens/subscription/useSubscriptionOptions"
@@ -74,25 +73,10 @@ export const SubscriptionScreen: FC<SubscriptionScreenProps> = (_props) => {
         })
         console.log("handleConfirmSelection result:\n", JSON.stringify(subscriptionResult, null, 2))
         authenticationStore.setAuthUser(subscriptionResult)
-        _props.navigation.navigate("User")
-        return
-
-        if (purchasePayment) {
-          const payment = {
-            price: purchasePayment.price,
-            currencyCode: purchasePayment.currencyCode,
-            status: purchasePayment.status,
-            transactionId: purchasePayment?.transactionId,
-            transactionDate: new Date(purchasePayment.transactionDate),
-            subscriptionId: subscriptionResult.id,
-          } as Payment
-
-          const paymentResult = await createPaymentMutation.mutateAsync({
-            data: payment,
-          })
-          console.log("Payment mutation result:", paymentResult)
-          authenticationStore.addAuthPayment(paymentResult)
-        }
+        _props.navigation.reset({
+          index: 0,
+          routes: [{ name: "User" }],
+        })
       }
     }
 

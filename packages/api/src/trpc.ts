@@ -1,21 +1,11 @@
 import { initTRPC, TRPCError } from "@trpc/server"
+import { createNextApiHandler } from "@trpc/server/adapters/next"
 import superjson from "superjson"
 import { createContext } from "./context"
 import { permissions } from "./middlewares"
 
-// export const t = initTRPC.context<Context>().create({
-//   transformer: superjson,
-// })
-// export const t = initTRPC.context<typeof createContext>().create({
-//   transformer: superjson,
-// })
 export const t = initTRPC.context<typeof createContext>().create({
-  transformer: {
-    input: superjson,
-    output: superjson,
-    serialize: superjson.serialize,
-    deserialize: superjson.deserialize,
-  },
+  transformer: superjson,
 })
 
 export const permissionsMiddleware = t.middleware(permissions)
@@ -26,9 +16,7 @@ export const protectedProcedure: typeof t.procedure = t.procedure.use(({ ctx, ne
   if (!ctx.session) {
     throw new TRPCError({ code: "UNAUTHORIZED" })
   }
-  return next({
-    ctx,
-  })
+  return next({ ctx })
 })
 
 export const loggedProcedure: typeof t.procedure = publicProcedure
@@ -51,3 +39,9 @@ export const loggedProcedure: typeof t.procedure = publicProcedure
   .use(permissionsMiddleware)
 
 export type { Context } from "./context"
+
+// Create Next.js API handler
+export const apiHandler = createNextApiHandler({
+  router: t.router, // replace with your router
+  createContext,
+})

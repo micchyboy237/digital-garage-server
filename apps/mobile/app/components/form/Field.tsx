@@ -5,7 +5,7 @@ import useField from "./useField"
 
 interface FieldProps extends React.ComponentProps<typeof FieldInput> {
   name: string
-  type?: "text" | "image"
+  type?: "text" | "number" | "image"
 }
 
 export function Field({ name, type = "text", ...rest }: FieldProps) {
@@ -38,6 +38,20 @@ export function Field({ name, type = "text", ...rest }: FieldProps) {
         value={value?.uri}
         error={error}
         onChange={fieldOnChange}
+      />
+    )
+  } else if (type === "number") {
+    return (
+      <FieldInput
+        ref={ref}
+        key={name}
+        {...rest}
+        {...register(name)}
+        value={value.toString()}
+        error={error}
+        onChange={(text) => fieldOnChange(parseInt(text, 10))}
+        onBlur={onBlur}
+        keyboardType="number-pad"
       />
     )
   } else if (type === "text") {

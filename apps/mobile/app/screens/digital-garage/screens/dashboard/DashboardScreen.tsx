@@ -7,13 +7,11 @@ import { spacing } from "app/theme"
 import { VehicleOwnership } from "app/types"
 import React, { useState } from "react"
 import { Button, Image, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from "react-native"
-import { AddVehicleModal } from "./AddVehicleModal"
 
 interface DashboardScreenProps {}
 
 export const DashboardScreen: React.FC<DashboardScreenProps> = () => {
   const [user, setUser] = useState(mockUser)
-  const [isAddingVehicle, setIsAddingVehicle] = useState(false)
   const navigation = useNavigation()
 
   const {
@@ -44,7 +42,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = () => {
       <View style={styles.topBar}>
         <Text style={styles.topBarText}>Digital Garage</Text>
         <View style={styles.topBarRight}>
-          <TouchableOpacity onPress={() => setIsAddingVehicle(true)}>
+          <TouchableOpacity onPress={() => navigation.navigate("VehicleForm")}>
             <Ionicons name="add-circle-outline" size={24} color="black" />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
@@ -78,12 +76,6 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = () => {
           </Text>
         </View>
       </View>
-      <AddVehicleModal
-        visible={isAddingVehicle}
-        user={user}
-        onAddVehicle={handleAddVehicle}
-        onClose={() => setIsAddingVehicle(false)}
-      />
       <View style={styles.vehicleSection}>
         <Text style={styles.sectionTitle}>Current Vehicles</Text>
         {currentVehicles.map((vehicleOwnership) => (

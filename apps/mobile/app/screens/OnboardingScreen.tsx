@@ -60,7 +60,10 @@ export const OnboardingScreen = ({ navigation }) => {
     console.log("updateProfileResult:\n", JSON.stringify(updateProfileResult, null, 2))
     authenticationStore.setAuthUser(updateProfileResult.data)
     console.log("Profile updated successfully")
-    navigation.navigate("Subscription")
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Subscription" }],
+    })
   }
 
   return (
@@ -73,7 +76,6 @@ export const OnboardingScreen = ({ navigation }) => {
         {navigation.canGoBack() && (
           <Header
             title="Profile"
-            titleStyle={styles.headerTitle}
             safeAreaEdges={["top"]}
             LeftActionComponent={<BackButton onPress={navigation.goBack} />}
             containerStyle={[
@@ -177,9 +179,6 @@ export const OnboardingScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   contentContainer: {
     minHeight: "100%",
-  },
-  headerTitle: {
-    fontSize: 25,
   },
   photoContainer: {
     marginTop: spacing.xl,

@@ -18,6 +18,20 @@ app.use(
   createExpressMiddleware({
     router: appRouter,
     createContext,
+    responseMeta({ ctx, paths, errors, type }) {
+      const allOk = errors.length === 0
+      const isQuery = type === "query"
+
+      if (ctx?.res && allOk && isQuery) {
+        const ONE_DAY_IN_SECONDS = 60 * 60 * 24
+        const MAX_AGE_SECONDS = 60
+        return {
+          headers: new Headers([["cache-control", `s-maxage=${MAX_AGE_SECONDS}, stale-while-revalidate=${ONE_DAY_IN_SECONDS}`]]),
+        }
+      }
+
+      return {}
+    },
   }),
 )
 

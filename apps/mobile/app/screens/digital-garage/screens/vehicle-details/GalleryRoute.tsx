@@ -1,53 +1,61 @@
-import { Document, EventType, VehicleOwnership } from "app/types"
+import { useNavigation } from "@react-navigation/native"
+import { Icon } from "app/components"
+import { MediaFile } from "app/models/media-file/MediaFile"
+import { trpc } from "app/services/api"
+import { colors } from "app/theme"
 import React from "react"
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native"
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 interface GalleryRouteProps {
-  vehicleOwnership: VehicleOwnership
+  ownershipId: string
 }
 
-const GalleryRoute: React.FC<GalleryRouteProps> = ({ vehicleOwnership }) => {
-  const { events } = vehicleOwnership
+const GalleryRoute: React.FC<GalleryRouteProps> = ({ ownershipId }) => {
+  const navigation = useNavigation()
+  const insets = useSafeAreaInsets()
 
-  const filteredEvents = events.filter((event) => event.type === EventType.post)
+  const vehicleGalleryPostsQuery = trpc.me.getVehicleGalleryPosts.useQuery({ ownershipId })
 
-  const renderDocuments = (documents: Document[]) => {
-    return documents.map((document) => {
+  const { vehiclePosts } = vehicleGalleryPostsQuery.data ?? {}
+
+  const renderFiles = (files: MediaFile[]) => {
+    return files.map((file) => {
       return (
-        <View key={document.id}>
-          {!!document.title && <Text>{document.title}</Text>}
-          {!!document.description && <Text>{document.description}</Text>}
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
-            {document.files.map((file) => {
-              return (
-                <View key={file.id}>
-                  <Image
-                    style={{ width: 120, height: 120, backgroundColor: "#cccccc" }}
-                    source={{ uri: file.url }}
-                  />
-                </View>
-              )
-            })}
-          </View>
+        <View key={file.id}>
+          <Image
+            style={{ width: 120, height: 120, backgroundColor: "#cccccc" }}
+            source={{ uri: file.url }}
+          />
         </View>
       )
     })
   }
 
   return (
-    <ScrollView>
-      <View>
-        <Text style={styles.header}>Gallery</Text>
-        {filteredEvents.map((event) => (
-          <View key={event.id} style={styles.eventContainer}>
-            <Text>{event.date.toDateString()}</Text>
-            <Text style={styles.eventHeader}>{event.header}</Text>
-            <Text>{event.description}</Text>
-            {!!event.documents?.length && renderDocuments(event.documents)}
-          </View>
-        ))}
-      </View>
-    </ScrollView>
+    <>
+      <ScrollView>
+        <View>
+          {vehiclePosts?.map((post) => (
+            <View key={post.id} style={styles.postContainer}>
+              <Text>{post.createdAt.toDateString()}</Text>
+              <Text style={styles.postTitle}>{post.title}</Text>
+              {!!post.description && <Text>{post.description}</Text>}
+              {!!post.files?.length && renderFiles(post.files)}
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+
+      {/* Floating + Button */}
+      <TouchableOpacity
+        style={[styles.floatingButton, { bottom: insets.bottom + 30, right: 30 }]}
+        onPress={() => navigation.navigate("VehicleGalleryForm")}
+      >
+        {/* Ionicon */}
+        <Icon icon="add" size={40} color="white" />
+      </TouchableOpacity>
+    </>
   )
 }
 
@@ -58,14 +66,32 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginVertical: 10,
   },
-  eventContainer: {
+  postContainer: {
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
   },
-  eventHeader: {
+  postTitle: {
     fontSize: 18,
     fontWeight: "bold",
+  },
+  floatingButton: {
+    position: "absolute",
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.palette.primary400,
+    // shadow
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 })
 

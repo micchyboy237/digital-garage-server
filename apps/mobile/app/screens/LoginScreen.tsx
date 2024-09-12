@@ -1,27 +1,16 @@
 import { useNavigation } from "@react-navigation/native"
 import { AspectRatioImage } from "app/components/image/AspectRatioImage"
-import { Session } from "app/models/session/Session"
 import { LoginErrorCodes } from "app/screens/auth/errors/errors"
-import { fetchExistingUser } from "app/screens/auth/sign-up/api"
 import { SignInButton } from "app/screens/auth/SignInButton"
 import { useAppleAuth } from "app/screens/auth/useAppleAuth"
 import { useAuthActions } from "app/screens/auth/useAuthActions"
 import { useEmailPasswordAuth } from "app/screens/auth/useEmailPasswordAuth"
 import { useGoogleAuth } from "app/screens/auth/useGoogleAuth"
-import { generateFingerprint } from "app/screens/auth/utils"
 import { trpc } from "app/services/api"
 import { observer } from "mobx-react-lite"
 import React, { ComponentType, FC, useEffect, useMemo, useRef, useState } from "react"
 import { TextInput, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
-import {
-  Button,
-  Icon,
-  Screen,
-  Text,
-  TextField,
-  TextFieldAccessoryProps,
-  Toggle,
-} from "../components"
+import { Button, Icon, Screen, Text, TextField, TextFieldAccessoryProps } from "../components"
 import { useStores } from "../models"
 import { AppStackScreenProps } from "../navigators"
 import { colors, spacing } from "../theme"
@@ -78,145 +67,82 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
   const handleLoginEmailPw = async () => {
     const result = await emailpwAuth.signInAsync(authEmail, authPassword)
     console.log(`handleLoginEmailPw (Email/PW):\n`, JSON.stringify(result, null, 2))
-    const { account, user, ...session } = await loginOrRegister.mutateAsync({
-      email: result.user?.email,
-      provider: result.session?.provider,
-      deviceFingerprint: result.session?.deviceFingerprint,
-      token: result.session?.token,
-      expiresAt: result.session?.expiresAt,
-      firebaseUid: result.user?.firebaseUid,
-      isEmailVerified: result.user?.isEmailVerified,
+    const { account, user, session } = await loginOrRegister.mutateAsync({
+      email: result.user.email,
+      provider: result.account.provider,
+      deviceFingerprint: result.session.deviceFingerprint,
+      token: result.session.token,
+      expiresAt: result.session.expiresAt,
+      firebaseUid: result.account.firebaseUid,
+      isEmailVerified: result.account.isEmailVerified,
     })
     console.log("handleLoginEmailPw result:\n", JSON.stringify({ account, user, session }, null, 2))
     authenticationStore.setAuthAccount(account)
-    authenticationStore.setAuthUser(user)
+    authenticationStore.setAuthUser({
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      displayPictureId: user.displayPictureId,
+      location: user.location,
+      accountStatus: user.accountStatus,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    })
     authenticationStore.setAuthSession(session)
-    _props.navigation.navigate("LoggedIn")
-    return
-
-    console.log("handleLoginEmailPw:", result)
-
-    // Check if user exists by firebaseUid
-    if (result.user) {
-      const existingUser = await fetchExistingUser(result.user.email)
-      if (existingUser) {
-        authenticationStore.setAuthUser({
-          ...existingUser,
-          profile: existingUser.profile?.id,
-          subscription: existingUser.subscription?.id,
-          sessions: existingUser.sessions?.map((session: Session) => session?.id),
-        })
-        authenticationStore.setAuthSubscription(existingUser.subscription)
-        const deviceFingerprint = await generateFingerprint(existingUser.id)
-        authenticationStore.setAuthSession(
-          existingUser.sessions.find((session) => session?.deviceFingerprint === deviceFingerprint),
-        )
-        authenticationStore.setAuthProfile(existingUser.profile)
-        _props.navigation.navigate("LoggedIn")
-      } else {
-        const userMutationResult = await userCreateMutation.mutateAsync({
-          data: {
-            ...result.user,
-          },
-          include: { profile: true, sessions: true, subscription: true },
-        })
-
-        authenticationStore.setAuthUser({
-          ...userMutationResult,
-          profile: userMutationResult.profile?.id,
-          subscription: userMutationResult.subscription?.id,
-          sessions: userMutationResult.sessions.map((session: Session) => session?.id),
-        })
-        const sessionMutationResult = await sessionCreateMutation.mutateAsync({
-          data: {
-            ...result.session,
-          },
-          include: { user: true },
-          where: { deviceFingerprint: result.session?.deviceFingerprint },
-        })
-        authenticationStore.setAuthSession(sessionMutationResult)
-
-        authenticationStore.setLoginFormEmail(authEmail)
-
-        _props.navigation.navigate("LoggedIn")
-      }
-    }
+    _props.navigation.reset({
+      index: 0,
+      routes: [{ name: "LoggedIn" }],
+    })
   }
 
   const handleLoginSocial = (provider: "apple" | "google") => async () => {
     const result =
       provider === "apple" ? await appleAuth.signInAsync() : await googleAuth.signInAsync()
-    console.log(`handleLoginSocial (${provider}):\n`, JSON.stringify(result, null, 2))
-    const { account, user, ...session } = await loginOrRegister.mutateAsync({
-      email: result.user?.email,
-      provider: result.session?.provider,
-      deviceFingerprint: result.session?.deviceFingerprint,
-      token: result.session?.token,
-      expiresAt: result.session?.expiresAt,
-      firebaseUid: result.user?.firebaseUid,
-      isEmailVerified: result.user?.isEmailVerified,
-      firstName: result.profile?.firstName,
-      lastName: result.profile?.lastName,
+    console.log(
+      `handleLoginSocial (${provider}):\n`,
+      JSON.stringify(
+        {
+          email: result.user.email,
+          deviceFingerprint: result.session.deviceFingerprint,
+          token: result.session.token,
+          expiresAt: result.session.expiresAt,
+          firstName: result.user.firstName,
+          lastName: result.user.lastName,
+        },
+        null,
+        2,
+      ),
+    )
+    const { account, user, session } = await loginOrRegister.mutateAsync({
+      email: result.user.email,
+      provider: result.account.provider,
+      deviceFingerprint: result.session.deviceFingerprint,
+      token: result.session.token,
+      expiresAt: result.session.expiresAt,
+      firebaseUid: result.account.firebaseUid,
+      isEmailVerified: result.account.isEmailVerified,
+      firstName: result.user.firstName,
+      lastName: result.user.lastName,
     })
     console.log("handleLoginSocial result:\n", JSON.stringify({ account, user, session }, null, 2))
     authenticationStore.setAuthAccount(account)
-    authenticationStore.setAuthUser(user)
-    authenticationStore.setAuthSession(session)
-    _props.navigation.navigate("LoggedIn")
-    return
-    const existingUser = await fetchExistingUser(result.user.email)
-    // Check if user exists by firebaseUid
-    let userMutationResult
-
-    console.log("existingUser:\n", existingUser)
-
-    if (existingUser) {
-      // Update existing user
-      userMutationResult = await userUpdateMutation.mutateAsync({
-        where: { firebaseUid: result.user?.firebaseUid },
-        data: { ...result.user }, // Update user data as necessary
-        include: { profile: true, sessions: true, subscription: true },
-      })
-    } else {
-      // Create new user
-      userMutationResult = await userCreateMutation.mutateAsync({
-        data: result.user,
-        include: { profile: true, sessions: true, subscription: true },
-      })
-
-      const profileMutation = profileCreateMutation
-      const profileMutationResult = await profileMutation.mutateAsync({
-        data: {
-          ...result.profile,
-        },
-      })
-      authenticationStore.setAuthProfile(profileMutationResult)
-    }
-
-    const sessionMutation = existingUser ? sessionUpdateMutation : sessionCreateMutation
-    const sessionMutationResult = await sessionMutation.mutateAsync({
-      data: {
-        ...result.session,
-      },
-      include: { user: true },
-      where: { deviceFingerprint: result.session?.deviceFingerprint },
+    authenticationStore.setAuthUser({
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      displayPictureId: user.displayPictureId,
+      location: user.location,
+      accountStatus: user.accountStatus,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
     })
-
-    if (userMutationResult) {
-      const { profile, subscription, sessions, ...authUser } = userMutationResult
-      authenticationStore.setAuthUser({
-        ...authUser,
-        profile: profile?.id,
-        subscription: subscription?.id,
-        sessions: sessions.map((session: Session) => session?.id),
-      })
-      authenticationStore.setAuthSubscription(subscription)
-    }
-    if (sessionMutationResult) {
-      authenticationStore.setAuthSession(sessionMutationResult)
-    }
-
-    _props.navigation.navigate("LoggedIn")
+    authenticationStore.setAuthSession(session)
+    _props.navigation.reset({
+      index: 0,
+      routes: [{ name: "LoggedIn" }],
+    })
   }
 
   const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
@@ -238,14 +164,12 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
   return (
     <Screen preset="scroll" contentContainerStyle={$screenContentContainer}>
       <View>
-        <AspectRatioImage source={logoWithText} width={180} style={$logo} />
+        <AspectRatioImage source={logoWithText} width={170} style={$logo} />
 
         <Text preset="subheading" style={$enterDetails}>
           Login to your account
         </Text>
       </View>
-
-      {attemptsCount > 2 && <Text tx="loginScreen.hint" size="sm" weight="light" style={$hint} />}
 
       <TextField
         value={authEmail}
@@ -255,8 +179,8 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
         autoComplete="email"
         autoCorrect={false}
         keyboardType="email-address"
-        labelTx="loginScreen.emailFieldLabel"
-        placeholderTx="loginScreen.emailFieldPlaceholder"
+        label="Email"
+        placeholder="Email"
         // helper={error}
         // status={error ? "error" : undefined}
         onSubmitEditing={() => authPasswordInput.current?.focus()}
@@ -271,8 +195,8 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
         autoComplete="password"
         autoCorrect={false}
         secureTextEntry={isAuthPasswordHidden}
-        labelTx="loginScreen.passwordFieldLabel"
-        placeholderTx="loginScreen.passwordFieldPlaceholder"
+        label="Password"
+        placeholder="Password"
         onSubmitEditing={handleLoginEmailPw}
         RightAccessory={PasswordRightAccessory}
       />
@@ -280,18 +204,17 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
       <View
         style={{
           flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
+          justifyContent: "center",
           marginBottom: spacing.lg,
         }}
       >
-        <Toggle
+        {/* <Toggle
           containerStyle={$checkboxContainer}
           value={isTermsAccepted}
           onValueChange={setIsTermsAccepted}
           variant="checkbox"
           label={<Text style={$checkboxText}>Remember me</Text>}
-        />
+        /> */}
         <TouchableOpacity
           onPress={() => {
             navigation.navigate("ForgotPassword")

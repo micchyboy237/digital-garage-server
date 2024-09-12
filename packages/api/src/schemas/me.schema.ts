@@ -56,7 +56,7 @@ export const documentSchema = z.object({
 })
 
 export const getVehicleOwnershipSchema = z.object({
-  vehicleId: z.string(),
+  ownershipId: z.string(),
 })
 
 export const transferSchema = z.object({
@@ -71,3 +71,19 @@ export const respondTransferSchema = z.object({
   transferId: z.string(),
   status: z.enum(["ACCEPTED", "REJECTED"]),
 })
+
+export const getVehicleGalleryPostSchema = z.object({
+  ownershipId: z.string().optional(),
+})
+
+export const upsertVehicleGalleryPostSchema = z
+  .object({
+    id: z.string().optional(),
+    title: z.string().optional(),
+    description: z.string().optional(),
+    ownershipId: z.string(),
+  })
+  .refine((data) => data.id || data.title, {
+    message: "Title is required if id is undefined",
+    path: ["title"], // Error will be shown under `title` path
+  })

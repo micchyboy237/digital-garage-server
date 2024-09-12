@@ -1,9 +1,10 @@
 import auth from "@react-native-firebase/auth"
+import { Account } from "app/models/account/Account"
 import { Session } from "app/models/session/Session"
 import { User } from "app/models/user/User"
 import { AuthError } from "app/screens/auth/errors/authErrors"
 import { LoginErrorCodes } from "app/screens/auth/errors/errors"
-import { UseAuthEmailArgs, UseAuthEmailPwReturn } from "app/screens/auth/types"
+import { AuthState, UseAuthEmailArgs, UseAuthEmailPwReturn } from "app/screens/auth/types"
 import { generateFingerprint } from "app/screens/auth/utils"
 import { jwtDecode } from "jwt-decode"
 import { useState } from "react"
@@ -14,13 +15,10 @@ export const useEmailPasswordAuth = (args?: UseAuthEmailArgs): UseAuthEmailPwRet
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [error, setError] = useState<AuthError | null>(null)
-  const [data, setData] = useState<{ user: User | null; session: Session | null } | null>(null)
+  const [data, setData] = useState<AuthState | null>(null)
 
-  const signInAsync = async (
-    email: string,
-    password: string,
-  ): Promise<{ user: User | null; session: Session | null }> => {
-    let authReturn = {} as { user: User | null; session: Session | null }
+  const signInAsync = async (email: string, password: string): Promise<AuthState> => {
+    let authReturn = {} as AuthState
     setLoading(true)
     setError(null)
 
@@ -36,21 +34,26 @@ export const useEmailPasswordAuth = (args?: UseAuthEmailArgs): UseAuthEmailPwRet
       const derivedUser = {
         id: userCredential.user.uid,
         email: userCredential.user.email,
-        firebaseUid: userCredential.user.uid,
-        isEmailVerified: userCredential.user.emailVerified,
       } as User
+
+      const derivedAccount = {
+        firebaseUid: userCredential.user.uid,
+        provider: "APPLE",
+        isEmailVerified: userCredential.user.emailVerified,
+        userId: userCredential.user.uid,
+      } as Account
 
       const deviceFingerprint = await generateFingerprint(derivedUser.id)
       const derivedSession = {
         token: idTokenResult.token,
         expiresAt: new Date(idTokenResult.expirationTime),
-        provider: "EMAIL_PASSWORD",
         deviceFingerprint,
         userId: userCredential.user.uid,
       } as Session
 
       authReturn = {
         user: derivedUser,
+        account: derivedAccount,
         session: derivedSession,
       }
 
@@ -60,6 +63,7 @@ export const useEmailPasswordAuth = (args?: UseAuthEmailArgs): UseAuthEmailPwRet
 
       onSignIn?.({
         user: derivedUser,
+        account: derivedAccount,
         session: derivedSession,
       })
     } catch (error: any) {
@@ -73,11 +77,8 @@ export const useEmailPasswordAuth = (args?: UseAuthEmailArgs): UseAuthEmailPwRet
     return authReturn
   }
 
-  const registerAsync = async (
-    email: string,
-    password: string,
-  ): Promise<{ user: User | null; session: Session | null }> => {
-    let authReturn = {} as { user: User | null; session: Session | null }
+  const registerAsync = async (email: string, password: string): Promise<AuthState> => {
+    let authReturn = {} as AuthState
     setLoading(true)
     setError(null)
 
@@ -95,17 +96,19 @@ export const useEmailPasswordAuth = (args?: UseAuthEmailArgs): UseAuthEmailPwRet
       const derivedUser = {
         id: userCredential.user.uid,
         email: userCredential.user.email,
-        firebaseUid: userCredential.user.uid,
-        profile: undefined,
-        subscription: undefined,
-        accountStatus: "ONBOARDING",
       } as User
+
+      const derivedAccount = {
+        firebaseUid: userCredential.user.uid,
+        provider: "EMAIL_PASSWORD",
+        isEmailVerified: userCredential.user.emailVerified,
+        userId: userCredential.user.uid,
+      } as Account
 
       const deviceFingerprint = await generateFingerprint(derivedUser.id)
       const derivedSession = {
         token: idTokenResult.token,
         expiresAt: new Date(idTokenResult.expirationTime),
-        provider: "EMAIL_PASSWORD",
         deviceFingerprint,
         userId: userCredential.user.uid,
       } as Session
@@ -124,6 +127,7 @@ export const useEmailPasswordAuth = (args?: UseAuthEmailArgs): UseAuthEmailPwRet
 
       onRegister?.({
         user: derivedUser,
+        account: derivedAccount,
         session: derivedSession,
       })
     } catch (error: any) {

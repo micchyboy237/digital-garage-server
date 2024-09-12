@@ -1,5 +1,5 @@
+import { VehicleOwnership } from "app/models/vehicle-ownership/VehicleOwnership"
 import { trpc } from "app/services/api"
-import { VehicleOwnership } from "app/types"
 import { useEffect, useState } from "react"
 
 interface UseVehicleOwnershipsReturn {

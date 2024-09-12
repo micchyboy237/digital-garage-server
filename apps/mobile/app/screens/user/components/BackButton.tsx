@@ -1,5 +1,5 @@
 import { MaterialIcons } from "@expo/vector-icons"
-import { colors, spacing } from "app/theme"
+import { colors } from "app/theme"
 import React from "react"
 import { ViewStyle } from "react-native"
 import { BorderlessButton, BorderlessButtonProps } from "react-native-gesture-handler"
@@ -16,12 +16,12 @@ export function BackButton({ color, size = 34, ...rest }: Props) {
       style={[
         $borderButton,
         {
-          left: -spacing.md / 2,
+          left: -size / 3,
         },
         rest.style,
       ]}
     >
-      <MaterialIcons name="chevron-left" size={size} color={color || colors.text} />
+      <MaterialIcons name="keyboard-arrow-left" size={size} color={color || colors.text} />
     </BorderlessButton>
   )
 }

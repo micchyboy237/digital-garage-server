@@ -275,6 +275,7 @@ const $container: ViewStyle = {
 
 const $title: TextStyle = {
   textAlign: "center",
+  fontSize: 22,
 }
 
 const $actionTextContainer: ViewStyle = {

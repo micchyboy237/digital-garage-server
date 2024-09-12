@@ -3,21 +3,22 @@ import * as ExpoImagePicker from "expo-image-picker"
 
 export const pickImage = async (
   options?: ExpoImagePicker.ImagePickerOptions,
-): Promise<ExpoImagePicker.ImagePickerAsset | null> => {
+): Promise<ExpoImagePicker.ImagePickerAsset[] | null> => {
   const result = await ExpoImagePicker.launchImageLibraryAsync({
     mediaTypes: ExpoImagePicker.MediaTypeOptions.Images,
-    allowsMultipleSelection: false,
+    allowsMultipleSelection: false, // Default to single selection
     allowsEditing: false,
     quality: 1,
-    ...options,
+    ...options, // Override with provided options
   })
 
   if (!result.canceled) {
-    const fileAsset = result.assets[0]
-    return fileAsset
+    const fileAssets = result.assets
+
+    return fileAssets
   }
 
-  return null
+  return null // Return null if no image is selected
 }
 
 export const pickVideo = async (

@@ -1,4 +1,3 @@
-import { Session } from "@boilerplate/database"
 import { TRPCError } from "@trpc/server"
 import { userController } from "../controllers/user.controller"
 import { ValidationException } from "../exceptions"
@@ -17,11 +16,12 @@ import { createOrUpdateAccount, createOrUpdateSession, createOrUpdateUser } from
 import { publicProcedure, t } from "../trpc"
 
 export const authRouter = t.router({
-  loginOrRegister: publicProcedure.input(loginOrRegisterSchema).mutation(async ({ ctx, input }): Promise<Session> => {
+  loginOrRegister: publicProcedure.input(loginOrRegisterSchema).mutation(async ({ ctx, input }) => {
     try {
       const user = await createOrUpdateUser(input)
       const account = await createOrUpdateAccount(input, user.id)
-      return await createOrUpdateSession({ ...input, accountId: account.id }, user.id)
+      const session = await createOrUpdateSession({ ...input, accountId: account.id }, user.id)
+      return { user, account, session }
     } catch (error) {
       if (error instanceof ValidationException) {
         throw new TRPCError({ code: "BAD_REQUEST", message: error.message })

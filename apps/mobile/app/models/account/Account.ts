@@ -1,9 +1,12 @@
+import { AuthProvider } from "app/models/account/AuthProvider"
 import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
-import { AuthProvider } from "./AuthProvider"
 
 export const AccountModel = types.model("Account", {
   id: types.string,
-  provider: types.enumeration<readonly string[]>(Object.values(AuthProvider)),
+  provider: types.enumeration<keyof typeof AuthProvider>(
+    "AuthProvider",
+    Object.keys(AuthProvider) as (keyof typeof AuthProvider)[],
+  ),
   userId: types.string,
   firebaseUid: types.string,
   isEmailVerified: types.boolean,

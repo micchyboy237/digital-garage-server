@@ -1,21 +1,11 @@
 import auth from "@react-native-firebase/auth"
 import { GoogleSignin } from "@react-native-google-signin/google-signin"
-import { Profile } from "app/models/profile/Profile"
+import { Account } from "app/models/account/Account"
 import { Session } from "app/models/session/Session"
 import { User } from "app/models/user/User"
-import { UseAuthArgs, UseAuthReturn } from "app/screens/auth/types"
+import { AuthState, UseAuthArgs, UseAuthReturn } from "app/screens/auth/types"
 import { generateFingerprint } from "app/screens/auth/utils"
 import { useState } from "react"
-
-const generateId = (): string => {
-  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-  let result = ""
-  for (let i = 0; i < 12; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length)
-    result += characters[randomIndex]
-  }
-  return result
-}
 
 GoogleSignin.configure({
   scopes: ["profile", "email"],
@@ -31,13 +21,8 @@ export const useGoogleAuth = (args?: UseAuthArgs): UseAuthReturn => {
   const signInAsync = async (): Promise<{
     user: User | null
     session: Session | null
-    profile: Profile | null
   }> => {
-    let googleAuthReturn = {} as {
-      user: User | null
-      session: Session | null
-      profile: Profile | null
-    }
+    let googleAuthReturn = {} as AuthState
     setLoading(true)
 
     try {
@@ -53,29 +38,29 @@ export const useGoogleAuth = (args?: UseAuthArgs): UseAuthReturn => {
       const derivedUser = {
         id: userCredential.user.uid,
         email: userCredential.user.email,
-        firebaseUid: userCredential.user.uid,
-        isEmailVerified: userCredential.user.emailVerified,
+        firstName: userCredential.additionalUserInfo?.profile?.given_name,
+        lastName: userCredential.additionalUserInfo?.profile?.family_name,
       } as User
+
+      const derivedAccount = {
+        firebaseUid: userCredential.user.uid,
+        provider: "APPLE",
+        isEmailVerified: userCredential.user.emailVerified,
+        userId: userCredential.user.uid,
+      } as Account
 
       const deviceFingerprint = await generateFingerprint(derivedUser.id)
       const derivedSession = {
         token: idTokenResult.token,
         expiresAt: new Date(idTokenResult.expirationTime),
-        provider: "GOOGLE",
         deviceFingerprint,
         userId: userCredential.user.uid,
       } as Session
 
-      const derivedProfile = {
-        firstName: userCredential.additionalUserInfo?.profile?.given_name,
-        lastName: userCredential.additionalUserInfo?.profile?.family_name,
-        userId: userCredential.user.uid,
-      } as Profile
-
       googleAuthReturn = {
         user: derivedUser,
+        account: derivedAccount,
         session: derivedSession,
-        profile: derivedProfile,
       }
 
       setSession(derivedSession)
@@ -87,7 +72,7 @@ export const useGoogleAuth = (args?: UseAuthArgs): UseAuthReturn => {
       onSignIn?.({
         user: derivedUser,
         session: derivedSession,
-        profile: derivedProfile,
+        account: derivedAccount,
       })
     } catch (error) {
       console.error("\nAUTH:signInAsync:error\n", error)

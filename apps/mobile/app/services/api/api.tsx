@@ -90,6 +90,9 @@ const customLink = trpcLink({
     console.error("Result:", result)
     if (!result || result.code === "UNAUTHORIZED") {
       console.log("Logging out due to unauthorized request")
+      if (result?.message) {
+        console.error("Error Message:", result.message)
+      }
       storage.clear()
       navigationRef.reset({
         index: 0,
@@ -104,12 +107,7 @@ export const createTrpcClient = (rootStore: RootStore) =>
     links: [
       customLink,
       httpLink({
-        transformer: {
-          input: superjson,
-          output: superjson,
-          serialize: superjson.serialize,
-          deserialize: superjson.deserialize,
-        },
+        transformer: superjson,
         url: Config.API_TRPC_URL,
         headers: async () => {
           const token = rootStore.authenticationStore.authSession?.token

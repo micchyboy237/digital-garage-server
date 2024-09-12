@@ -1,10 +1,12 @@
 import { ApiResponseDvla } from "app/screens/digital-garage/screens/dashboard/vehicle-form/types"
+import { clientUtils } from "app/services/api"
 import { apiClient } from "app/services/api/apiClient"
 
 // Specific function for uploading vehicle details using the generic API client
 export const uploadVehicleDetails = async (formData: FormData) => {
   // return await apiClient("/upload/uploadVehicleDetails", "POST", formData)
-  return await apiClient("/trpc/me.addVehicle", "POST", formData)
+  await apiClient("/trpc/me.upsertVehicle", "POST", formData)
+  await clientUtils.me.getVehicleOwnerships.invalidate()
 }
 
 // Specific function for uploading profile details using the generic API client

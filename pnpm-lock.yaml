@@ -21,9 +21,6 @@ importers:
       prettier-plugin-tailwindcss:
         specifier: ^0.5.0
         version: 0.5.14(prettier@3.3.2)
-      prisma-docs-generator:
-        specifier: ^0.8.0
-        version: 0.8.0
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@18.19.39)(typescript@5.3.3)
@@ -364,9 +361,6 @@ importers:
       dayjs:
         specifier: 1.11.10
         version: 1.11.10
-      express:
-        specifier: ^4.19.2
-        version: 4.19.2
       google-auth-library:
         specifier: ^9.11.0
         version: 9.14.0
@@ -376,6 +370,9 @@ importers:
       kysely:
         specifier: 0.27.4
         version: 0.27.4
+      next:
+        specifier: ^14.2.9
+        version: 14.2.9(@babel/core@7.25.2)(@opentelemetry/api@1.4.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       node-fetch:
         specifier: ^3.3.2
         version: 3.3.2
@@ -404,15 +401,15 @@ importers:
       '@types/cors':
         specifier: ^2.8.17
         version: 2.8.17
-      '@types/express':
-        specifier: ^4.17.21
-        version: 4.17.21
       '@types/jest':
         specifier: ^29.5.12
         version: 29.5.12
       '@types/jsonwebtoken':
         specifier: 9.0.5
         version: 9.0.5
+      '@types/next':
+        specifier: ^9.0.0
+        version: 9.0.0(@babel/core@7.25.2)(@opentelemetry/api@1.4.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@types/node':
         specifier: ^18.15.3
         version: 18.19.39
@@ -595,18 +592,6 @@ importers:
       prisma:
         specifier: ^5.16.2
         version: 5.19.0
-      prisma-class-generator:
-        specifier: ^0.2.9
-        version: 0.2.11(prisma@5.19.0)
-      prisma-generator-express:
-        specifier: ^1.16.1
-        version: 1.16.5(prisma@5.19.0)
-      prisma-kysely:
-        specifier: ^1.8.0
-        version: 1.8.0
-      prisma-trpc-generator:
-        specifier: ^1.4.1
-        version: 1.4.1(prisma@5.19.0)
     devDependencies:
       '@mermaid-js/mermaid-cli':
         specifier: ^10.9.1
@@ -617,6 +602,9 @@ importers:
       dotenv-cli:
         specifier: ^7.1.0
         version: 7.4.2
+      prisma-class-generator:
+        specifier: ^0.2.9
+        version: 0.2.11(prisma@5.19.0)
       prisma-dbml-generator:
         specifier: ^0.12.0
         version: 0.12.0
@@ -626,9 +614,18 @@ importers:
       prisma-erd-generator:
         specifier: ^1.11.2
         version: 1.11.2(@prisma/client@5.19.0(prisma@5.19.0))(typescript@5.3.3)
+      prisma-generator-express:
+        specifier: ^1.16.1
+        version: 1.16.5(prisma@5.19.0)
       prisma-generator-fake-data:
         specifier: ^0.14.2
         version: 0.14.2(prisma@5.19.0)
+      prisma-kysely:
+        specifier: ^1.8.0
+        version: 1.8.0
+      prisma-trpc-generator:
+        specifier: ^1.4.1
+        version: 1.4.1(prisma@5.19.0)
       prisma-zod-generator:
         specifier: ^0.8.13
         version: 0.8.13(prisma@5.19.0)
@@ -2618,6 +2615,63 @@ packages:
     resolution: {integrity: sha512-GTPkYf1meO2UXXIrz/SIDFWz+P4kXo2PTt36LYh/oNxV1PieYi7ZgenQk4IV0ut71Je3Z8ZoNZ8Tr7v2c1X1pg==}
     engines: {node: '>=16'}
 
+  '@next/env@14.2.9':
+    resolution: {integrity: sha512-hnDAoDPMii31V0ivibI8p6b023jOF1XblWTVjsDUoZKwnZlaBtJFZKDwFqi22R8r9i6W08dThUWU7Bsh2Rg8Ww==}
+
+  '@next/swc-darwin-arm64@14.2.9':
+    resolution: {integrity: sha512-/kfQifl3uLYi3DlwFlzCkgxe6fprJNLzzTUFknq3M5wGYicDIbdGlxUl6oHpVLJpBB/CBY3Y//gO6alz/K4NWA==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@next/swc-darwin-x64@14.2.9':
+    resolution: {integrity: sha512-tK/RyhCmOCiXQ9IVdFrBbZOf4/1+0RSuJkebXU2uMEsusS51TjIJO4l8ZmEijH9gZa0pJClvmApRHi7JuBqsRw==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [darwin]
+
+  '@next/swc-linux-arm64-gnu@14.2.9':
+    resolution: {integrity: sha512-tS5eqwsp2nO7mzywRUuFYmefNZsUKM/mTG3exK2jIHv9TEVklE1SByB1KMhFkqlit1PxS9YK1tV8BOV90Wpbrw==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+
+  '@next/swc-linux-arm64-musl@14.2.9':
+    resolution: {integrity: sha512-8svpeTFNAMTUMKQbEzE8qRAwl9o7mNBv7LR1bmSkQvo1oy4WrNyZbhWsldOiKrc4mZ5dfQkGYsI9T75mIFMfeA==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+
+  '@next/swc-linux-x64-gnu@14.2.9':
+    resolution: {integrity: sha512-0HNulLWpKTB7H5BhHCkEhcRAnWUHeAYCftrrGw3QC18+ZywTdAoPv/zEqKy/0adqt+ks4JDdlgSQ1lNKOKjo0A==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+
+  '@next/swc-linux-x64-musl@14.2.9':
+    resolution: {integrity: sha512-hhVFViPHLAVUJRNtwwm609p9ozWajOmRvzOZzzKXgiVGwx/CALxlMUeh+M+e0Zj6orENhWLZeilOPHpptuENsA==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+
+  '@next/swc-win32-arm64-msvc@14.2.9':
+    resolution: {integrity: sha512-p/v6XlOdrk06xfN9z4evLNBqftVQUWiyduQczCwSj7hNh8fWTbzdVxsEiNOcajMXJbQiaX/ZzZdFgKVmmJnnGQ==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [win32]
+
+  '@next/swc-win32-ia32-msvc@14.2.9':
+    resolution: {integrity: sha512-IcW9dynWDjMK/0M05E3zopbRen7v0/yEaMZbHFOSS1J/w+8YG3jKywOGZWNp/eCUVtUUXs0PW+7Lpz8uLu+KQA==}
+    engines: {node: '>= 10'}
+    cpu: [ia32]
+    os: [win32]
+
+  '@next/swc-win32-x64-msvc@14.2.9':
+    resolution: {integrity: sha512-gcbpoXyWZdVOBgNa5BRzynrL5UR1nb2ZT38yKgnphYU9UHjeecnylMHntrQiMg/QtONDcJPFC/PmsS47xIRYoA==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [win32]
+
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -3920,6 +3974,12 @@ packages:
     peerDependencies:
       '@svgr/core': '*'
 
+  '@swc/counter@0.1.3':
+    resolution: {integrity: sha512-e2BR4lsJkkRlKZ/qCHPw9ZaSxc0MVUd7gtbtaB7aMvHeJVYe8sOB8DBZkP2DtISHGSku9sCK6T6cnY0CtXrOCQ==}
+
+  '@swc/helpers@0.5.5':
+    resolution: {integrity: sha512-KGYxvIOXcceOAbEk4bi/dVLEK9z8sZ0uBB3Il5b1rhfClSpcX0yfRO0KmTkqR2cnQDymwLB+25ZyMzICg/cm/A==}
+
   '@tailwindcss/forms@0.5.7':
     resolution: {integrity: sha512-QE7X69iQI+ZXwldE+rzasvbJiyV/ju1FGHH0Qn2W3FKbuYtqp8LKcy6iSw79fVUT5/Vvf+0XgLCeYVG+UV6hOw==}
     peerDependencies:
@@ -4105,6 +4165,10 @@ packages:
 
   '@types/multer@1.4.12':
     resolution: {integrity: sha512-pQ2hoqvXiJt2FP9WQVLPRO+AmiIm/ZYkavPlIQnx282u4ZrVdztx0pkh3jjpQt0Kz+YI0YhSG264y08UJKoUQg==}
+
+  '@types/next@9.0.0':
+    resolution: {integrity: sha512-gnBXM8rP1mnCgT1uE2z8SnpFTKRWReJlhbZLZkOLq/CH1ifvTNwjIVtXvsywTy1dwVklf+y/MB0Eh6FOa94yrg==}
+    deprecated: This is a stub types definition. next provides its own type definitions, so you do not need this installed.
 
   '@types/node-forge@1.3.11':
     resolution: {integrity: sha512-FQx220y22OKNTqaByeBGqHWYz4cl94tpcxeFdvBo3wjG6XPBuZ0BNgNZRV5J5TFmmcsJ4IzsLkmGRiQbnYsBEQ==}
@@ -4842,6 +4906,9 @@ packages:
   cli-truncate@2.1.0:
     resolution: {integrity: sha512-n8fOixwDD6b/ObinzTrp1ZKFzbgvKZvuz/TvejnLn1aQfC6r52XEx85FmuC+3HI+JM7coBRXUvNqEU2PHVrHpg==}
     engines: {node: '>=8'}
+
+  client-only@0.0.1:
+    resolution: {integrity: sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA==}
 
   cliui@6.0.0:
     resolution: {integrity: sha512-t6wbgtoCXvAzst7QgXxJYqPt0usEfbgQdftEPbLL/cvv6HPE5VgvqCuAIDR0NgU52ds6rFwqrgakNLrHEjCbrQ==}
@@ -7854,6 +7921,24 @@ packages:
     resolution: {integrity: sha512-md4cGoxuT4T4d/HDOXbrUHkTKrp/vp+m3aOA7XXVYwNsUNMK49g3SQicTSeV5GIz/5QVGAeYRAOlyp9OvlgsYA==}
     engines: {node: '>=10'}
 
+  next@14.2.9:
+    resolution: {integrity: sha512-3CzBNo6BuJnRjcQvRw+irnU1WiuJNZEp+dkzkt91y4jeIDN/Emg95F+takSYiLpJ/HkxClVQRyqiTwYce5IVqw==}
+    engines: {node: '>=18.17.0'}
+    hasBin: true
+    peerDependencies:
+      '@opentelemetry/api': ^1.1.0
+      '@playwright/test': ^1.41.2
+      react: ^18.2.0
+      react-dom: ^18.2.0
+      sass: ^1.3.0
+    peerDependenciesMeta:
+      '@opentelemetry/api':
+        optional: true
+      '@playwright/test':
+        optional: true
+      sass:
+        optional: true
+
   nice-try@1.0.5:
     resolution: {integrity: sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==}
 
@@ -8328,6 +8413,10 @@ packages:
 
   postcss-value-parser@4.2.0:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
+
+  postcss@8.4.31:
+    resolution: {integrity: sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==}
+    engines: {node: ^10 || ^12 || >=14}
 
   postcss@8.4.39:
     resolution: {integrity: sha512-0vzE+lAiG7hZl1/9I8yzKLx3aR9Xbof3fBHKunvMfOCYAtMhrsnccJY2iTURb9EZd5+pLuiNV9/c/GZJOHsgIw==}
@@ -9365,6 +9454,19 @@ packages:
 
   stubs@3.0.0:
     resolution: {integrity: sha512-PdHt7hHUJKxvTCgbKX9C1V/ftOcjJQgz8BZwNfV5c4B6dcGqlpelTbJ999jBGZ2jYiPAwcX5dP6oBwVlBlUbxw==}
+
+  styled-jsx@5.1.1:
+    resolution: {integrity: sha512-pW7uC1l4mBZ8ugbiZrcIsiIvVx1UmTfw7UkC3Um2tmfUq9Bhk8IiyEIPl6F8agHgjzku6j0xQEZbfA5uSgSaCw==}
+    engines: {node: '>= 12.0.0'}
+    peerDependencies:
+      '@babel/core': '*'
+      babel-plugin-macros: '*'
+      react: '>= 16.8.0 || 17.x.x || ^18.0.0-0'
+    peerDependenciesMeta:
+      '@babel/core':
+        optional: true
+      babel-plugin-macros:
+        optional: true
 
   styleq@0.1.3:
     resolution: {integrity: sha512-3ZUifmCDCQanjeej1f6kyl/BeP/Vae5EYkQ9iJfUm/QwZvlgnZzyflqAsAWYURdtea8Vkvswu2GrC57h3qffcA==}
@@ -12176,7 +12278,7 @@ snapshots:
       rimraf: 2.7.1
       sudo-prompt: 8.2.5
       tmp: 0.0.33
-      tslib: 2.6.3
+      tslib: 2.7.0
     transitivePeerDependencies:
       - supports-color
 
@@ -12342,7 +12444,7 @@ snapshots:
       '@firebase/app-compat': 0.2.35
       '@firebase/component': 0.6.7
       '@firebase/util': 1.9.6
-      tslib: 2.6.3
+      tslib: 2.7.0
     transitivePeerDependencies:
       - '@firebase/app'
 
@@ -12355,7 +12457,7 @@ snapshots:
       '@firebase/installations': 0.6.7(@firebase/app@0.10.5)
       '@firebase/logger': 0.4.2
       '@firebase/util': 1.9.6
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@firebase/app-check-compat@0.3.11(@firebase/app-compat@0.2.35)(@firebase/app@0.10.5)':
     dependencies:
@@ -12365,7 +12467,7 @@ snapshots:
       '@firebase/component': 0.6.7
       '@firebase/logger': 0.4.2
       '@firebase/util': 1.9.6
-      tslib: 2.6.3
+      tslib: 2.7.0
     transitivePeerDependencies:
       - '@firebase/app'
 
@@ -12379,7 +12481,7 @@ snapshots:
       '@firebase/component': 0.6.7
       '@firebase/logger': 0.4.2
       '@firebase/util': 1.9.6
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@firebase/app-compat@0.2.35':
     dependencies:
@@ -12387,7 +12489,7 @@ snapshots:
       '@firebase/component': 0.6.7
       '@firebase/logger': 0.4.2
       '@firebase/util': 1.9.6
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@firebase/app-types@0.9.2': {}
 
@@ -12397,7 +12499,7 @@ snapshots:
       '@firebase/logger': 0.4.2
       '@firebase/util': 1.9.6
       idb: 7.1.1
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@firebase/auth-compat@0.5.9(@firebase/app-compat@0.2.35)(@firebase/app-types@0.9.2)(@firebase/app@0.10.5)(@react-native-async-storage/async-storage@1.23.1(react-native@0.74.5(@babel/core@7.25.2)(@babel/preset-env@7.25.3(@babel/core@7.25.2))(@types/react@18.2.79)(react@18.2.0)))':
     dependencies:
@@ -12406,7 +12508,7 @@ snapshots:
       '@firebase/auth-types': 0.12.2(@firebase/app-types@0.9.2)(@firebase/util@1.9.6)
       '@firebase/component': 0.6.7
       '@firebase/util': 1.9.6
-      tslib: 2.6.3
+      tslib: 2.7.0
       undici: 5.28.4
     transitivePeerDependencies:
       - '@firebase/app'
@@ -12426,7 +12528,7 @@ snapshots:
       '@firebase/component': 0.6.7
       '@firebase/logger': 0.4.2
       '@firebase/util': 1.9.6
-      tslib: 2.6.3
+      tslib: 2.7.0
       undici: 5.28.4
     optionalDependencies:
       '@react-native-async-storage/async-storage': 1.23.1(react-native@0.74.5(@babel/core@7.25.2)(@babel/preset-env@7.25.3(@babel/core@7.25.2))(@types/react@18.2.79)(react@18.2.0))
@@ -12434,7 +12536,7 @@ snapshots:
   '@firebase/component@0.6.7':
     dependencies:
       '@firebase/util': 1.9.6
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@firebase/component@0.6.8':
     dependencies:
@@ -12448,7 +12550,7 @@ snapshots:
       '@firebase/database-types': 1.0.3
       '@firebase/logger': 0.4.2
       '@firebase/util': 1.9.6
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@firebase/database-compat@1.0.7':
     dependencies:
@@ -12477,7 +12579,7 @@ snapshots:
       '@firebase/logger': 0.4.2
       '@firebase/util': 1.9.6
       faye-websocket: 0.11.4
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@firebase/database@1.0.7':
     dependencies:
@@ -12496,7 +12598,7 @@ snapshots:
       '@firebase/firestore': 4.6.3(@firebase/app@0.10.5)
       '@firebase/firestore-types': 3.0.2(@firebase/app-types@0.9.2)(@firebase/util@1.9.6)
       '@firebase/util': 1.9.6
-      tslib: 2.6.3
+      tslib: 2.7.0
     transitivePeerDependencies:
       - '@firebase/app'
       - '@firebase/app-types'
@@ -12515,7 +12617,7 @@ snapshots:
       '@firebase/webchannel-wrapper': 1.0.0
       '@grpc/grpc-js': 1.9.15
       '@grpc/proto-loader': 0.7.13
-      tslib: 2.6.3
+      tslib: 2.7.0
       undici: 5.28.4
 
   '@firebase/functions-compat@0.3.11(@firebase/app-compat@0.2.35)(@firebase/app@0.10.5)':
@@ -12525,7 +12627,7 @@ snapshots:
       '@firebase/functions': 0.11.5(@firebase/app@0.10.5)
       '@firebase/functions-types': 0.6.2
       '@firebase/util': 1.9.6
-      tslib: 2.6.3
+      tslib: 2.7.0
     transitivePeerDependencies:
       - '@firebase/app'
 
@@ -12539,7 +12641,7 @@ snapshots:
       '@firebase/component': 0.6.7
       '@firebase/messaging-interop-types': 0.2.2
       '@firebase/util': 1.9.6
-      tslib: 2.6.3
+      tslib: 2.7.0
       undici: 5.28.4
 
   '@firebase/installations-compat@0.2.7(@firebase/app-compat@0.2.35)(@firebase/app-types@0.9.2)(@firebase/app@0.10.5)':
@@ -12549,7 +12651,7 @@ snapshots:
       '@firebase/installations': 0.6.7(@firebase/app@0.10.5)
       '@firebase/installations-types': 0.5.2(@firebase/app-types@0.9.2)
       '@firebase/util': 1.9.6
-      tslib: 2.6.3
+      tslib: 2.7.0
     transitivePeerDependencies:
       - '@firebase/app'
       - '@firebase/app-types'
@@ -12564,7 +12666,7 @@ snapshots:
       '@firebase/component': 0.6.7
       '@firebase/util': 1.9.6
       idb: 7.1.1
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@firebase/logger@0.4.2':
     dependencies:
@@ -12576,7 +12678,7 @@ snapshots:
       '@firebase/component': 0.6.7
       '@firebase/messaging': 0.12.9(@firebase/app@0.10.5)
       '@firebase/util': 1.9.6
-      tslib: 2.6.3
+      tslib: 2.7.0
     transitivePeerDependencies:
       - '@firebase/app'
 
@@ -12590,7 +12692,7 @@ snapshots:
       '@firebase/messaging-interop-types': 0.2.2
       '@firebase/util': 1.9.6
       idb: 7.1.1
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@firebase/performance-compat@0.2.7(@firebase/app-compat@0.2.35)(@firebase/app@0.10.5)':
     dependencies:
@@ -12600,7 +12702,7 @@ snapshots:
       '@firebase/performance': 0.6.7(@firebase/app@0.10.5)
       '@firebase/performance-types': 0.2.2
       '@firebase/util': 1.9.6
-      tslib: 2.6.3
+      tslib: 2.7.0
     transitivePeerDependencies:
       - '@firebase/app'
 
@@ -12613,7 +12715,7 @@ snapshots:
       '@firebase/installations': 0.6.7(@firebase/app@0.10.5)
       '@firebase/logger': 0.4.2
       '@firebase/util': 1.9.6
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@firebase/remote-config-compat@0.2.7(@firebase/app-compat@0.2.35)(@firebase/app@0.10.5)':
     dependencies:
@@ -12623,7 +12725,7 @@ snapshots:
       '@firebase/remote-config': 0.4.7(@firebase/app@0.10.5)
       '@firebase/remote-config-types': 0.3.2
       '@firebase/util': 1.9.6
-      tslib: 2.6.3
+      tslib: 2.7.0
     transitivePeerDependencies:
       - '@firebase/app'
 
@@ -12636,7 +12738,7 @@ snapshots:
       '@firebase/installations': 0.6.7(@firebase/app@0.10.5)
       '@firebase/logger': 0.4.2
       '@firebase/util': 1.9.6
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@firebase/storage-compat@0.3.8(@firebase/app-compat@0.2.35)(@firebase/app-types@0.9.2)(@firebase/app@0.10.5)':
     dependencies:
@@ -12645,7 +12747,7 @@ snapshots:
       '@firebase/storage': 0.12.5(@firebase/app@0.10.5)
       '@firebase/storage-types': 0.8.2(@firebase/app-types@0.9.2)(@firebase/util@1.9.6)
       '@firebase/util': 1.9.6
-      tslib: 2.6.3
+      tslib: 2.7.0
     transitivePeerDependencies:
       - '@firebase/app'
       - '@firebase/app-types'
@@ -12660,12 +12762,12 @@ snapshots:
       '@firebase/app': 0.10.5
       '@firebase/component': 0.6.7
       '@firebase/util': 1.9.6
-      tslib: 2.6.3
+      tslib: 2.7.0
       undici: 5.28.4
 
   '@firebase/util@1.9.6':
     dependencies:
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@firebase/util@1.9.7':
     dependencies:
@@ -12679,7 +12781,7 @@ snapshots:
       '@firebase/component': 0.6.7
       '@firebase/logger': 0.4.2
       '@firebase/util': 1.9.6
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@firebase/webchannel-wrapper@1.0.0': {}
 
@@ -13153,6 +13255,35 @@ snapshots:
     dependencies:
       chevrotain: 10.5.0
       lilconfig: 2.1.0
+
+  '@next/env@14.2.9': {}
+
+  '@next/swc-darwin-arm64@14.2.9':
+    optional: true
+
+  '@next/swc-darwin-x64@14.2.9':
+    optional: true
+
+  '@next/swc-linux-arm64-gnu@14.2.9':
+    optional: true
+
+  '@next/swc-linux-arm64-musl@14.2.9':
+    optional: true
+
+  '@next/swc-linux-x64-gnu@14.2.9':
+    optional: true
+
+  '@next/swc-linux-x64-musl@14.2.9':
+    optional: true
+
+  '@next/swc-win32-arm64-msvc@14.2.9':
+    optional: true
+
+  '@next/swc-win32-ia32-msvc@14.2.9':
+    optional: true
+
+  '@next/swc-win32-x64-msvc@14.2.9':
+    optional: true
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -15206,6 +15337,13 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
+  '@swc/counter@0.1.3': {}
+
+  '@swc/helpers@0.5.5':
+    dependencies:
+      '@swc/counter': 0.1.3
+      tslib: 2.7.0
+
   '@tailwindcss/forms@0.5.7(tailwindcss@3.4.4(ts-node@10.9.2(@types/node@18.19.39)(typescript@5.3.3)))':
     dependencies:
       mini-svg-data-uri: 1.4.4
@@ -15419,6 +15557,18 @@ snapshots:
   '@types/multer@1.4.12':
     dependencies:
       '@types/express': 4.17.21
+
+  '@types/next@9.0.0(@babel/core@7.25.2)(@opentelemetry/api@1.4.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+    dependencies:
+      next: 14.2.9(@babel/core@7.25.2)(@opentelemetry/api@1.4.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@opentelemetry/api'
+      - '@playwright/test'
+      - babel-plugin-macros
+      - react
+      - react-dom
+      - sass
 
   '@types/node-forge@1.3.11':
     dependencies:
@@ -15943,7 +16093,7 @@ snapshots:
 
   ast-types@0.15.2:
     dependencies:
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   astral-regex@1.0.0: {}
 
@@ -16433,6 +16583,8 @@ snapshots:
     dependencies:
       slice-ansi: 3.0.0
       string-width: 4.2.3
+
+  client-only@0.0.1: {}
 
   cliui@6.0.0:
     dependencies:
@@ -18419,7 +18571,7 @@ snapshots:
   graphql-tag@2.12.6(graphql@15.8.0):
     dependencies:
       graphql: 15.8.0
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   graphql@15.8.0: {}
 
@@ -20340,6 +20492,32 @@ snapshots:
 
   new-github-issue-url@0.2.1: {}
 
+  next@14.2.9(@babel/core@7.25.2)(@opentelemetry/api@1.4.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+    dependencies:
+      '@next/env': 14.2.9
+      '@swc/helpers': 0.5.5
+      busboy: 1.6.0
+      caniuse-lite: 1.0.30001651
+      graceful-fs: 4.2.11
+      postcss: 8.4.31
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      styled-jsx: 5.1.1(@babel/core@7.25.2)(react@18.2.0)
+    optionalDependencies:
+      '@next/swc-darwin-arm64': 14.2.9
+      '@next/swc-darwin-x64': 14.2.9
+      '@next/swc-linux-arm64-gnu': 14.2.9
+      '@next/swc-linux-arm64-musl': 14.2.9
+      '@next/swc-linux-x64-gnu': 14.2.9
+      '@next/swc-linux-x64-musl': 14.2.9
+      '@next/swc-win32-arm64-msvc': 14.2.9
+      '@next/swc-win32-ia32-msvc': 14.2.9
+      '@next/swc-win32-x64-msvc': 14.2.9
+      '@opentelemetry/api': 1.4.1
+    transitivePeerDependencies:
+      - '@babel/core'
+      - babel-plugin-macros
+
   nice-try@1.0.5: {}
 
   no-case@3.0.4:
@@ -20808,6 +20986,12 @@ snapshots:
       util-deprecate: 1.0.2
 
   postcss-value-parser@4.2.0: {}
+
+  postcss@8.4.31:
+    dependencies:
+      nanoid: 3.3.7
+      picocolors: 1.0.1
+      source-map-js: 1.2.0
 
   postcss@8.4.39:
     dependencies:
@@ -21448,7 +21632,7 @@ snapshots:
       ast-types: 0.15.2
       esprima: 4.0.1
       source-map: 0.6.1
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   recyclerlistview@4.2.1(react-native@0.74.5(@babel/core@7.25.2)(@babel/preset-env@7.25.3(@babel/core@7.25.2))(@types/react@18.2.79)(react@18.2.0))(react@18.2.0):
     dependencies:
@@ -22034,6 +22218,13 @@ snapshots:
 
   stubs@3.0.0:
     optional: true
+
+  styled-jsx@5.1.1(@babel/core@7.25.2)(react@18.2.0):
+    dependencies:
+      client-only: 0.0.1
+      react: 18.2.0
+    optionalDependencies:
+      '@babel/core': 7.25.2
 
   styleq@0.1.3: {}
 

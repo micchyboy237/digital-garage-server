@@ -1,9 +1,19 @@
 import { multerUpload, S3File, uploadImageAndThumbnail } from "@boilerplate/aws"
-import { MediaFile, MediaFileType, PostCategory, Subscription, User } from "@boilerplate/database"
+import {
+  MediaFile,
+  MediaFileType,
+  PostCategory,
+  Subscription,
+  User,
+  Vehicle,
+  VehicleDetails,
+  VehicleOwnership,
+} from "@boilerplate/database"
 import { TRPCError } from "@trpc/server"
 import fs from "fs"
 import {
   documentSchema,
+  getVehicleGalleryPostSchema,
   getVehicleOwnershipSchema,
   onboardUserSchema,
   postSchema,
@@ -14,7 +24,14 @@ import {
   updateVehicleSchema,
 } from "../schemas/me.schema"
 import { meService } from "../services"
-import { createOrUpdateSubscription } from "../services/model.service"
+import {
+  createOrUpdateMediaFile,
+  createOrUpdateSubscription,
+  createOrUpdateVehicle,
+  createOrUpdateVehicleDetails,
+  createOrUpdateVehicleGalleryPost,
+  createOrUpdateVehicleOwnership,
+} from "../services/model.service"
 import { protectedProcedure, publicProcedure, t } from "../trpc"
 
 export const meRouter = t.router({
@@ -135,32 +152,51 @@ export const meRouter = t.router({
   }),
   getVehicleDetails: protectedProcedure.input(getVehicleOwnershipSchema).query(async ({ ctx, input }) => {
     const userId = ctx.user?.id!
-    const vehicle = await ctx.prisma.vehicle.findUnique({
-      where: { id: input.vehicleId },
-      include: { details: true },
+    const vehicleOwnershipResult = await ctx.prisma.vehicleOwnership.findUnique({
+      where: {
+        id: input.ownershipId,
+      },
+      include: {
+        vehicle: true,
+        vehicleDetails: true,
+        vehicleDisplayPhoto: true,
+      },
     })
 
-    if (!vehicle) {
+    if (!vehicleOwnershipResult) {
       throw new TRPCError({ code: "NOT_FOUND", message: "Vehicle not found" })
     }
 
-    if (vehicle.ownerId !== userId) {
+    if (vehicleOwnershipResult.userId !== userId) {
       throw new TRPCError({ code: "FORBIDDEN", message: "Unauthorized to view vehicle details" })
     }
 
-    return vehicle
+    const { vehicle, vehicleDetails, vehicleDisplayPhoto, ...vehicleOwnership } = vehicleOwnershipResult
+
+    return {
+      vehicle,
+      vehicleDetails,
+      vehicleDisplayPhoto,
+      vehicleOwnership,
+    } as {
+      vehicle: Vehicle
+      vehicleDetails: VehicleDetails
+      vehicleDisplayPhoto: MediaFile
+      vehicleOwnership: VehicleOwnership
+    }
   }),
-  getVehicleGallery: protectedProcedure.query(async ({ ctx }) => {
+  getVehicleGalleryPosts: protectedProcedure.input(getVehicleGalleryPostSchema).query(async ({ ctx, input }) => {
     const userId = ctx.user?.id!
+    const { ownershipId } = input
 
     const vehiclePosts = await ctx.prisma.vehiclePost.findMany({
-      where: { createdById: userId, category: PostCategory.GALLERY },
+      where: { createdById: userId, category: PostCategory.GALLERY, ownershipId },
       include: { files: true, ownership: true },
     })
 
-    return vehiclePosts
+    return { vehiclePosts }
   }),
-  getVehicleHistory: protectedProcedure.query(async ({ ctx }) => {
+  getVehicleHistoryPosts: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.user?.id!
 
     const vehiclePosts = await ctx.prisma.vehiclePost.findMany({
@@ -168,7 +204,7 @@ export const meRouter = t.router({
       include: { files: true, ownership: true },
     })
 
-    return vehiclePosts
+    return { vehiclePosts }
   }),
   getTransfers: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.user?.id!
@@ -180,7 +216,7 @@ export const meRouter = t.router({
     })
     return transfers
   }),
-  addVehicle: protectedProcedure.mutation(async ({ ctx, input }) => {
+  upsertVehicle: protectedProcedure.mutation(async ({ ctx, input }) => {
     return new Promise((resolve, reject) => {
       multerUpload.single("displayPhoto")(ctx.req, ctx.res, async (err) => {
         if (err) {
@@ -194,6 +230,43 @@ export const meRouter = t.router({
 
         const file = ctx.req.file
         console.log("Received file:", file)
+
+        // Create a new vehicle with the provided details
+        const vehicle = await createOrUpdateVehicle(
+          {
+            registrationNumber: input.registrationNumber,
+            make: input.make,
+            model: input.model,
+          },
+          ctx.session?.userId,
+        )
+
+        // Create an ownership record for the new vehicle
+        const ownership = await createOrUpdateVehicleOwnership(
+          {
+            vehicleId: vehicle.id,
+            overview: input.overview,
+          },
+          ctx.session?.userId,
+        )
+
+        // Create the vehicle details
+        const vehicleDetails = await createOrUpdateVehicleDetails(
+          {
+            registrationNumber: input.registrationNumber,
+            make: input.make,
+            model: input.model,
+            yearOfManufacture: parseInt(input.yearOfManufacture),
+            engineCapacity: parseInt(input.engineCapacity),
+            colour: input.colour,
+            taxDueDate: input.taxDueDate,
+            taxStatus: input.taxStatus,
+            motStatus: input.motStatus,
+            motExpiryDate: input.motExpiryDate,
+            fuelType: input.fuelType,
+          },
+          ownership.id,
+        )
 
         let displayPhoto
 
@@ -220,62 +293,101 @@ export const meRouter = t.router({
           } as MediaFile
         }
 
-        // Create a new vehicle with the provided details
-        const newVehicle = await ctx.prisma.vehicle.create({
-          data: {
-            registrationNumber: input.registrationNumber,
-            make: input.make,
-            model: input.model,
-            ownerId: ctx.session?.userId,
-          },
-        })
-        // Create an ownership record for the new vehicle
-        const newOwnership = await ctx.prisma.vehicleOwnership.create({
-          data: {
-            vehicleId: newVehicle.id,
-            userId: ctx.session?.userId!,
-            // vehicleDisplayPhoto: {
-            //   create: displayPhoto,
-            // }
-          },
-        })
         // Create the vehicle display photo
         if (displayPhoto) {
           await ctx.prisma.mediaFile.create({
             data: {
               ...displayPhoto,
               vehicleDisplayPhotoOwnership: {
-                connect: { id: newOwnership.id },
+                connect: { id: ownership.id },
               },
             },
           })
         }
 
-        // Create the vehicle details
-        const newVehicleDetails = await ctx.prisma.vehicleDetails.create({
-          data: {
-            registrationNumber: input.registrationNumber,
-            make: input.make,
-            model: input.model,
-            yearOfManufacture: parseInt(input.yearOfManufacture),
-            engineCapacity: parseInt(input.engineCapacity),
-            colour: input.colour,
-            taxDueDate: input.taxDueDate,
-            taxStatus: input.taxStatus,
-            motStatus: input.motStatus,
-            motExpiryDate: input.motExpiryDate,
-            fuelType: input.fuelType,
-            ownership: {
-              connect: { id: newOwnership.id },
-            },
-          },
-        })
-        console.log("Added vehicle:", newVehicleDetails)
-
-        resolve(newVehicleDetails)
+        resolve({ vehicle, ownership, vehicleDetails })
       })
     })
   }),
+  upsertVehicleGalleryPost: protectedProcedure.mutation(async ({ ctx, input }) => {
+    return new Promise((resolve, reject) => {
+      multerUpload.array("files")(ctx.req, ctx.res, async (err) => {
+        if (err) {
+          reject(err)
+          return
+        }
+
+        const folder = "vehicle"
+        const input = ctx.req.body
+        console.log("Received input:", input)
+
+        const files = ctx.req.files as Express.Multer.File[]
+        console.log("Received files:", files)
+
+        try {
+          const vehiclePost = await createOrUpdateVehicleGalleryPost(input, ctx.session?.userId)
+
+          if (files && files.length > 0) {
+            const displayPhotos = await Promise.all(
+              files.map(async (file) => {
+                const fileBuffer = fs.readFileSync(file.path)
+                const s3File: S3File = {
+                  originalname: file.originalname,
+                  buffer: fileBuffer,
+                }
+
+                console.log("Uploading to S3...", s3File)
+
+                const { imageUrl, thumbnailUrl } = await uploadImageAndThumbnail(s3File, folder)
+
+                // Delete the file after processing
+                fs.unlinkSync(file.path) // Remove the temporary file
+
+                const displayPhoto = {
+                  url: imageUrl,
+                  thumbnailUrl,
+                  fileName: file.originalname,
+                  type: MediaFileType.IMAGE,
+                  mimeType: file.mimetype,
+                } as MediaFile
+
+                // Create the vehicle display photo
+                return await createOrUpdateMediaFile({
+                  ...displayPhoto,
+                  ownershipId: vehiclePost.ownershipId,
+                  postId: vehiclePost.id,
+                })
+              }),
+            )
+          }
+
+          resolve({ vehiclePost })
+        } catch (err) {
+          console.error("Error while processing files:", err)
+          reject(err)
+        }
+      })
+    })
+  }),
+  // upsertVehicleGalleryPost: protectedProcedure.input(upsertVehicleGalleryPostSchema).mutation(async ({ ctx, input }) => {
+  //   const userId = ctx.user?.id!
+  //   const vehicleOwnershipResult = await ctx.prisma.vehicleOwnership.findUnique({
+  //     where: {
+  //       id: input.ownershipId,
+  //     },
+  //   })
+
+  //   if (!vehicleOwnershipResult) {
+  //     throw new TRPCError({ code: "NOT_FOUND", message: "Vehicle not found" })
+  //   }
+
+  //   if (vehicleOwnershipResult.userId !== userId) {
+  //     throw new TRPCError({ code: "FORBIDDEN", message: "Unauthorized to view vehicle details" })
+  //   }
+
+  //   const vehiclePost = createOrUpdateVehicleGalleryPost(input, ctx.user?.id)
+  //   return vehiclePost
+  // }),
   updateVehicle: protectedProcedure.input(updateVehicleSchema).mutation(async ({ ctx, input }) => {
     const { vehicleId, ...updates } = input
 

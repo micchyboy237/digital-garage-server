@@ -1,9 +1,7 @@
 import { MediaFileModel } from "app/models/media-file/MediaFile"
-import { SessionModel } from "app/models/session/Session"
 import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
 import { withSetPropAction } from "../helpers/withSetPropAction"
-import { Profile, ProfileModel } from "../profile/Profile"
-import { SubscriptionModel } from "../subscription/Subscription"
+import { Profile } from "../profile/Profile"
 
 export const UserModel = types
   .model("User")
@@ -16,9 +14,6 @@ export const UserModel = types
     displayPicture: types.maybeNull(MediaFileModel),
     location: types.maybeNull(types.string),
     accountStatus: types.enumeration(["ONBOARDING", "SELECT_SUBSCRIPTION", "ACTIVE"]),
-    profile: types.maybe(types.reference(ProfileModel)), // Reference to ProfileModel
-    subscription: types.maybe(types.reference(SubscriptionModel)), // Reference to SubscriptionModel
-    sessions: types.maybe(types.array(types.reference(SessionModel))),
     createdAt: types.optional(types.Date, () => new Date()),
     updatedAt: types.optional(types.Date, () => new Date()),
   })

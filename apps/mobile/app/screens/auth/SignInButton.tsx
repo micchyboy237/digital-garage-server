@@ -7,10 +7,17 @@ interface SignInButtonProps {
   type: "apple" | "google"
   onPress: () => void
   style?: StyleProp<ViewStyle>
+  isCreateAccount?: boolean
   textStyle?: StyleProp<TextStyle>
 }
 
-export const SignInButton: React.FC<SignInButtonProps> = ({ type, onPress, style, textStyle }) => {
+export const SignInButton: React.FC<SignInButtonProps> = ({
+  type,
+  onPress,
+  style,
+  isCreateAccount,
+  textStyle,
+}) => {
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -33,7 +40,7 @@ export const SignInButton: React.FC<SignInButtonProps> = ({ type, onPress, style
           textStyle,
         ]}
       >
-        {type === "apple" ? "Sign in with Apple" : "Sign in with Google"}
+        {isCreateAccount ? "Sign up with" : "Sign in with"} {type === "apple" ? "Apple" : "Google"}
       </Text>
     </TouchableOpacity>
   )
